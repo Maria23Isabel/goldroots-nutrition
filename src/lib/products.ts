@@ -61,12 +61,12 @@ export const productPath = (slug: string) => `product/${slug}`;
  * Dirección absoluta de una ruta, para el QR y para canonical/og.
  * Sin VITE_SITE_URL se usa el origen por el que se está viendo el sitio, así el QR funciona igual en la vista previa
  * de GitHub Pages que en el dominio definitivo.
+ * GitHub Pages sirve cada ruta con barra final (sin ella responde 301), así que canonical y QR van con la barra.
  */
 export function absoluteUrl(path: string): string {
   const origin = import.meta.env.VITE_SITE_URL || (typeof window === 'undefined' ? '' : window.location.origin);
-  const base = `${origin}${import.meta.env.BASE_URL}`;
-  const clean = path.replace(/^\//, '');
-  return base.endsWith('/') ? `${base}${clean}` : `${base}/${clean}`;
+  const clean = path.replace(/^\/|\/$/g, '');
+  return `${origin}${import.meta.env.BASE_URL}${clean ? `${clean}/` : ''}`;
 }
 
 /** Ruta de una foto ya convertida en dirección absoluta (og:image). */

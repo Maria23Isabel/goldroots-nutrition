@@ -11,7 +11,10 @@ import { resolve } from 'node:path';
 const DIST = resolve('dist');
 const BASE = process.argv.includes('--pages') ? '/goldroots-nutrition/' : '/';
 const HOST = process.env.VITE_SITE_URL || (process.argv.includes('--pages') ? 'https://maria23isabel.github.io' : 'http://localhost:5176');
-const url = (path) => `${HOST}${BASE}${String(path).replace(/^\//, '')}`;
+const url = (path) => {
+  const clean = String(path).replace(/^\/|\/$/g, '');
+  return `${HOST}${BASE}${clean ? `${clean}/` : ''}`;
+};
 
 const products = JSON.parse(readFileSync('src/data/productos.generado.json', 'utf8'));
 const ROUTAS = ['/', '/catalog', '/wholesale', '/about', '/contact', '/legal/terms', '/legal/privacy', ...products.map((p) => `/product/${p.slug}`)];

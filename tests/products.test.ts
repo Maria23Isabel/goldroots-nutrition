@@ -57,7 +57,7 @@ describe('buscar, filtrar y ordenar', () => {
 
 describe('la dirección que codifica el QR', () => {
   it('apunta a la ficha del producto', () => {
-    for (const p of PRODUCTS) expect(absoluteUrl(`product/${p.slug}`).endsWith(`product/${p.slug}`)).toBe(true);
+    for (const p of PRODUCTS) expect(absoluteUrl(`product/${p.slug}`).endsWith(`product/${p.slug}/`)).toBe(true);
   });
 
   it('no cambia de sitio entre dos fichas', () => {
