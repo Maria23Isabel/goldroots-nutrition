@@ -2,8 +2,9 @@ import { IconArrowRight, IconCheck, IconQrcode, IconScale, IconShieldCheck, Icon
 import { useState, type FormEvent } from 'react';
 import { Link } from 'react-router';
 import { ProductCard } from '@/components/ProductCard';
+import { FormulaFinder } from '@/components/FormulaFinder';
 import { buttonClass, Reveal, SectionHeading, ToConfirm } from '@/components/ui';
-import { asset, countByGoal, featured, GOALS, money, PRODUCTS } from '@/lib/products';
+import { asset, countByGoal, featured, GOALS, goalOf, money, PRODUCTS, type GoalId } from '@/lib/products';
 import { usePageMeta } from '@/lib/meta';
 
 const PILLARS = [
@@ -34,6 +35,9 @@ function Hero() {
             </Link>
             <a href="#goals" className={buttonClass('ghost-light')}>
               Shop by goal
+            </a>
+            <a href="#finder" className={buttonClass('ghost-light')}>
+              <IconSparkles size={18} aria-hidden="true" /> Find your formula
             </a>
           </div>
           <ul className="mt-12 grid max-w-md grid-cols-3 gap-6 border-t border-white/15 pt-6">
@@ -110,20 +114,45 @@ function Goals() {
   );
 }
 
+/** Pestañas por objetivo: cada clic cambia la selección de la portada sin salir de ella. */
 function Featured() {
+  const [tab, setTab] = useState<'picks' | GoalId>('picks');
+  const list = tab === 'picks' ? featured() : PRODUCTS.filter((p) => p.goal === tab);
+  const empty = 4 - list.length;
+  const chip = (active: boolean) =>
+    `inline-flex min-h-11 items-center gap-2 rounded-full border px-5 text-sm font-semibold transition ${active ? 'border-forest bg-forest text-white' : 'border-line bg-white text-forest hover:border-gold'}`;
+
   return (
     <section className="mx-auto max-w-7xl px-5 pt-24">
       <div className="flex flex-wrap items-end justify-between gap-4">
-        <SectionHeading eyebrow="Best value right now" title="Our collection" />
+        <SectionHeading eyebrow="Best value right now" title={tab === 'picks' ? 'Our collection' : `${goalOf(tab).label}, up close`} />
         <Link to="/catalog" className="inline-flex items-center gap-2 font-bold tracking-wider text-forest uppercase hover:text-gold-deep">
           View all products <IconArrowRight size={18} aria-hidden="true" />
         </Link>
       </div>
-      <div className="mt-10 grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
-        {featured().map((p, i) => (
+      <div role="group" aria-label="Which formulas to show" className="mt-8 flex flex-wrap gap-2">
+        <button type="button" aria-pressed={tab === 'picks'} onClick={() => setTab('picks')} className={chip(tab === 'picks')}>
+          Brand picks <span className="opacity-70">{featured().length}</span>
+        </button>
+        {GOALS.map((g) => (
+          <button key={g.id} type="button" aria-pressed={tab === g.id} onClick={() => setTab(g.id)} className={chip(tab === g.id)}>
+            {g.short} <span className="opacity-70">{countByGoal(g.id)}</span>
+          </button>
+        ))}
+      </div>
+      <div key={tab} className="animate-rise mt-8 grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
+        {list.map((p, i) => (
           <Reveal key={p.slug} delay={i * 80}>
             <ProductCard product={p} />
           </Reveal>
+        ))}
+        {Array.from({ length: Math.max(empty, 0) }, (_, i) => (
+          <Link key={`cta-${i}`} to={`/catalog${tab === 'picks' ? '' : `?goal=${tab}`}`} className="grid min-h-56 place-items-center rounded-3xl border-2 border-dashed border-line bg-sand/40 p-6 text-center transition hover:border-gold hover:bg-gold-soft/30">
+            <span>
+              <span className="block font-serif text-4xl text-forest">14</span>
+              <span className="mt-2 block text-xs font-bold tracking-[0.2em] text-gold-deep uppercase">Open the full catalog</span>
+            </span>
+          </Link>
         ))}
       </div>
     </section>
@@ -314,6 +343,7 @@ export function Home() {
         </ul>
       </section>
       <Goals />
+      <FormulaFinder />
       <Featured />
       <AtAGlance />
       <Why />
