@@ -1,0 +1,89 @@
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/playfair-display';
+@import 'tailwindcss';
+
+/* Paleta: marfil cálido, verde bosque, dorado y un color por objetivo, para distinguir los 14 productos de un vistazo */
+@theme {
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'Playfair Display Variable', ui-serif, Georgia, serif;
+  --color-ivory: #fbf8f1;
+  --color-sand: #f1e9d6;
+  --color-line: #e4dbc4;
+  --color-forest: #0d2a1e;
+  --color-forest-2: #153a29;
+  --color-moss: #2f6b4a;
+  --color-gold: #c9a227;
+  --color-gold-deep: #8a6d12;
+  --color-gold-soft: #f0dc9a;
+  --color-ink: #17241d;
+  --color-muted: #55605a;
+  --color-energy: #c2610f;
+  --color-heart: #a8203a;
+  --color-brain: #3b4bab;
+  --color-sleep: #5b3f86;
+  --color-radiance: #0f8a80;
+  --color-immune: #2f6b4a;
+  --animate-rise: rise 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-marquee: marquee 32s linear infinite;
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  color: var(--color-ink);
+  background: var(--color-ivory);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 { font-family: var(--font-serif); letter-spacing: -0.01em; }
+
+:focus-visible {
+  outline: 3px solid var(--color-gold);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+::selection { background: var(--color-gold-soft); color: var(--color-forest); }
+
+.eyebrow {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--color-gold-deep);
+}
+
+.reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.reveal.in { opacity: 1; transform: none; }
+
+.grain {
+  background-image: radial-gradient(circle at 1px 1px, rgba(13, 42, 30, 0.08) 1px, transparent 0);
+  background-size: 14px 14px;
+}
+
+.marquee-track { animation: var(--animate-marquee); }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+  .reveal { opacity: 1; transform: none; }
+  .marquee-track { animation: none; }
+}

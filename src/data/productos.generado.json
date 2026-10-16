@@ -1,0 +1,360 @@
+[
+  {
+    "slug": "nad-resveratrol-coenzyme-q10",
+    "name": "NAD + RESVERATROL + COENZYME Q10",
+    "goal": "energy",
+    "price": null,
+    "compareAt": null,
+    "headline": "Advanced Cellular Energy & Healthy Aging Formula",
+    "summary": "Featuring NAD+, Resveratrol, and Coenzyme Q10, a powerful combination designed to support cellular energy production, cardiovascular health, antioxidant protection, and healthy aging.",
+    "benefits": [
+      "Supports cellular energy and mitochondrial function",
+      "Promotes healthy aging and longevity",
+      "Provides powerful antioxidant protection",
+      "Supports heart and cardiovascular health",
+      "Enhances energy production at the cellular level",
+      "Helps combat oxidative stress and free radical damage",
+      "Supports mental focus and cognitive performance",
+      "Promotes overall vitality and wellness"
+    ],
+    "ingredients": [
+      "NAD+",
+      "Resveratrol",
+      "Coenzyme Q10 (CoQ10)"
+    ],
+    "format": "60 Vegetarian Capsules",
+    "image": "products/nad-resveratrol-coenzyme-q10.webp",
+    "featured": false
+  },
+  {
+    "slug": "astaxanthin",
+    "name": "ASTAXANTHIN",
+    "goal": "eye-skin",
+    "price": 24,
+    "compareAt": 32,
+    "headline": "Advanced Antioxidant, Skin & Eye Health Formula",
+    "summary": "Featuring premium Astaxanthin, a naturally occurring carotenoid renowned for its exceptional antioxidant properties. Designed to support cellular protection, skin radiance, eye health, cardiovascular function, and overall wellness.",
+    "benefits": [
+      "Delivers potent antioxidant defense against free radicals",
+      "Supports healthy skin appearance and elasticity",
+      "Promotes eye comfort and visual performance",
+      "Helps protect cells from environmental stressors",
+      "Supports cardiovascular and circulatory health",
+      "Enhances recovery from physical activity",
+      "Encourages healthy aging and cellular vitality",
+      "Supports overall wellness and immune function"
+    ],
+    "ingredients": [
+      "Natural Astaxanthin"
+    ],
+    "format": "60 Vegetarian Capsules",
+    "image": "products/astaxanthin.webp",
+    "featured": false
+  },
+  {
+    "slug": "nitric-oxide-l-arginine-l-citrulline",
+    "name": "NITRIC OXIDE + L ARGININE + L CITRULLINE",
+    "goal": "heart",
+    "price": 25,
+    "compareAt": 32,
+    "headline": "Advanced Nitric Oxide Performance Formula",
+    "summary": "A powerful blend formulated to support nitric oxide production, healthy circulation, cardiovascular function, and peak physical performance.",
+    "benefits": [
+      "Supports healthy blood flow and circulation",
+      "Enhances workout performance and endurance",
+      "Promotes muscle pumps and vascularity",
+      "Supports oxygen and nutrient delivery to muscles",
+      "Encourages cardiovascular health",
+      "Helps improve stamina and physical output",
+      "Supports energy and exercise recovery",
+      "Promotes overall athletic performance"
+    ],
+    "ingredients": [
+      "Nitric Oxide Support Blend",
+      "L-Arginine",
+      "L-Citrulline"
+    ],
+    "format": "",
+    "image": "products/nitric-oxide-l-arginine-l-citrulline.webp",
+    "featured": false
+  },
+  {
+    "slug": "shilajit-gold",
+    "name": "SHILAJIT GOLD",
+    "goal": "energy",
+    "price": 25,
+    "compareAt": 32,
+    "headline": "Advanced Energy, Performance & Vitality Formula",
+    "summary": "Featuring purified Shilajit, a natural source of fulvic acid and trace minerals traditionally used to support energy, endurance, cognitive performance, and overall wellness.",
+    "benefits": [
+      "Supports healthy energy production",
+      "Enhances stamina and physical performance",
+      "Promotes mental focus and concentration",
+      "Supports testosterone and reproductive health",
+      "Provides antioxidant support",
+      "Supports nutrient absorption and cellular function",
+      "Encourages healthy aging and vitality",
+      "Helps maintain overall wellness"
+    ],
+    "ingredients": [
+      "Purified Shilajit Extract",
+      "Naturally Occurring Fulvic Acid",
+      "Trace Minerals"
+    ],
+    "format": "60 Vegetarian Capsules",
+    "image": "products/shilajit-gold.webp",
+    "featured": false
+  },
+  {
+    "slug": "vitamin-k2-d3",
+    "name": "VITAMIN K2 + D3",
+    "goal": "heart",
+    "price": 24,
+    "compareAt": 29,
+    "headline": "Advanced Bone & Heart Support Formula",
+    "summary": "Combining Vitamin D3 and Vitamin K2 to support calcium utilization, bone strength, and cardiovascular health.",
+    "benefits": [
+      "Supports strong bones and teeth",
+      "Promotes calcium absorption",
+      "Supports cardiovascular health",
+      "Encourages immune function",
+      "Helps maintain healthy arteries",
+      "Supports muscle function",
+      "Promotes overall wellness"
+    ],
+    "ingredients": [
+      "Vitamin D3",
+      "Vitamin K2"
+    ],
+    "format": "60 Vegetarian Capsules",
+    "image": "products/vitamin-k2-d3.webp",
+    "featured": false
+  },
+  {
+    "slug": "vision-pro",
+    "name": "VISION PRO",
+    "goal": "eye-skin",
+    "price": 24,
+    "compareAt": 29,
+    "headline": "Advanced Eye Health & Vision Support Formula",
+    "summary": "A specialized blend of Vitamin A, Zeaxanthin, Carrot, and Blueberry designed to support visual performance, eye health, and antioxidant protection for everyday vision wellness.",
+    "benefits": [
+      "Supports healthy vision and eye function",
+      "Helps maintain normal eyesight",
+      "Provides antioxidant protection for eye tissues",
+      "Supports retinal health",
+      "Helps reduce oxidative stress caused by daily screen exposure",
+      "Promotes healthy night vision",
+      "Supports long-term eye wellness",
+      "Contributes to overall visual comfort"
+    ],
+    "ingredients": [
+      "Vitamin A",
+      "Carrot Powder",
+      "Blueberry Extract",
+      "Zeaxanthin"
+    ],
+    "format": "60 Vegetarian Capsules",
+    "image": "products/vision-pro.webp",
+    "featured": false
+  },
+  {
+    "slug": "lions-mane-blend-complex",
+    "name": "LIONS MANE BLEND COMPLEX",
+    "goal": "brain",
+    "price": 22,
+    "compareAt": 28,
+    "headline": "Advanced Lion's Mane Mushroom Formula",
+    "summary": "A functional mushroom traditionally valued for supporting cognitive performance and nervous system health.",
+    "benefits": [
+      "Supports memory and focus",
+      "Promotes cognitive performance",
+      "Supports brain health",
+      "Encourages mental clarity",
+      "Supports nervous system function",
+      "Helps maintain concentration",
+      "Promotes long-term cognitive wellness"
+    ],
+    "ingredients": [
+      "Lion's Mane Mushroom Extract"
+    ],
+    "format": "60 Vegetarian Capsules",
+    "image": "products/lions-mane-blend-complex.webp",
+    "featured": false
+  },
+  {
+    "slug": "ashwagandha-melatonin-magnesium",
+    "name": "ASHWAGANDHA + MELATONIN + MAGNESIUM",
+    "goal": "sleep",
+    "price": 22,
+    "compareAt": 28,
+    "headline": "Advanced Sleep & Relaxation Formula",
+    "summary": "A powerful nighttime blend combining Ashwagandha, Melatonin, and Magnesium to promote relaxation, support restful sleep, and help the body recover from daily stress.",
+    "benefits": [
+      "Promotes deep and restful sleep",
+      "Supports relaxation and calmness",
+      "Helps reduce occasional stress and tension",
+      "Supports healthy sleep cycles",
+      "Encourages faster sleep onset",
+      "Supports nervous system function",
+      "Promotes muscle relaxation and recovery",
+      "Helps maintain overall mental and physical well-being"
+    ],
+    "ingredients": [
+      "Ashwagandha Root Extract",
+      "Melatonin",
+      "Magnesium"
+    ],
+    "format": "60 Vegetarian Capsules",
+    "image": "products/ashwagandha-melatonin-magnesium.webp",
+    "featured": false
+  },
+  {
+    "slug": "turmeric-curcumin",
+    "name": "TURMERIC + CURCUMIN",
+    "goal": "immune",
+    "price": 19,
+    "compareAt": 22,
+    "headline": "Advanced Curcumin Complex",
+    "summary": "A concentrated turmeric-derived formula designed to support joint health and antioxidant protection.",
+    "benefits": [
+      "Supports joint comfort and mobility",
+      "Provides antioxidant defense",
+      "Helps maintain a healthy inflammatory response",
+      "Supports cardiovascular wellness",
+      "Promotes healthy aging",
+      "Supports immune function",
+      "Encourages overall wellness"
+    ],
+    "ingredients": [
+      "Curcumin (Turmeric Extract)"
+    ],
+    "format": "60 Vegetarian Capsules",
+    "image": "products/turmeric-curcumin.webp",
+    "featured": false
+  },
+  {
+    "slug": "milk-thistle",
+    "name": "MILK THISTLE",
+    "goal": "immune",
+    "price": 18,
+    "compareAt": 22,
+    "headline": "Advanced Liver Support Formula",
+    "summary": "Featuring Milk Thistle, a traditional botanical known for supporting liver function and antioxidant defense.",
+    "benefits": [
+      "Supports liver health and function",
+      "Promotes natural detoxification processes",
+      "Provides antioxidant protection",
+      "Supports digestive wellness",
+      "Helps maintain healthy liver cells",
+      "Encourages metabolic health",
+      "Supports overall well-being"
+    ],
+    "ingredients": [
+      "Milk Thistle Extract"
+    ],
+    "format": "60 Vegetarian Capsules",
+    "image": "products/milk-thistle.webp",
+    "featured": false
+  },
+  {
+    "slug": "zinc-triple-play",
+    "name": "ZINC TRIPLE PLAY",
+    "goal": "immune",
+    "price": 18,
+    "compareAt": 20,
+    "headline": "Advanced Triple Zinc Complex",
+    "summary": "Featuring Zinc Acetate, Zinc Picolinate, and Zinc Orotate, this premium triple-action formula is designed to deliver enhanced absorption and comprehensive zinc support for immune health, skin wellness, metabolic function, and overall vitality.",
+    "benefits": [
+      "Supports a healthy and responsive immune system",
+      "Promotes healthy skin, hair, and nail growth",
+      "Helps protect cells from oxidative stress and free radicals",
+      "Supports normal hormone production and balance",
+      "Contributes to reproductive and prostate health",
+      "Supports wound healing and tissue repair",
+      "Promotes healthy metabolism and nutrient utilization",
+      "Essential for hundreds of enzymatic and cellular functions throughout the body"
+    ],
+    "ingredients": [
+      "Zinc Acetate",
+      "Zinc Picolinate",
+      "Zinc Orotate"
+    ],
+    "format": "60 Vegetarian Capsules",
+    "image": "products/zinc-triple-play.webp",
+    "featured": true
+  },
+  {
+    "slug": "selenium-200-mcg",
+    "name": "SELENIUM 200 MCG",
+    "goal": "immune",
+    "price": 20,
+    "compareAt": 25,
+    "headline": "Advanced Selenium Complex",
+    "summary": "An essential trace mineral providing powerful antioxidant support for immune function, thyroid health, and cellular protection.",
+    "benefits": [
+      "Supports thyroid gland function",
+      "Promotes immune system health",
+      "Provides antioxidant protection",
+      "Helps combat oxidative stress",
+      "Supports healthy metabolism",
+      "Contributes to cardiovascular wellness",
+      "Supports overall cellular health"
+    ],
+    "ingredients": [
+      "Selenium"
+    ],
+    "format": "60 Vegetarian Capsules",
+    "image": "products/selenium-200-mcg.webp",
+    "featured": true
+  },
+  {
+    "slug": "maca-root-extra-strength",
+    "name": "MACA ROOT EXTRA STRENGTH",
+    "goal": "energy",
+    "price": 15,
+    "compareAt": 20,
+    "headline": "Advanced Energy, Stamina & Vitality Formula",
+    "summary": "Featuring premium organic Maca Root, a traditional superfood revered for centuries for its ability to support energy, endurance, hormonal balance, and overall vitality. This nutrient-rich formula is designed to help promote physical performance, mental focus, and daily wellness.",
+    "benefits": [
+      "Supports natural energy production without stimulants",
+      "Enhances stamina, endurance, and physical performance",
+      "Promotes healthy hormonal balance in men and women",
+      "Supports reproductive health and vitality",
+      "Helps improve mental focus and concentration",
+      "Encourages healthy mood and emotional well-being",
+      "Supports athletic performance and recovery",
+      "Promotes overall wellness and daily vitality"
+    ],
+    "ingredients": [
+      "Premium organic Maca Root"
+    ],
+    "format": "60 Vegetarian Capsules",
+    "image": "products/maca-root-extra-strength.webp",
+    "featured": true
+  },
+  {
+    "slug": "beet-root-complex-l-arginine",
+    "name": "BEET ROOT COMPLEX + L ARGININE",
+    "goal": "heart",
+    "price": 18,
+    "compareAt": 20,
+    "headline": "Advanced Beet Root Complex + L-Arginine",
+    "summary": "A natural source of dietary nitrates formulated to support circulation, cardiovascular health, and physical performance.",
+    "benefits": [
+      "Supports healthy blood flow",
+      "Promotes cardiovascular wellness",
+      "Enhances exercise performance",
+      "Supports oxygen delivery throughout the body",
+      "Encourages healthy endurance levels",
+      "Helps maintain energy production",
+      "Supports overall heart health"
+    ],
+    "ingredients": [
+      "Beet Root Powder"
+    ],
+    "format": "60 Vegetarian Capsules",
+    "image": "products/beet-root-complex-l-arginine.webp",
+    "featured": true
+  }
+]
