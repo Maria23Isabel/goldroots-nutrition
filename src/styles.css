@@ -71,8 +71,8 @@ h1, h2, h3 { font-family: var(--font-serif); letter-spacing: -0.01em; }
   color: var(--color-gold-deep);
 }
 
-.reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1); }
-.reveal.in { opacity: 1; transform: none; }
+/* La animación se añade al entrar en pantalla: sin JavaScript (o si el observador no dispara) el contenido se ve igual. */
+.reveal.in { animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) backwards; }
 
 .grain {
   background-image: radial-gradient(circle at 1px 1px, rgba(13, 42, 30, 0.08) 1px, transparent 0);
@@ -84,6 +84,6 @@ h1, h2, h3 { font-family: var(--font-serif); letter-spacing: -0.01em; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
-  .reveal { opacity: 1; transform: none; }
+  .reveal.in { animation: none; }
   .marquee-track { animation: none; }
 }

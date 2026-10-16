@@ -22,7 +22,7 @@ export function Reveal({ children, className = '', delay = 0 }: { children: Reac
     return () => io.disconnect();
   }, []);
   return (
-    <div ref={ref} className={`reveal ${className}`} style={{ transitionDelay: `${delay}ms` }}>
+    <div ref={ref} className={`reveal ${className}`} style={{ animationDelay: `${delay}ms` }}>
       {children}
     </div>
   );
