@@ -2,11 +2,10 @@
 export const site = {
   brand: 'Gold Roots Nutrition',
   tagline: 'Essential nutrition for daily wellness',
-  /** [to be confirmed] número de WhatsApp o teléfono de la marca */
-  phone: null as string | null,
-  /** [to be confirmed] correo de contacto y de mayoreo */
-  email: null as string | null,
-  wholesaleEmail: null as string | null,
+  /** [to be confirmed] número de WhatsApp de la marca, con código de país y solo dígitos (ej. «15551234567») */
+  whatsapp: null as string | null,
+  /** [to be confirmed] horario de atención */
+  hours: null as string | null,
   /** [to be confirmed] dirección fiscal y país de envío */
   address: null as string | null,
   /** [to be confirmed] redes sociales */

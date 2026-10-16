@@ -1,11 +1,12 @@
 import { IconArrowRight, IconCheck, IconQrcode, IconScale, IconShieldCheck, IconSparkles, IconLeaf, IconTruckDelivery } from '@tabler/icons-react';
-import { useState, type FormEvent } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router';
 import { ProductCard } from '@/components/ProductCard';
 import { FormulaFinder } from '@/components/FormulaFinder';
-import { buttonClass, Reveal, SectionHeading, ToConfirm } from '@/components/ui';
+import { buttonClass, Reveal, SectionHeading, ToConfirm, WhatsAppButton } from '@/components/ui';
 import { asset, countByGoal, featured, GOALS, goalOf, money, PRODUCTS, type GoalId } from '@/lib/products';
 import { usePageMeta } from '@/lib/meta';
+import { GENERAL_MESSAGE, waLink } from '@/lib/whatsapp';
 
 const PILLARS = [
   { icon: IconLeaf, title: 'Organic ingredients', text: 'Botanical and mineral sources chosen for quality, shown clearly on every label.' },
@@ -19,23 +20,20 @@ const MARQUEE = ['Organic ingredients', 'Powerful results', 'Pure • Safe • E
 function Hero() {
   const trio = PRODUCTS.filter((p) => ['shilajit-gold', 'astaxanthin', 'lions-mane-blend-complex'].includes(p.slug));
   return (
-    <section className="relative overflow-hidden bg-forest text-white">
-      <div className="pointer-events-none absolute -top-40 -right-40 size-[40rem] rounded-full bg-gold/20 blur-3xl" aria-hidden="true" />
-      <div className="pointer-events-none absolute -bottom-52 -left-40 size-[34rem] rounded-full bg-moss/40 blur-3xl" aria-hidden="true" />
+    <section className="hero-bg relative overflow-hidden text-white">
+      <div className="hero-dots pointer-events-none absolute inset-0" aria-hidden="true" />
       <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-5 pt-14 pb-20 lg:grid-cols-[1.05fr_1fr] lg:pt-24 lg:pb-28">
         <div className="animate-rise">
           <p className="eyebrow !text-gold">Premium wellness</p>
           <h1 className="mt-5 text-5xl leading-[1.02] uppercase sm:text-7xl">
-            Essential nutrition for <span className="text-gold">daily wellness</span>
+            Essential nutrition for <span className="gold-text">daily wellness</span>
           </h1>
           <p className="mt-6 max-w-xl text-lg leading-relaxed text-white/75">Clean, focused supplements for the way you live. Pure, safe and effective — made for people who expect more.</p>
           <div className="mt-9 flex flex-wrap gap-3">
             <Link to="/catalog" className={buttonClass('gold')}>
               See all 14 formulas <IconArrowRight size={18} aria-hidden="true" />
             </Link>
-            <a href="#goals" className={buttonClass('ghost-light')}>
-              Shop by goal
-            </a>
+            <WhatsAppButton href={waLink(GENERAL_MESSAGE)}>Order on WhatsApp</WhatsAppButton>
             <a href="#finder" className={buttonClass('ghost-light')}>
               <IconSparkles size={18} aria-hidden="true" /> Find your formula
             </a>
@@ -47,14 +45,15 @@ function Hero() {
               ['100%', 'Vegetarian'],
             ].map(([n, l]) => (
               <li key={l}>
-                <p className="font-serif text-3xl text-gold">{n}</p>
+                <p className="gold-text font-serif text-3xl">{n}</p>
                 <p className="mt-0.5 text-xs text-white/60">{l}</p>
               </li>
             ))}
           </ul>
         </div>
         <div className="relative mx-auto grid w-full max-w-lg place-items-center">
-          <div className="absolute inset-6 rounded-full bg-gradient-to-br from-gold/35 to-transparent" aria-hidden="true" />
+          <div className="absolute inset-4 rounded-full bg-[radial-gradient(circle,rgb(231_197_90/0.45),transparent_68%)]" aria-hidden="true" />
+          <div className="absolute inset-10 rounded-full border border-gold/25" aria-hidden="true" />
           <div className="relative flex items-end justify-center">
             {trio.map((p, i) => (
               <Link
@@ -276,42 +275,35 @@ function WholesaleBand() {
   );
 }
 
-function Newsletter() {
-  const [done, setDone] = useState(false);
-  const [error, setError] = useState('');
-  const submit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const email = String(new FormData(e.currentTarget).get('email') ?? '').trim();
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return setError('Please enter a valid email address.');
-    setError('');
-    setDone(true);
-  };
+function OrderCta() {
   return (
-    <section className="mx-auto max-w-7xl px-5 pt-24">
-      <div className="rounded-[2rem] bg-gradient-to-br from-sand to-gold-soft/60 p-8 text-center sm:p-14">
-        <p className="eyebrow">Keep going</p>
-        <h2 className="mx-auto mt-3 max-w-2xl text-3xl text-forest sm:text-5xl">Pure. Safe. Effective.</h2>
-        <p className="mx-auto mt-4 max-w-lg text-lg text-muted">Join our list for new formulas and member-only offers.</p>
-        {done ? (
-          <p role="status" className="mt-8 text-lg font-semibold text-moss">
-            Thank you! You’re on the list. (Prototype: nothing was sent.)
+    <section className="mx-auto max-w-7xl px-5 pt-24" aria-labelledby="order-title">
+      <div className="hero-bg relative overflow-hidden rounded-[2rem] p-8 text-center text-white sm:p-14">
+        <div className="hero-dots pointer-events-none absolute inset-0" aria-hidden="true" />
+        <div className="relative">
+          <p className="eyebrow !text-gold">Keep going</p>
+          <h2 id="order-title" className="mx-auto mt-3 max-w-2xl text-3xl sm:text-5xl">
+            <span className="gold-text">Pure. Safe. Effective.</span>
+          </h2>
+          <p className="mx-auto mt-4 max-w-lg text-lg text-white/75">Ready to try a formula, or not sure which one fits you? Tell us what you’re looking for and we’ll help you choose.</p>
+          <ol className="mx-auto mt-8 grid max-w-3xl gap-3 text-left sm:grid-cols-3">
+            {['Pick your formulas', 'Send us a WhatsApp with your order already written', 'We confirm availability, payment and shipping'].map((t, i) => (
+              <li key={t} className="flex gap-3 rounded-2xl border border-white/15 bg-white/5 p-4 text-sm text-white/85">
+                <span className="gold-fill grid size-7 shrink-0 place-items-center rounded-full font-serif text-forest">{i + 1}</span>
+                {t}
+              </li>
+            ))}
+          </ol>
+          <div className="mt-8 flex flex-wrap justify-center gap-3">
+            <WhatsAppButton href={waLink(GENERAL_MESSAGE)}>Chat on WhatsApp</WhatsAppButton>
+            <Link to="/catalog" className={buttonClass('ghost-light')}>
+              Browse the catalog
+            </Link>
+          </div>
+          <p className="mt-6 text-sm text-white/60">
+            <ToConfirm label="to be confirmed" /> Payment methods, shipping costs and delivery times.
           </p>
-        ) : (
-          <form onSubmit={submit} className="mx-auto mt-8 flex max-w-md flex-col gap-3 sm:flex-row" noValidate>
-            <label htmlFor="news" className="sr-only">
-              Email address
-            </label>
-            <input id="news" name="email" type="email" autoComplete="email" placeholder="Email address" aria-invalid={error ? true : undefined} className="h-12 flex-1 rounded-full border border-line bg-white px-6" />
-            <button type="submit" className={buttonClass('dark')}>
-              Subscribe
-            </button>
-          </form>
-        )}
-        {error && (
-          <p role="alert" className="mt-3 text-sm text-red-700">
-            {error}
-          </p>
-        )}
+        </div>
       </div>
     </section>
   );
@@ -331,7 +323,7 @@ export function Home() {
         <ul className="mx-auto grid max-w-7xl gap-px px-5 sm:grid-cols-2 lg:grid-cols-4">
           {PILLARS.map((p) => (
             <li key={p.title} className="flex gap-4 py-7 sm:px-4">
-              <span className="grid size-12 shrink-0 place-items-center rounded-full bg-sand text-gold-deep">
+              <span className="gold-fill grid size-12 shrink-0 place-items-center rounded-full text-forest">
                 <p.icon size={24} aria-hidden="true" />
               </span>
               <div>
@@ -349,7 +341,7 @@ export function Home() {
       <Why />
       <QrBand />
       <WholesaleBand />
-      <Newsletter />
+      <OrderCta />
     </>
   );
 }

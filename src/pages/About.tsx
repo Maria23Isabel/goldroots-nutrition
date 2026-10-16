@@ -92,7 +92,7 @@ export function About() {
       <section className="mt-20 rounded-[2rem] bg-sand p-8 sm:p-12">
         <h2 className="font-serif text-3xl text-forest">About this page</h2>
         <p className="mt-4 max-w-3xl leading-relaxed text-muted">
-          This is a showcase site, not the brand’s store: there is no cart and no payment. Product names, prices, benefits, ingredients and photography come from{' '}
+          This is a showcase site: there is no cart and no online payment, and orders are arranged by WhatsApp. Product names, prices, benefits, ingredients and photography come from{' '}
           <a href={site.originalShop} className="font-semibold text-forest underline underline-offset-4 hover:text-gold-deep">
             {site.originalShop.replace(/^https?:\/\//, '')}
           </a>

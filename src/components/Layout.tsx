@@ -1,8 +1,9 @@
-import { IconSearch, IconX, IconMenu2 } from '@tabler/icons-react';
+import { IconBrandWhatsapp, IconSearch, IconX, IconMenu2 } from '@tabler/icons-react';
 import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router';
 import { asset, goalLabel, money, searchProducts } from '@/lib/products';
 import { site } from '@/lib/site';
+import { GENERAL_MESSAGE, waLink } from '@/lib/whatsapp';
 import { buttonClass, Logo } from './ui';
 
 const NAV = [
@@ -76,7 +77,9 @@ function Header() {
   const [menu, setMenu] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
-  useEffect(() => setMenu(false), [location.pathname]);
+  useEffect(() => {
+    setMenu(false);
+  }, [location.pathname]);
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
     onScroll();
@@ -99,9 +102,13 @@ function Header() {
           ))}
         </nav>
         <div className="flex items-center gap-1">
-          <Link to="/catalog" className={buttonClass('dark', 'hidden !min-h-11 !px-5 sm:inline-flex')}>
-            View catalog
-          </Link>
+          <div className="hidden sm:block">
+            <a href={waLink(GENERAL_MESSAGE)} target="_blank" rel="noopener noreferrer" className={buttonClass('wa', '!min-h-11 !px-5')}>
+              <IconBrandWhatsapp size={20} aria-hidden="true" /> <span className="xl:hidden">WhatsApp</span>
+              <span className="hidden xl:inline">Order on WhatsApp</span>
+              <span className="sr-only"> (opens WhatsApp in a new tab)</span>
+            </a>
+          </div>
           <button type="button" onClick={() => setSearching(true)} aria-label="Search products" className="grid size-11 place-items-center rounded-full text-forest hover:bg-sand">
             <IconSearch size={22} />
           </button>
@@ -127,6 +134,11 @@ function Header() {
                 </NavLink>
               </li>
             ))}
+            <li className="mt-2">
+              <a href={waLink(GENERAL_MESSAGE)} target="_blank" rel="noopener noreferrer" className={buttonClass('wa', 'w-full')}>
+                <IconBrandWhatsapp size={20} aria-hidden="true" /> Order on WhatsApp
+              </a>
+            </li>
           </ul>
         </nav>
       )}
@@ -138,15 +150,15 @@ function Header() {
 function Footer() {
   return (
     <footer className="mt-24 bg-forest text-white/80">
+      <div className="h-1 gold-fill" aria-hidden="true" />
       <div className="mx-auto grid max-w-7xl gap-10 px-5 py-14 md:grid-cols-[1.5fr_1fr_1fr_1fr]">
         <div>
           <Logo light />
           <p className="mt-4 max-w-sm leading-relaxed">{site.tagline}. Pure, safe and effective formulas made with integrity.</p>
-          <p className="mt-4 text-sm">
-            <a href={site.originalShop} className="text-gold underline underline-offset-4 hover:text-gold-soft">
-              Shop the original store
-            </a>
-          </p>
+          <a href={waLink(GENERAL_MESSAGE)} target="_blank" rel="noopener noreferrer" className={buttonClass('wa', 'mt-6')}>
+            <IconBrandWhatsapp size={20} aria-hidden="true" /> Chat with us
+            <span className="sr-only"> (opens WhatsApp in a new tab)</span>
+          </a>
         </div>
         <nav aria-label="Catalog">
           <p className="eyebrow !text-gold">Catalog</p>
@@ -186,23 +198,31 @@ function Footer() {
 
 export function Layout() {
   const { pathname } = useLocation();
-  useEffect(() => window.scrollTo({ top: 0 }), [pathname]);
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+  }, [pathname]);
   return (
     <>
       <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-60 focus:rounded-lg focus:bg-gold focus:px-4 focus:py-2 focus:text-forest">
         Skip to content
       </a>
       <div className="bg-forest px-4 py-2.5 text-center text-[11px] font-semibold tracking-[0.22em] text-gold-soft uppercase sm:text-xs">
-        Premium wellness • Trusted quality • Showcase prototype
+        Premium wellness • Trusted quality • Fast shipping
       </div>
       <Header />
       <main id="main">
         <Outlet />
       </main>
       <Footer />
-      <div className="pointer-events-none fixed right-3 bottom-3 z-30 rounded-full bg-forest/90 px-3 py-1.5 text-[11px] font-semibold tracking-wider text-gold-soft uppercase shadow-lg">
-        Prototype v0.2
-      </div>
+      <a
+        href={waLink(GENERAL_MESSAGE)}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Chat on WhatsApp (opens in a new tab)"
+        className="fixed right-4 bottom-4 z-30 grid size-14 animate-pulse-ring place-items-center rounded-full bg-wa text-forest shadow-xl transition hover:scale-105 sm:right-6 sm:bottom-6"
+      >
+        <IconBrandWhatsapp size={30} aria-hidden="true" />
+      </a>
     </>
   );
 }

@@ -22,7 +22,7 @@ const PAGES: Record<string, { title: string; blocks: Array<{ h: string; p: strin
   privacy: {
     title: 'Privacy policy',
     blocks: [
-      { h: 'What this prototype collects', p: ['Nothing. The forms on this page validate input in the browser and do not send or store anything while the site is a prototype.'] },
+      { h: 'What this site collects', p: ['Nothing. The contact and wholesale forms only write a message and open WhatsApp on your device; this site does not receive, send or store what you type. What you then send in WhatsApp is handled by WhatsApp and the brand.'] },
       { h: 'When it goes live', p: ['[To be written: what personal data the brand collects, why, how long it is kept, who it is shared with, and how to request its removal.]'] },
       { h: 'Cookies and analytics', p: ['[To be confirmed: whether the site will use analytics or marketing cookies, and what consent banner will be shown.]'] },
     ],

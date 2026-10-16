@@ -1,58 +1,41 @@
+import { IconBrandWhatsapp } from '@tabler/icons-react';
 import { useState, type FormEvent } from 'react';
-import { buttonClass } from './ui';
 import { PRODUCTS, money } from '@/lib/products';
+import { inquiryMessage, waLink } from '@/lib/whatsapp';
 
 const field = 'h-12 w-full rounded-2xl border border-line bg-white px-4';
 const label = 'block text-sm font-bold tracking-wide text-forest uppercase';
 
-/** Formulario de muestra: valida y confirma en pantalla, pero no envía nada todavía (no hay buzón confirmado). */
+/** Formulario que arma el mensaje y abre WhatsApp con el texto ya escrito: la vitrina no guarda ni envía nada a ningún servidor. */
 export function InquiryForm({ kind, defaultProduct }: { kind: 'contact' | 'wholesale'; defaultProduct?: string }) {
-  const [state, setState] = useState<'idle' | 'sent' | 'error'>('idle');
   const [problems, setProblems] = useState<Record<string, string>>({});
+  const [link, setLink] = useState<string | null>(null);
 
   const submit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
+    const text = (k: string) => String(data.get(k) ?? '').trim();
     const next: Record<string, string> = {};
-    const email = String(data.get('email') ?? '').trim();
-    if (!String(data.get('name') ?? '').trim()) next.name = 'Please tell us your name.';
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) next.email = 'Please enter a valid email address.';
-    if (!String(data.get('message') ?? '').trim()) next.message = 'Add a short message so we know what you need.';
+    if (!text('name')) next.name = 'Please tell us your name.';
+    if (text('message').length < 5) next.message = 'Add a short message so we know what you need.';
     setProblems(next);
-    if (Object.keys(next).length) return setState('error');
-    setState('sent');
-    e.currentTarget.reset();
+    if (Object.keys(next).length) return setLink(null);
+    const slug = text('product');
+    const product = PRODUCTS.find((p) => p.slug === slug)?.name;
+    const url = waLink(inquiryMessage({ kind, name: text('name'), message: text('message'), product, business: text('business'), country: text('country') }));
+    setLink(url);
+    window.open(url, '_blank', 'noopener,noreferrer');
   };
 
-  if (state === 'sent')
-    return (
-      <div role="status" className="rounded-[2rem] border border-moss/30 bg-moss/10 p-8">
-        <h2 className="font-serif text-2xl text-forest">Thanks — your inquiry is ready</h2>
-        <p className="mt-3 leading-relaxed text-muted">
-          Nothing was sent anywhere yet: this page has no inbox until the brand confirms where inquiries should go. The form and the fields it collects are what will be used.
-        </p>
-        <button type="button" onClick={() => setState('idle')} className={buttonClass('outline', 'mt-6')}>
-          Write another
-        </button>
-      </div>
-    );
-
   return (
-    <form onSubmit={submit} noValidate className="rounded-[2rem] border border-line bg-white p-8">
+    <form onSubmit={submit} noValidate className="rounded-[2rem] border border-line bg-white p-8 shadow-sm">
       <div className="grid gap-5 sm:grid-cols-2">
-        <div>
+        <div className={kind === 'contact' ? 'sm:col-span-2' : ''}>
           <label htmlFor="name" className={label}>
             Name
           </label>
           <input id="name" name="name" autoComplete="name" aria-invalid={problems.name ? true : undefined} aria-describedby={problems.name ? 'name-error' : undefined} className={`${field} mt-2`} />
           {problems.name && <p role="alert" id="name-error" className="mt-1 text-sm text-red-700">{problems.name}</p>}
-        </div>
-        <div>
-          <label htmlFor="email" className={label}>
-            Email
-          </label>
-          <input id="email" name="email" type="email" autoComplete="email" aria-invalid={problems.email ? true : undefined} aria-describedby={problems.email ? 'email-error' : undefined} className={`${field} mt-2`} />
-          {problems.email && <p role="alert" id="email-error" className="mt-1 text-sm text-red-700">{problems.email}</p>}
         </div>
         {kind === 'wholesale' ? (
           <>
@@ -62,7 +45,7 @@ export function InquiryForm({ kind, defaultProduct }: { kind: 'contact' | 'whole
               </label>
               <input id="business" name="business" autoComplete="organization" className={`${field} mt-2`} />
             </div>
-            <div>
+            <div className="sm:col-span-2">
               <label htmlFor="country" className={label}>
                 Country
               </label>
@@ -99,11 +82,23 @@ export function InquiryForm({ kind, defaultProduct }: { kind: 'contact' | 'whole
           {problems.message && <p role="alert" id="message-error" className="mt-1 text-sm text-red-700">{problems.message}</p>}
         </div>
       </div>
-      <button type="submit" className={buttonClass('gold', 'mt-7 w-full sm:w-auto')}>
-        {kind === 'wholesale' ? 'Request wholesale details' : 'Send inquiry'}
+      <button type="submit" className="mt-7 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-wa px-7 text-sm font-bold tracking-wider text-forest uppercase transition hover:brightness-105 sm:w-auto">
+        <IconBrandWhatsapp size={20} aria-hidden="true" /> {kind === 'wholesale' ? 'Request wholesale on WhatsApp' : 'Send on WhatsApp'}
       </button>
       <p aria-live="polite" className="mt-3 text-sm text-muted">
-        {state === 'error' ? 'Please fix the highlighted fields.' : 'Prototype form — it does not send anything yet.'}
+        {Object.keys(problems).length ? (
+          'Please fix the highlighted fields.'
+        ) : link ? (
+          <>
+            WhatsApp should have opened in a new tab.{' '}
+            <a href={link} target="_blank" rel="noopener noreferrer" className="font-semibold text-gold-deep underline underline-offset-4">
+              Open the chat here
+            </a>{' '}
+            if it didn’t.
+          </>
+        ) : (
+          'We open WhatsApp with your message already written — you just press send.'
+        )}
       </p>
     </form>
   );

@@ -5,7 +5,7 @@ Versión nueva, en paralelo al prototipo `goldroots-glow` (que queda intacto).
 
 ## Qué es
 
-- **Vitrina, sin carrito ni pagos**: cada ficha invita a preguntar o a comprar en la tienda de la marca.
+- **Vitrina, sin carrito ni pagos**: todo el contacto y los pedidos van por **WhatsApp**. Cada producto, el formulario de contacto y el de mayoreo abren el chat con el mensaje ya escrito (`src/lib/whatsapp.ts`); hay un botón flotante en todas las páginas. El sitio no recibe ni guarda lo que se escribe.
 - **Los 14 productos reales**: nombre, precio, beneficios, ingredientes, formato y foto salen de la tienda (`npm run datos`).
 - **QR por producto**: cada ficha genera su código QR con la dirección de esa ficha, para imprimirlo en el envase o en el mostrador, con descarga en PNG y el enlace copiable.
 - **Todos los productos visibles**: portada con la lista completa, catálogo en rejilla y en tabla de especificaciones, filtros por los 6 objetivos.
@@ -26,7 +26,7 @@ npm run build      # dist/ + 404.html + sitemap.xml + robots.txt
 
 No se inventa nada. Mientras la marca no lo confirme, la pantalla lo muestra con un sello `to be confirmed`:
 
-- teléfono / WhatsApp, correo, correo de mayoreo, dirección y redes → `src/lib/site.ts`
+- **número de WhatsApp** (`whatsapp` en `src/lib/site.ts`, con código de país y solo dígitos, ej. `15551234567`; mientras falte, los botones abren WhatsApp para elegir contacto), horario, dirección y redes → `src/lib/site.ts`
 - envío y devoluciones, texto legal, precios de distribuidor y cantidad mínima
 - aviso FDA definitivo (el texto actual es el de la tienda original, pendiente de revisión)
 

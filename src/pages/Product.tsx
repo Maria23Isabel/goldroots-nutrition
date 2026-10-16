@@ -2,10 +2,10 @@ import { IconCheck, IconChevronRight, IconPlus, IconMessageCircle } from '@table
 import { Link, useParams } from 'react-router';
 import { ProductCard } from '@/components/ProductCard';
 import { QrCard } from '@/components/QrCard';
-import { buttonClass, Pending, SectionHeading } from '@/components/ui';
+import { buttonClass, Pending, SectionHeading, WhatsAppButton } from '@/components/ui';
 import { usePageMeta } from '@/lib/meta';
 import { asset, findProduct, goalLabel, money, percentOff, related, savings } from '@/lib/products';
-import { site } from '@/lib/site';
+import { productMessage, waLink } from '@/lib/whatsapp';
 import { NotFound } from './Legal';
 
 function Accordion({ title, children, open = false }: { title: string; children: React.ReactNode; open?: boolean }) {
@@ -98,16 +98,14 @@ export function Product() {
           <p className="mt-5 text-lg leading-relaxed text-muted">{product.summary}</p>
 
           <div className="mt-8 flex flex-wrap items-center gap-3">
-            <Link to={`/contact?product=${product.slug}`} className={buttonClass('gold')}>
-              <IconMessageCircle size={18} aria-hidden="true" /> Ask about this formula
+            <WhatsAppButton href={waLink(productMessage(product))} className="flex-1 sm:min-w-72 sm:flex-none">
+              {soon ? 'Ask about this formula' : 'Order on WhatsApp'}
+            </WhatsAppButton>
+            <Link to={`/contact?product=${product.slug}`} className={buttonClass('outline')}>
+              <IconMessageCircle size={18} aria-hidden="true" /> Write a message
             </Link>
-            {site.email && (
-              <a href={`mailto:${site.email}?subject=${encodeURIComponent(product.name)}`} className={buttonClass('outline')}>
-                Email us
-              </a>
-            )}
           </div>
-          <p className="mt-3 text-sm text-muted">This is a showcase: no cart and no checkout. Orders go through the brand’s own store.</p>
+          <p className="mt-3 text-sm text-muted">No cart and no online checkout: we confirm availability, shipping and payment with you in the chat.</p>
 
           <div className="mt-10">
             <QrCard slug={product.slug} name={product.name} />

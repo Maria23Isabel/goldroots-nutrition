@@ -1,4 +1,4 @@
-import { IconLeaf } from '@tabler/icons-react';
+import { IconBrandWhatsapp, IconLeaf } from '@tabler/icons-react';
 import { useEffect, useRef, type ReactNode } from 'react';
 import { Link } from 'react-router';
 
@@ -30,7 +30,7 @@ export function Reveal({ children, className = '', delay = 0 }: { children: Reac
 
 export function Logo({ light = false }: { light?: boolean }) {
   return (
-    <Link to="/" aria-label="Gold Roots Nutrition, home" className="inline-flex items-center gap-2.5">
+    <Link to="/" aria-label="Gold Roots Nutrition, home" className="inline-flex items-center gap-2.5 whitespace-nowrap">
       <span className={`grid size-10 place-items-center rounded-full ${light ? 'bg-gold text-forest' : 'bg-forest text-gold'}`}>
         <IconLeaf size={21} stroke={2} aria-hidden="true" />
       </span>
@@ -52,15 +52,27 @@ export function SectionHeading({ eyebrow, title, lead, center = false, light = f
   );
 }
 
-export const buttonClass = (variant: 'gold' | 'dark' | 'outline' | 'ghost-light' = 'gold', extra = '') =>
-  `inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-7 text-sm font-bold tracking-wider uppercase transition disabled:cursor-not-allowed disabled:opacity-50 ${
+export const buttonClass = (variant: 'gold' | 'dark' | 'outline' | 'ghost-light' | 'wa' = 'gold', extra = '') =>
+  `inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-7 whitespace-nowrap text-sm font-bold tracking-wider uppercase transition disabled:cursor-not-allowed disabled:opacity-50 ${
     {
-      gold: 'bg-gold text-forest hover:bg-gold-soft',
+      gold: 'gold-fill text-forest hover:brightness-110',
+      wa: 'bg-wa text-forest hover:brightness-105',
       dark: 'bg-forest text-white hover:bg-forest-2',
       outline: 'border-2 border-forest text-forest hover:bg-forest hover:text-white',
       'ghost-light': 'border border-white/30 text-white hover:bg-white/10',
     }[variant]
   } ${extra}`;
+
+/** Abre WhatsApp con el mensaje ya escrito: la vitrina no cobra en línea, los pedidos se cierran por el chat. */
+export function WhatsAppButton({ href, children, className = '' }: { href: string; children: ReactNode; className?: string }) {
+  return (
+    <a href={href} target="_blank" rel="noopener noreferrer" className={buttonClass('wa', className)}>
+      <IconBrandWhatsapp size={20} aria-hidden="true" />
+      {children}
+      <span className="sr-only"> (opens WhatsApp in a new tab)</span>
+    </a>
+  );
+}
 
 /** Aviso de que un dato del negocio todavía no está confirmado: se ve, pero no interrumpe. */
 export function ToConfirm({ label = 'to be confirmed' }: { label?: string }) {

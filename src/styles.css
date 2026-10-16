@@ -17,6 +17,8 @@
   --color-gold-soft: #f0dc9a;
   --color-ink: #17241d;
   --color-muted: #55605a;
+  --color-wa: #25d366;
+  --color-wa-deep: #128c4a;
   --color-energy: #c2610f;
   --color-heart: #a8203a;
   --color-brain: #3b4bab;
@@ -26,6 +28,7 @@
   --animate-rise: rise 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both;
   --animate-float: float 7s ease-in-out infinite;
   --animate-marquee: marquee 32s linear infinite;
+  --animate-pulse-ring: pulse-ring 2.6s ease-out infinite;
 }
 
 @keyframes rise {
@@ -41,6 +44,33 @@
 @keyframes marquee {
   from { transform: translateX(0); }
   to { transform: translateX(-50%); }
+}
+
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgb(37 211 102 / 0.55); }
+  80%, 100% { box-shadow: 0 0 0 16px rgb(37 211 102 / 0); }
+}
+
+/* Dorado metálico para titulares y detalles */
+.gold-text {
+  background: linear-gradient(100deg, #f6e6a0 0%, #e7c55a 35%, #b8901c 70%, #f0d77f 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.gold-fill { background: linear-gradient(135deg, #f3dc8a 0%, #d9b43c 45%, #a8821a 100%); }
+
+/* Fondo de las bandas oscuras: verde profundo con luces doradas y una trama muy suave */
+.hero-bg {
+  background:
+    radial-gradient(60rem 36rem at 85% -10%, rgb(201 162 39 / 0.28), transparent 60%),
+    radial-gradient(40rem 30rem at -5% 110%, rgb(31 154 99 / 0.28), transparent 60%),
+    linear-gradient(160deg, #081c13 0%, #0d2a1e 55%, #123a28 100%);
+}
+.hero-dots {
+  background-image: radial-gradient(rgb(255 255 255 / 0.08) 1px, transparent 1px);
+  background-size: 22px 22px;
+  mask-image: linear-gradient(to bottom, black, transparent 85%);
 }
 
 html { scroll-behavior: smooth; }

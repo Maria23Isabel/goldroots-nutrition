@@ -112,8 +112,8 @@ export function Wholesale() {
 
       <section className="mt-16 grid gap-8 lg:grid-cols-2">
         <div>
-          <SectionHeading eyebrow="Send an inquiry" title="Tell us about your store" lead="This prototype saves nothing: it shows what the form will collect once the brand confirms where inquiries go." />
-          <Pending>Contact email or WhatsApp for wholesale.</Pending>
+          <SectionHeading eyebrow="Send an inquiry" title="Tell us about your store" lead="Tell us about your store and we open WhatsApp with your message ready to send." />
+          <Pending>WhatsApp number and minimum order for wholesale.</Pending>
         </div>
         <InquiryForm kind="wholesale" />
       </section>

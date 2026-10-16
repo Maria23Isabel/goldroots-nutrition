@@ -1,6 +1,7 @@
-import { IconArrowBarRight, IconQrcode } from '@tabler/icons-react';
+import { IconBrandWhatsapp, IconQrcode } from '@tabler/icons-react';
 import { Link } from 'react-router';
 import { asset, goalOf, money, percentOff, type Product } from '@/lib/products';
+import { productMessage, waLink } from '@/lib/whatsapp';
 
 export function ProductCard({ product }: { product: Product }) {
   const off = percentOff(product);
@@ -9,8 +10,8 @@ export function ProductCard({ product }: { product: Product }) {
 
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-3xl border border-line bg-white transition duration-300 hover:-translate-y-1 hover:border-gold hover:shadow-xl hover:shadow-forest/10">
-      <Link to={`/product/${product.slug}`} className="relative block bg-gradient-to-b from-sand/80 to-white" aria-label={`${product.name} — open product page`}>
-        {off > 0 && <span className="absolute top-3 left-3 z-10 rounded-full bg-gold px-3 py-1 text-xs font-bold tracking-wider text-forest uppercase">−{off}%</span>}
+      <Link to={`/product/${product.slug}`} className="relative block bg-[radial-gradient(circle_at_50%_35%,#fff_0%,#f6efdc_75%)]" aria-label={`${product.name} — open product page`}>
+        {off > 0 && <span className="gold-fill absolute top-3 left-3 z-10 rounded-full px-3 py-1 text-xs font-bold tracking-wider text-forest uppercase shadow">−{off}%</span>}
         {soon && <span className="absolute top-3 left-3 z-10 rounded-full bg-forest px-3 py-1 text-xs font-bold tracking-wider text-gold uppercase">Coming soon</span>}
         {product.image && (
           <img
@@ -46,9 +47,15 @@ export function ProductCard({ product }: { product: Product }) {
               </>
             )}
           </p>
-          <Link to={`/product/${product.slug}`} className="inline-flex items-center gap-1 text-sm font-bold tracking-wider text-gold-deep uppercase hover:text-forest">
-            Details <IconArrowBarRight size={17} aria-hidden="true" />
-          </Link>
+          <a
+            href={waLink(productMessage(product))}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`${soon ? 'Ask about' : 'Order'} ${product.name} on WhatsApp (opens in a new tab)`}
+            className="grid size-11 shrink-0 place-items-center rounded-full bg-wa/15 text-wa-deep transition hover:bg-wa hover:text-forest"
+          >
+            <IconBrandWhatsapp size={22} aria-hidden="true" />
+          </a>
         </div>
       </div>
     </article>
