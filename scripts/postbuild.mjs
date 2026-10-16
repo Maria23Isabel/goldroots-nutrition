@@ -1,9 +1,11 @@
 // Lo que va después de `vite build`:
-//   - 404.html: GitHub Pages no reenvía las rutas limpias al index; con esta copia /product/shilajit-gold abre igual
+//   - una carpeta con su index.html por ruta: GitHub Pages responde 404 a las rutas limpias aunque tengan contenido,
+//     y así el catálogo y las 14 fichas salen en 200 para el navegador y para Google
+//   - 404.html: sigue haciendo falta para cualquier dirección escrita a mano que no exista
 //   - sitemap.xml y robots.txt: para que Google lea las 14 fichas y el catálogo
 //   - .nojekyll: Pages no procese los archivos con Jekyll
 // Uso: node scripts/postbuild.mjs [--pages]
-import { copyFileSync, readFileSync, writeFileSync } from 'node:fs';
+import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 const DIST = resolve('dist');
@@ -14,7 +16,14 @@ const url = (path) => `${HOST}${BASE}${String(path).replace(/^\//, '')}`;
 const products = JSON.parse(readFileSync('src/data/productos.generado.json', 'utf8'));
 const ROUTAS = ['/', '/catalog', '/wholesale', '/about', '/contact', '/legal/terms', '/legal/privacy', ...products.map((p) => `/product/${p.slug}`)];
 
-copyFileSync(resolve(DIST, 'index.html'), resolve(DIST, '404.html'));
+const pagina = readFileSync(resolve(DIST, 'index.html'), 'utf8');
+writeFileSync(resolve(DIST, '404.html'), pagina);
+for (const ruta of ROUTAS) {
+  if (ruta === '/') continue;
+  const carpeta = resolve(DIST, `.${ruta}`);
+  mkdirSync(carpeta, { recursive: true });
+  writeFileSync(resolve(carpeta, 'index.html'), pagina);
+}
 writeFileSync(resolve(DIST, '.nojekyll'), '');
 writeFileSync(resolve(DIST, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
