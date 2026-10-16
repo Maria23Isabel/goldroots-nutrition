@@ -32,12 +32,21 @@ No se inventa nada. Mientras la marca no lo confirme, la pantalla lo muestra con
 
 ## Publicar
 
+Ya está publicado: <https://maria23isabel.github.io/goldroots-nutrition/>
+
+- `main` → el código fuente (público, como `america-land`).
+- `gh-pages` → el contenido de `dist/` en la raíz; GitHub Pages lee de esa rama.
+
+Para volver a publicar después de un cambio:
+
 ```bash
-VITE_SITE_URL=https://eldominio.com npm run build   # con dominio propio
-npm run build:pages                                 # vista previa en /goldroots-nutrition/
+npm run build:pages
+node scripts/publicar-pages.mjs        # sincroniza dist/ con la rama gh-pages y la sube
 ```
 
-`VITE_SITE_URL` se usa para el QR, el `canonical`, los `og:` y el sitemap. Si no se define, el QR toma el origen por el que se está navegando, así que sigue funcionando en la vista previa.
+`VITE_SITE_URL` se usa para el QR, el `canonical`, los `og:` y el sitemap. Sin esa variable el QR toma el origen por el que se está navegando, así que funciona igual en esta vista previa de Pages. Cuando el dominio propio apunte aquí, se compila con `VITE_SITE_URL=https://eldominio.com npm run build` y `npm run datos` deja de ser necesario para las rutas.
+
+Cada ruta limpia lleva su propia carpeta con `index.html` (lo escribe `scripts/postbuild.mjs`), porque Pages responde 301 con barra final y 404 a una ruta que no existe como carpeta; `404.html` sigue cubriendo las direcciones escritas a mano que no cuadran.
 
 ## Estructura
 
