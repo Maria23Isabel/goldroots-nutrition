@@ -1,85 +1,60 @@
-import { IconBrandWhatsapp, IconSearch, IconX, IconMenu2 } from '@tabler/icons-react';
-import { useEffect, useRef, useState } from 'react';
-import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router';
-import { asset, goalLabel, money, searchProducts } from '@/lib/products';
-import { site } from '@/lib/site';
+import { IconBrandFacebook, IconBrandInstagram, IconBrandTiktok, IconBrandWhatsapp, IconHome2, IconMenu2, IconMoon, IconPackage, IconShoppingBag, IconSun, IconX } from '@tabler/icons-react';
+import { useEffect, useState } from 'react';
+import { Link, NavLink, Outlet, useLocation } from 'react-router';
+import { OrderDrawer } from './OrderDrawer';
+import { Logo, Pending, WhatsAppButton } from './ui';
+import { orderActions, useOrder } from '@/lib/order';
+import { GOALS } from '@/lib/products';
+import { useTheme } from '@/lib/theme';
+import { isConfirmed, prettyPhone, site } from '@/lib/site';
 import { GENERAL_MESSAGE, waLink } from '@/lib/whatsapp';
-import { buttonClass, Logo } from './ui';
 
 const NAV = [
-  { to: '/', label: 'Home', end: true },
-  { to: '/catalog', label: 'Catalog' },
-  { to: '/wholesale', label: 'Wholesale' },
-  { to: '/about', label: 'About' },
-  { to: '/contact', label: 'Contact' },
+  { to: '/', label: 'Inicio', end: true },
+  { to: '/catalogo', label: 'Catálogo' },
+  { to: '/mayoristas', label: 'Mayoristas' },
+  { to: '/nosotros', label: 'Nosotros' },
+  { to: '/contacto', label: 'Contacto' },
 ];
 
-function SearchOverlay({ onClose }: { onClose: () => void }) {
-  const [q, setQ] = useState('');
-  const navigate = useNavigate();
-  const input = useRef<HTMLInputElement>(null);
-  const results = q.trim() ? searchProducts(q, 'all', 'featured').slice(0, 6) : searchProducts('', 'all', 'featured').slice(0, 4);
-
-  useEffect(() => {
-    input.current?.focus();
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
-    document.addEventListener('keydown', onKey);
-    return () => document.removeEventListener('keydown', onKey);
-  }, [onClose]);
-
+function OrderButton({ className = '' }: { className?: string }) {
+  const { totals } = useOrder();
   return (
-    <div className="fixed inset-0 z-50 bg-forest/70 backdrop-blur-sm" onClick={onClose} role="presentation">
-      <div role="dialog" aria-modal="true" aria-label="Search products" className="mx-auto mt-16 w-[min(42rem,92vw)] rounded-3xl bg-ivory p-5 shadow-2xl" onClick={(e) => e.stopPropagation()}>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            navigate(`/catalog?q=${encodeURIComponent(q)}`);
-            onClose();
-          }}
-          className="flex items-center gap-3 rounded-full border border-line bg-white px-5"
-        >
-          <IconSearch size={20} className="text-gold-deep" aria-hidden="true" />
-          <input
-            ref={input}
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            placeholder="Search by name, benefit or ingredient…"
-            aria-label="Search products"
-            className="h-14 flex-1 bg-transparent text-base outline-none"
-          />
-          <button type="button" onClick={onClose} aria-label="Close search" className="grid size-10 place-items-center text-muted hover:text-forest">
-            <IconX size={20} />
-          </button>
-        </form>
-        <p className="mt-4 mb-2 text-xs font-semibold tracking-[0.2em] text-muted uppercase">{q.trim() ? 'Results' : 'Popular right now'}</p>
-        <ul className="grid gap-1">
-          {results.map((p) => (
-            <li key={p.slug}>
-              <Link to={`/product/${p.slug}`} onClick={onClose} className="flex items-center gap-4 rounded-2xl p-2 hover:bg-sand/70">
-                {p.image && <img src={asset(p.image)} alt="" className="size-14 rounded-xl bg-white object-contain" />}
-                <span className="min-w-0 flex-1">
-                  <span className="block text-sm font-bold tracking-wide text-forest uppercase">{p.name}</span>
-                  <span className="block text-xs text-muted">{goalLabel(p.goal)}</span>
-                </span>
-                <span className="text-sm text-muted">{p.price != null ? money(p.price) : 'Soon'}</span>
-              </Link>
-            </li>
-          ))}
-          {results.length === 0 && <li className="p-3 text-muted">No products match “{q}”.</li>}
-        </ul>
-      </div>
+    <button type="button" onClick={orderActions.open} className={`relative inline-flex min-h-11 items-center gap-2 rounded-full bg-inv px-5 font-bold text-inv-fg transition hover:opacity-85 ${className}`}>
+      <IconShoppingBag size={19} aria-hidden="true" />
+      Mi pedido
+      {totals.units > 0 && (
+        <span key={totals.units} className="pop grad-sun grid min-w-6 place-items-center rounded-full px-1.5 py-0.5 text-xs font-extrabold text-night" aria-label={`${totals.units} en el pedido`}>
+          {totals.units}
+        </span>
+      )}
+    </button>
+  );
+}
+
+function ThemeToggle() {
+  const { theme, set } = useTheme();
+  const seg = (active: boolean) => `grid size-9 place-items-center rounded-full transition ${active ? 'bg-inv text-inv-fg shadow' : 'text-muted hover:text-fg'}`;
+  return (
+    <div role="group" aria-label="Tema de la página" className="flex items-center rounded-full bg-fg/5 p-1 ring-1 ring-line">
+      <button type="button" onClick={() => set('light')} aria-pressed={theme === 'light'} aria-label="Tema claro" className={seg(theme === 'light')}>
+        <IconSun size={18} aria-hidden="true" />
+      </button>
+      <button type="button" onClick={() => set('dark')} aria-pressed={theme === 'dark'} aria-label="Tema oscuro" className={seg(theme === 'dark')}>
+        <IconMoon size={18} aria-hidden="true" />
+      </button>
     </div>
   );
 }
 
 function Header() {
-  const [searching, setSearching] = useState(false);
-  const [menu, setMenu] = useState(false);
+  const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const location = useLocation();
+  const { pathname } = useLocation();
+
   useEffect(() => {
-    setMenu(false);
-  }, [location.pathname]);
+    setOpen(false);
+  }, [pathname]);
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
     onScroll();
@@ -87,142 +62,193 @@ function Header() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const link = ({ isActive }: { isActive: boolean }) =>
-    `relative rounded-full px-3 py-2 text-sm font-bold tracking-[0.16em] uppercase transition hover:text-gold-deep ${isActive ? 'text-gold-deep' : 'text-forest'}`;
-
   return (
-    <header className={`sticky top-0 z-40 transition-shadow ${scrolled ? 'border-b border-line bg-ivory/95 shadow-sm backdrop-blur' : 'bg-ivory'}`}>
-      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between gap-4 px-5">
+    <header className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-5 sm:pt-4">
+      <div className={`glass mx-auto flex max-w-6xl items-center justify-between gap-3 rounded-full py-2 pr-2 pl-5 ring-1 transition-shadow ${scrolled ? 'shadow-xl shadow-ink/10 ring-line' : 'shadow-md shadow-ink/5 ring-white/60'}`}>
         <Logo />
-        <nav aria-label="Main" className="hidden items-center gap-1 lg:flex">
+        <nav aria-label="Principal" className="hidden items-center gap-1 lg:flex">
           {NAV.map((n) => (
-            <NavLink key={n.to} to={n.to} end={n.end} className={link}>
+            <NavLink key={n.to} to={n.to} end={n.end} className={({ isActive }) => `rounded-full px-4 py-2 text-[0.93rem] font-bold transition ${isActive ? 'bg-inv text-inv-fg' : 'text-fg/75 hover:bg-fg/5 hover:text-fg'}`}>
               {n.label}
             </NavLink>
           ))}
         </nav>
-        <div className="flex items-center gap-1">
-          <div className="hidden sm:block">
-            <a href={waLink(GENERAL_MESSAGE)} target="_blank" rel="noopener noreferrer" className={buttonClass('wa', '!min-h-11 !px-5')}>
-              <IconBrandWhatsapp size={20} aria-hidden="true" /> <span className="xl:hidden">WhatsApp</span>
-              <span className="hidden xl:inline">Order on WhatsApp</span>
-              <span className="sr-only"> (opens WhatsApp in a new tab)</span>
-            </a>
-          </div>
-          <button type="button" onClick={() => setSearching(true)} aria-label="Search products" className="grid size-11 place-items-center rounded-full text-forest hover:bg-sand">
-            <IconSearch size={22} />
-          </button>
-          <button
-            type="button"
-            onClick={() => setMenu((v) => !v)}
-            aria-label="Main menu"
-            aria-expanded={menu}
-            aria-controls="mobile-nav"
-            className="grid size-11 place-items-center rounded-full text-forest hover:bg-sand lg:hidden"
-          >
-            {menu ? <IconX size={22} /> : <IconMenu2 size={22} />}
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <OrderButton className="max-sm:!hidden" />
+          <button type="button" onClick={() => setOpen(!open)} aria-expanded={open} aria-controls="menu-movil" aria-label={open ? 'Cerrar el menú' : 'Abrir el menú'} className="grid size-11 place-items-center rounded-full bg-fg/5 transition hover:bg-sun lg:hidden">
+            {open ? <IconX size={22} aria-hidden="true" /> : <IconMenu2 size={22} aria-hidden="true" />}
           </button>
         </div>
       </div>
-      {menu && (
-        <nav id="mobile-nav" aria-label="Mobile" className="border-t border-line bg-ivory px-5 py-4 lg:hidden">
+
+      {open && (
+        <nav id="menu-movil" aria-label="Menú" className="glass mx-auto mt-2 max-w-6xl rounded-[2rem] p-3 shadow-xl ring-1 ring-line [animation:sheet-up_0.25s_both] lg:hidden">
           <ul className="grid gap-1">
             {NAV.map((n) => (
               <li key={n.to}>
-                <NavLink to={n.to} end={n.end} className={({ isActive }) => `block rounded-xl px-3 py-3 text-base font-bold tracking-[0.14em] uppercase ${isActive ? 'bg-sand text-gold-deep' : 'text-forest'}`}>
+                <NavLink to={n.to} end={n.end} className={({ isActive }) => `block rounded-2xl px-5 py-3.5 text-lg font-bold ${isActive ? 'bg-inv text-inv-fg' : 'text-night hover:bg-sun/30'}`}>
                   {n.label}
                 </NavLink>
               </li>
             ))}
-            <li className="mt-2">
-              <a href={waLink(GENERAL_MESSAGE)} target="_blank" rel="noopener noreferrer" className={buttonClass('wa', 'w-full')}>
-                <IconBrandWhatsapp size={20} aria-hidden="true" /> Order on WhatsApp
-              </a>
-            </li>
           </ul>
         </nav>
       )}
-      {searching && <SearchOverlay onClose={() => setSearching(false)} />}
     </header>
   );
 }
 
-function Footer() {
+/** En el celular: barra de pestañas abajo, como una app. */
+function BottomBar() {
+  const { totals } = useOrder();
+  const tab = 'flex flex-1 flex-col items-center gap-0.5 py-2 text-[0.7rem] font-bold text-fg/70';
   return (
-    <footer className="mt-24 bg-forest text-white/80">
-      <div className="h-1 gold-fill" aria-hidden="true" />
-      <div className="mx-auto grid max-w-7xl gap-10 px-5 py-14 md:grid-cols-[1.5fr_1fr_1fr_1fr]">
+    <nav aria-label="Atajos" className="glass fixed inset-x-3 bottom-3 z-40 flex items-center rounded-full px-2 shadow-2xl shadow-ink/20 ring-1 ring-line sm:hidden">
+      <NavLink to="/" end className={({ isActive }) => `${tab} ${isActive ? '!text-coral-deep' : ''}`}>
+        <IconHome2 size={22} aria-hidden="true" />
+        Inicio
+      </NavLink>
+      <NavLink to="/catalogo" className={({ isActive }) => `${tab} ${isActive ? '!text-coral-deep' : ''}`}>
+        <IconPackage size={22} aria-hidden="true" />
+        Catálogo
+      </NavLink>
+      <button type="button" onClick={orderActions.open} className="relative -mt-6 grid size-16 shrink-0 place-items-center rounded-full bg-inv text-inv-fg shadow-xl shadow-ink/40 ring-4 ring-cream" aria-label={`Mi pedido${totals.units ? `, ${totals.units} unidades` : ''}`}>
+        <IconShoppingBag size={26} aria-hidden="true" />
+        {totals.units > 0 && (
+          <span key={totals.units} className="pop grad-sun absolute -top-1 -right-1 grid min-w-6 place-items-center rounded-full px-1.5 py-0.5 text-xs font-extrabold text-night">
+            {totals.units}
+          </span>
+        )}
+      </button>
+      <a href={waLink(GENERAL_MESSAGE)} target="_blank" rel="noopener noreferrer" className={tab}>
+        <IconBrandWhatsapp size={22} aria-hidden="true" />
+        WhatsApp
+        <span className="sr-only"> (se abre en una pestaña nueva)</span>
+      </a>
+      <NavLink to="/contacto" className={({ isActive }) => `${tab} ${isActive ? '!text-coral-deep' : ''}`}>
+        <IconMenu2 size={22} aria-hidden="true" />
+        Más
+      </NavLink>
+    </nav>
+  );
+}
+
+function Footer() {
+  const socials = [
+    { label: 'Instagram', href: site.instagram, Icon: IconBrandInstagram },
+    { label: 'Facebook', href: site.facebook, Icon: IconBrandFacebook },
+    { label: 'TikTok', href: site.tiktok, Icon: IconBrandTiktok },
+  ].filter((s) => isConfirmed(s.href));
+  const col = 'space-y-2.5 text-white/70 [&_a]:transition [&_a:hover]:text-sun';
+  return (
+    <footer className="grain relative mt-28 overflow-hidden bg-ink pt-16 pb-32 text-white sm:pb-14">
+      <div className="pointer-events-none absolute -top-40 left-1/2 size-[36rem] -translate-x-1/2 rounded-full bg-coral/20 blur-3xl" aria-hidden="true" />
+      <div className="relative mx-auto grid max-w-6xl gap-12 px-5 md:grid-cols-[1.4fr_1fr_1fr_1.2fr]">
         <div>
           <Logo light />
-          <p className="mt-4 max-w-sm leading-relaxed">{site.tagline}. Pure, safe and effective formulas made with integrity.</p>
-          <a href={waLink(GENERAL_MESSAGE)} target="_blank" rel="noopener noreferrer" className={buttonClass('wa', 'mt-6')}>
-            <IconBrandWhatsapp size={20} aria-hidden="true" /> Chat with us
-            <span className="sr-only"> (opens WhatsApp in a new tab)</span>
-          </a>
+          <p className="mt-5 max-w-xs leading-relaxed text-white/70">{site.tagline}. Catorce fórmulas enfocadas, en cápsulas vegetarianas y con etiquetas claras.</p>
+          {socials.length > 0 && (
+            <ul className="mt-5 flex gap-2">
+              {socials.map(({ label, href, Icon }) => (
+                <li key={label}>
+                  <a href={href!} target="_blank" rel="noopener noreferrer" aria-label={label} className="grid size-11 place-items-center rounded-full bg-white/10 transition hover:bg-sun hover:text-night">
+                    <Icon size={20} aria-hidden="true" />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
-        <nav aria-label="Catalog">
-          <p className="eyebrow !text-gold">Catalog</p>
-          <ul className="mt-4 grid gap-2.5">
-            <li><Link to="/catalog" className="hover:text-gold">All 14 formulas</Link></li>
-            <li><Link to="/catalog?goal=energy" className="hover:text-gold">Energy &amp; Vitality</Link></li>
-            <li><Link to="/catalog?goal=heart" className="hover:text-gold">Heart &amp; Circulation</Link></li>
-            <li><Link to="/catalog?goal=immune" className="hover:text-gold">Immune &amp; Antioxidant</Link></li>
+        <nav aria-label="Secciones">
+          <h2 className="font-display text-lg font-bold">Explora</h2>
+          <ul className={`mt-4 ${col}`}>
+            {NAV.map((n) => (
+              <li key={n.to}>
+                <Link to={n.to}>{n.label}</Link>
+              </li>
+            ))}
           </ul>
         </nav>
-        <nav aria-label="Company">
-          <p className="eyebrow !text-gold">Company</p>
-          <ul className="mt-4 grid gap-2.5">
-            <li><Link to="/about" className="hover:text-gold">About us</Link></li>
-            <li><Link to="/wholesale" className="hover:text-gold">Wholesale</Link></li>
-            <li><Link to="/contact" className="hover:text-gold">Contact</Link></li>
+        <nav aria-label="Por objetivo">
+          <h2 className="font-display text-lg font-bold">Por objetivo</h2>
+          <ul className={`mt-4 ${col}`}>
+            {GOALS.map((g) => (
+              <li key={g.id}>
+                <Link to={`/catalogo?objetivo=${g.slug}`}>{g.label}</Link>
+              </li>
+            ))}
           </ul>
         </nav>
-        <nav aria-label="Legal">
-          <p className="eyebrow !text-gold">Legal</p>
-          <ul className="mt-4 grid gap-2.5">
-            <li><Link to="/legal/terms" className="hover:text-gold">Terms &amp; policies</Link></li>
-            <li><Link to="/legal/privacy" className="hover:text-gold">Privacy policy</Link></li>
+        <div>
+          <h2 className="font-display text-lg font-bold">Pedidos y consultas</h2>
+          <ul className={`mt-4 ${col}`}>
+            <li>
+              WhatsApp:{' '}
+              <a href={waLink(GENERAL_MESSAGE)} target="_blank" rel="noopener noreferrer" className="font-bold text-white">
+                {prettyPhone(site.whatsapp)}
+              </a>
+              {!site.whatsappConfirmed && (
+                <div className="mt-2">
+                  <Pending>número definitivo de la marca</Pending>
+                </div>
+              )}
+            </li>
+            <li>{site.hours ?? 'Horario: se acuerda en el chat'}</li>
+            <li>
+              <WhatsAppButton text={GENERAL_MESSAGE} className="mt-2 !min-h-11 !px-5 !text-sm">
+                Escríbenos
+              </WhatsAppButton>
+            </li>
           </ul>
-        </nav>
+        </div>
       </div>
-      <div className="border-t border-white/10 px-5 py-6 text-center text-xs leading-relaxed text-white/55">
-        <p className="mx-auto max-w-4xl">
-          These statements have not been evaluated by the Food and Drug Administration. These products are not intended to diagnose, treat, cure or prevent any disease.{' '}
-          <em>[Legal text to be reviewed before launch.]</em>
+      <div className="relative mx-auto mt-14 max-w-6xl border-t border-white/10 px-5 pt-8 text-sm text-white/55">
+        <p className="max-w-3xl leading-relaxed">
+          Estas declaraciones no han sido evaluadas por la Administración de Alimentos y Medicamentos de EE. UU. (FDA). Estos productos no están destinados a diagnosticar, tratar, curar ni prevenir ninguna enfermedad. Consulta a un profesional de la salud antes de usar cualquier suplemento.
         </p>
-        <p className="mt-3">© {new Date().getFullYear()} GOLD ROOTS NUTRITION</p>
+        <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
+          <p>© {new Date().getFullYear()} {site.brand}. Vitrina informativa: no hay pagos en línea.</p>
+          <ul className="flex gap-5 font-semibold [&_a:hover]:text-sun">
+            <li>
+              <Link to="/legal/terminos">Términos</Link>
+            </li>
+            <li>
+              <Link to="/legal/privacidad">Privacidad</Link>
+            </li>
+          </ul>
+        </div>
       </div>
     </footer>
+  );
+}
+
+function FloatingWhatsApp() {
+  return (
+    <a href={waLink(GENERAL_MESSAGE)} target="_blank" rel="noopener noreferrer" aria-label="Escríbenos por WhatsApp (se abre en una pestaña nueva)" className="animate-pulse-ring fixed right-6 bottom-6 z-40 hidden size-16 place-items-center rounded-full bg-wa text-night shadow-2xl shadow-wa/40 transition hover:scale-110 sm:grid">
+      <IconBrandWhatsapp size={34} aria-hidden="true" />
+    </a>
   );
 }
 
 export function Layout() {
   const { pathname } = useLocation();
   useEffect(() => {
-    window.scrollTo({ top: 0 });
+    window.scrollTo({ top: 0, behavior: 'instant' });
   }, [pathname]);
   return (
     <>
-      <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-60 focus:rounded-lg focus:bg-gold focus:px-4 focus:py-2 focus:text-forest">
-        Skip to content
+      <a href="#contenido" className="fixed top-3 left-3 z-[70] -translate-y-24 rounded-full bg-inv px-5 py-3 font-bold text-inv-fg focus:translate-y-0">
+        Saltar al contenido
       </a>
-      <div className="bg-forest px-4 py-2.5 text-center text-[11px] font-semibold tracking-[0.22em] text-gold-soft uppercase sm:text-xs">
-        Premium wellness • Trusted quality • Fast shipping
-      </div>
       <Header />
-      <main id="main">
+      <main id="contenido" className="min-h-[70vh]">
         <Outlet />
       </main>
       <Footer />
-      <a
-        href={waLink(GENERAL_MESSAGE)}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Chat on WhatsApp (opens in a new tab)"
-        className="fixed right-4 bottom-4 z-30 grid size-14 animate-pulse-ring place-items-center rounded-full bg-wa text-forest shadow-xl transition hover:scale-105 sm:right-6 sm:bottom-6"
-      >
-        <IconBrandWhatsapp size={30} aria-hidden="true" />
-      </a>
+      <FloatingWhatsApp />
+      <BottomBar />
+      <OrderDrawer />
     </>
   );
 }

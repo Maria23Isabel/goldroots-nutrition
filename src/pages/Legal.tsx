@@ -2,50 +2,53 @@ import { Link, useParams } from 'react-router';
 import { buttonClass } from '@/components/ui';
 import { usePageMeta } from '@/lib/meta';
 
-const FDA = 'These statements have not been evaluated by the Food and Drug Administration. These products are not intended to diagnose, treat, cure or prevent any disease.';
+const FDA = 'Estas declaraciones no han sido evaluadas por la Administración de Alimentos y Medicamentos de EE. UU. (FDA). Estos productos no están destinados a diagnosticar, tratar, curar ni prevenir ninguna enfermedad.';
 
 const PAGES: Record<string, { title: string; blocks: Array<{ h: string; p: string[] }> }> = {
-  terms: {
-    title: 'Terms & policies',
+  terminos: {
+    title: 'Términos y políticas',
     blocks: [
       {
-        h: 'About this site',
+        h: 'Sobre este sitio',
         p: [
-          'This site shows the Gold Roots Nutrition line. It is a showcase: it holds no cart, takes no payment and stores no orders. Purchases happen on the brand’s own store.',
-          '[To be reviewed: the legal entity behind the brand, the governing country and state, and the returns and warranty policy.]',
+          'Este sitio muestra la línea Gold Roots Nutrition. Es una vitrina informativa: no tiene carrito, no recibe pagos ni guarda pedidos. Los pedidos se coordinan por WhatsApp.',
+          '[Por revisar: la razón social detrás de la marca, el país y la jurisdicción aplicables, y la política de devoluciones y garantía.]',
         ],
       },
-      { h: 'Product information', p: ['Names, prices, benefits, ingredients and format come from the products as the brand publishes them. They may change without notice.', FDA] },
-      { h: 'Consult a professional', p: ['Talk to a qualified healthcare professional before starting any supplement, especially if you are pregnant, nursing, taking medication or managing a condition.'] },
+      { h: 'Información de los productos', p: ['Los nombres, precios, beneficios, ingredientes y presentaciones provienen de los productos tal como la marca los publica. Pueden cambiar sin previo aviso.', FDA] },
+      { h: 'Consulta a un profesional', p: ['Habla con un profesional de la salud calificado antes de empezar cualquier suplemento, sobre todo si estás embarazada, en lactancia, tomas medicamentos o tienes una condición de salud.'] },
     ],
   },
-  privacy: {
-    title: 'Privacy policy',
+  privacidad: {
+    title: 'Política de privacidad',
     blocks: [
-      { h: 'What this site collects', p: ['Nothing. The contact and wholesale forms only write a message and open WhatsApp on your device; this site does not receive, send or store what you type. What you then send in WhatsApp is handled by WhatsApp and the brand.'] },
-      { h: 'When it goes live', p: ['[To be written: what personal data the brand collects, why, how long it is kept, who it is shared with, and how to request its removal.]'] },
-      { h: 'Cookies and analytics', p: ['[To be confirmed: whether the site will use analytics or marketing cookies, and what consent banner will be shown.]'] },
+      { h: 'Qué datos recoge este sitio', p: ['Ninguno. «Mi pedido» y los formularios de contacto y de mayoristas solo escriben un mensaje y abren WhatsApp en tu dispositivo; este sitio no recibe, envía ni guarda lo que escribes. Lo que envíes después por WhatsApp lo gestionan WhatsApp y la marca.', 'Tu pedido en curso se guarda únicamente en tu propio navegador (almacenamiento local) para que no lo pierdas al recargar; puedes vaciarlo cuando quieras.'] },
+      { h: 'Cuando el sitio salga a producción', p: ['[Por redactar: qué datos personales recoge la marca, para qué, por cuánto tiempo, con quién los comparte y cómo pedir que se eliminen.]'] },
+      { h: 'Cookies y analítica', p: ['[Por confirmar: si el sitio usará analítica o cookies de marketing, y qué aviso de consentimiento se mostrará.]'] },
     ],
   },
 };
 
-export function Legal() {
-  const { page = 'terms' } = useParams();
-  const known = page in PAGES;
-  const content = PAGES[page] ?? PAGES.terms;
+/** Direcciones en inglés de la versión anterior del sitio, por si alguien las tiene guardadas. */
+const OLD: Record<string, string> = { terms: 'terminos', privacy: 'privacidad' };
 
-  usePageMeta({ title: `${content.title} — Gold Roots Nutrition`, description: `${content.title} for the Gold Roots Nutrition showcase site.`, path: `/legal/${known ? page : 'terms'}` });
+export function Legal() {
+  const { page = 'terminos' } = useParams();
+  const key = page in PAGES ? page : (OLD[page] ?? 'terminos');
+  const content = PAGES[key];
+
+  usePageMeta({ title: `${content.title} — Gold Roots Nutrition`, description: `${content.title} de la vitrina de Gold Roots Nutrition.`, path: `/legal/${key}` });
 
   return (
-    <article className="mx-auto max-w-3xl px-5 py-12 sm:py-16">
+    <article className="mx-auto max-w-3xl px-5 pt-36 pb-12 sm:pt-44">
       <p className="eyebrow">Legal</p>
-      <h1 className="mt-3 text-4xl text-forest sm:text-5xl">{content.title}</h1>
-      <p className="mt-3 text-sm text-muted">Draft for the brand — not reviewed and not in force yet.</p>
+      <h1 className="mt-3 text-5xl font-extrabold sm:text-6xl">{content.title}</h1>
+      <p className="mt-4 inline-block rounded-full bg-sun/30 px-4 py-1.5 text-sm font-bold text-coral-deep">Borrador para la marca: aún no está revisado ni en vigor.</p>
       {content.blocks.map((b) => (
         <section key={b.h} className="mt-10">
-          <h2 className="font-serif text-2xl text-forest">{b.h}</h2>
+          <h2 className="text-2xl font-extrabold">{b.h}</h2>
           {b.p.map((text) => (
-            <p key={text} className="mt-3 leading-relaxed text-muted">
+            <p key={text} className="mt-3 text-lg leading-relaxed text-muted">
               {text}
             </p>
           ))}
@@ -56,18 +59,19 @@ export function Legal() {
 }
 
 export function NotFound() {
-  usePageMeta({ title: 'Page not found — Gold Roots Nutrition', description: 'This page does not exist on the Gold Roots Nutrition showcase site.', path: '/' });
+  usePageMeta({ title: 'Página no encontrada — Gold Roots Nutrition', description: 'Esta página no existe en la vitrina de Gold Roots Nutrition.', path: '/' });
   return (
-    <div className="mx-auto grid max-w-2xl place-items-center px-5 py-24 text-center">
-      <p className="eyebrow">404</p>
-      <h1 className="mt-3 text-4xl text-forest sm:text-5xl">We couldn’t find that page</h1>
-      <p className="mt-4 text-lg text-muted">The formula may have been renamed. The catalog shows everything that is on the line today.</p>
+    <div className="mx-auto grid max-w-2xl place-items-center px-5 pt-40 pb-16 text-center">
+      <p className="text-8xl" aria-hidden="true">🌱</p>
+      <p className="eyebrow mt-4">Error 404</p>
+      <h1 className="mt-3 text-5xl font-extrabold sm:text-6xl">No encontramos esa página</h1>
+      <p className="mt-4 text-lg text-muted">Puede que la fórmula haya cambiado de nombre. El catálogo muestra todo lo que hay hoy en la línea.</p>
       <div className="mt-8 flex flex-wrap justify-center gap-3">
-        <Link to="/catalog" className={buttonClass('gold')}>
-          Browse all 14 formulas
+        <Link to="/catalogo" className={buttonClass('sun')}>
+          Ver las 14 fórmulas
         </Link>
         <Link to="/" className={buttonClass('outline')}>
-          Back home
+          Volver al inicio
         </Link>
       </div>
     </div>

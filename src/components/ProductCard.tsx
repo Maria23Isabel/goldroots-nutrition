@@ -1,62 +1,42 @@
-import { IconBrandWhatsapp, IconQrcode } from '@tabler/icons-react';
+import { IconArrowUpRight } from '@tabler/icons-react';
 import { Link } from 'react-router';
-import { asset, goalOf, money, percentOff, type Product } from '@/lib/products';
-import { productMessage, waLink } from '@/lib/whatsapp';
+import { AddButton, GoalBadge, PriceTag } from './ui';
+import { asset, percentOff, productPath, type Product } from '@/lib/products';
 
-export function ProductCard({ product }: { product: Product }) {
+/** Foto del frasco sobre el degradado de su objetivo (la foto trae fondo blanco; «multiply» lo funde con el color). */
+export function ProductImage({ product, width = 480, eager = false, className = '' }: { product: Product; width?: number; eager?: boolean; className?: string }) {
+  if (!product.image) return <div className={`grid place-items-center text-sm text-muted ${className}`}>Foto próximamente</div>;
+  return <img src={asset(product.image)} alt={`Frasco de ${product.name}`} width={width} height={Math.round(width * 1.49)} loading={eager ? 'eager' : 'lazy'} decoding="async" className={`shot ${className}`} />;
+}
+
+export function ProductCard({ product, className = '' }: { product: Product; className?: string }) {
   const off = percentOff(product);
-  const soon = product.price == null;
-  const goal = goalOf(product.goal);
-
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-3xl border border-line bg-white transition duration-300 hover:-translate-y-1 hover:border-gold hover:shadow-xl hover:shadow-forest/10">
-      <Link to={`/product/${product.slug}`} className="relative block bg-[radial-gradient(circle_at_50%_35%,#fff_0%,#f6efdc_75%)]" aria-label={`${product.name} — open product page`}>
-        {off > 0 && <span className="gold-fill absolute top-3 left-3 z-10 rounded-full px-3 py-1 text-xs font-bold tracking-wider text-forest uppercase shadow">−{off}%</span>}
-        {soon && <span className="absolute top-3 left-3 z-10 rounded-full bg-forest px-3 py-1 text-xs font-bold tracking-wider text-gold uppercase">Coming soon</span>}
-        {product.image && (
-          <img
-            src={asset(product.image)}
-            alt={product.name}
-            loading="lazy"
-            decoding="async"
-            width={600}
-            height={900}
-            className="mx-auto aspect-[4/5] w-full object-contain p-4 mix-blend-multiply transition duration-500 group-hover:scale-105"
-          />
-        )}
-        <span className="absolute right-3 bottom-3 grid size-9 place-items-center rounded-full bg-forest/85 text-gold opacity-0 transition group-hover:opacity-100" aria-hidden="true">
-          <IconQrcode size={18} />
-        </span>
-      </Link>
-      <div className="flex flex-1 flex-col p-5">
-        <p className={`text-xs font-bold tracking-[0.18em] uppercase ${goal.text}`}>{goal.label}</p>
-        <h3 className="mt-1.5 font-sans text-base leading-snug font-extrabold tracking-wide text-forest uppercase">
-          <Link to={`/product/${product.slug}`} className="hover:text-gold-deep">
-            {product.name}
-          </Link>
-        </h3>
-        {product.format && <p className="mt-1 text-sm text-muted">{product.format}</p>}
-        <div className="mt-4 flex items-end justify-between gap-3 pt-1">
-          <p className="flex items-baseline gap-2">
-            {soon ? (
-              <span className="text-sm font-semibold text-muted">Price to be announced</span>
-            ) : (
-              <>
-                <span className="text-xl font-bold text-forest">{money(product.price!)}</span>
-                {product.compareAt && <s className="text-sm text-muted">{money(product.compareAt)}</s>}
-              </>
-            )}
-          </p>
-          <a
-            href={waLink(productMessage(product))}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={`${soon ? 'Ask about' : 'Order'} ${product.name} on WhatsApp (opens in a new tab)`}
-            className="grid size-11 shrink-0 place-items-center rounded-full bg-wa/15 text-wa-deep transition hover:bg-wa hover:text-forest"
-          >
-            <IconBrandWhatsapp size={22} aria-hidden="true" />
-          </a>
+    <article className={`g-${product.goal} card-lift group relative flex h-full flex-col overflow-hidden rounded-[2rem] bg-surface shadow-sm ring-1 ring-line ${className}`}>
+      <Link to={`/${productPath(product.slug)}`} aria-label={`Ver ${product.name}`} className="relative block">
+        <div className="grad-goal relative grid aspect-[4/4.4] place-items-center overflow-hidden">
+          <div className="absolute -top-10 -right-10 size-40 rounded-full bg-white/25 blur-2xl transition duration-500 group-hover:scale-150" aria-hidden="true" />
+          <ProductImage product={product} className="absolute inset-0 size-full object-contain p-4 transition duration-500 group-hover:scale-110 group-hover:-rotate-3" />
+          {off > 0 && <span className="absolute top-4 left-4 rounded-full bg-paper px-3 py-1 text-xs font-extrabold text-night shadow-md">−{off}%</span>}
+          <span className="absolute right-4 bottom-4 grid size-10 translate-y-2 place-items-center rounded-full bg-paper text-night opacity-0 shadow-md transition duration-300 group-hover:translate-y-0 group-hover:opacity-100" aria-hidden="true">
+            <IconArrowUpRight size={20} />
+          </span>
         </div>
+      </Link>
+      <div className="flex flex-1 flex-col gap-3 p-5">
+        <GoalBadge goal={product.goal} small />
+        <div>
+          <h3 className="font-display text-lg leading-tight font-extrabold text-fg">
+            <Link to={`/${productPath(product.slug)}`} className="hover:text-coral-deep">
+              {product.name}
+            </Link>
+          </h3>
+          <p className="mt-1.5 text-sm leading-snug text-muted">{product.tagline}</p>
+        </div>
+        <div className="mt-auto flex items-center justify-between gap-3 pt-1">
+          <PriceTag product={product} />
+        </div>
+        <AddButton product={product} compact variant="ink" className="w-full" />
       </div>
     </article>
   );

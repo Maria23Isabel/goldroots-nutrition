@@ -1,4 +1,5 @@
 import raw from '@/data/productos.generado.json';
+import { PRODUCTOS_ES } from '@/data/productos.es';
 
 export type GoalId = 'energy' | 'heart' | 'brain' | 'sleep' | 'eye-skin' | 'immune';
 
@@ -6,10 +7,11 @@ export interface Product {
   slug: string;
   name: string;
   goal: GoalId;
-  /** null = sin precio todavía («Coming soon») */
+  /** null = sin precio todavía: la pantalla dice «Consultar precio» */
   price: number | null;
   compareAt: number | null;
   headline: string;
+  tagline: string;
   summary: string;
   benefits: string[];
   ingredients: string[];
@@ -20,27 +22,31 @@ export interface Product {
 
 export interface Goal {
   id: GoalId;
+  /** Lo que se escribe en la dirección: /catalogo?objetivo=energia */
+  slug: string;
   label: string;
   short: string;
   blurb: string;
-  /** Clases literales: Tailwind las busca en el código fuente y no puede construirlas en runtime. */
-  text: string;
-  soft: string;
-  bar: string;
+  /** Pregunta del buscador de fórmulas */
+  wish: string;
 }
 
 export const GOALS: Goal[] = [
-  { id: 'energy', label: 'Energy & Vitality', short: 'Energy', blurb: 'Daily drive, stamina and focus', text: 'text-energy', soft: 'bg-energy/10', bar: 'bg-energy' },
-  { id: 'heart', label: 'Heart & Circulation', short: 'Heart', blurb: 'Healthy blood flow and performance', text: 'text-heart', soft: 'bg-heart/10', bar: 'bg-heart' },
-  { id: 'brain', label: 'Brain & Focus', short: 'Brain', blurb: 'Memory, clarity and concentration', text: 'text-brain', soft: 'bg-brain/10', bar: 'bg-brain' },
-  { id: 'sleep', label: 'Sleep & Calm', short: 'Sleep', blurb: 'Rest well, recover better', text: 'text-sleep', soft: 'bg-sleep/10', bar: 'bg-sleep' },
-  { id: 'eye-skin', label: 'Eye & Skin', short: 'Eye & skin', blurb: 'Antioxidant support for how you look and see', text: 'text-radiance', soft: 'bg-radiance/10', bar: 'bg-radiance' },
-  { id: 'immune', label: 'Immune & Antioxidant', short: 'Immune', blurb: 'Everyday protection for your cells', text: 'text-immune', soft: 'bg-immune/10', bar: 'bg-immune' },
+  { id: 'energy', slug: 'energia', label: 'Energía y vitalidad', short: 'Energía', blurb: 'Pilas para el día: resistencia, aguante y enfoque', wish: 'Quiero más energía y aguante' },
+  { id: 'heart', slug: 'corazon', label: 'Corazón y circulación', short: 'Corazón', blurb: 'Buen flujo sanguíneo y mejor rendimiento', wish: 'Quiero cuidar mi corazón y mi circulación' },
+  { id: 'brain', slug: 'cerebro', label: 'Mente y enfoque', short: 'Mente', blurb: 'Memoria, claridad y concentración', wish: 'Quiero concentrarme y pensar con claridad' },
+  { id: 'sleep', slug: 'sueno', label: 'Sueño y calma', short: 'Sueño', blurb: 'Descansa mejor y recupérate de verdad', wish: 'Quiero dormir mejor y relajarme' },
+  { id: 'eye-skin', slug: 'vista-y-piel', label: 'Vista y piel', short: 'Vista y piel', blurb: 'Antioxidantes para cómo te ves y cómo ves', wish: 'Quiero cuidar mi vista y mi piel' },
+  { id: 'immune', slug: 'defensas', label: 'Defensas y antioxidantes', short: 'Defensas', blurb: 'Protección diaria para tus células', wish: 'Quiero reforzar mis defensas' },
 ];
 
-export const PRODUCTS = raw as Product[];
+export const PRODUCTS: Product[] = (raw as Array<Omit<Product, 'tagline'>>).map((p) => {
+  const es = PRODUCTOS_ES[p.slug];
+  return es ? { ...p, ...es } : { ...p, tagline: p.headline };
+});
 
 export const goalOf = (id: GoalId) => GOALS.find((g) => g.id === id) ?? GOALS[5];
+export const goalBySlug = (slug: string | null | undefined) => GOALS.find((g) => g.slug === slug);
 export const goalLabel = (id: GoalId) => goalOf(id).label;
 export const findProduct = (slug: string | undefined) => PRODUCTS.find((p) => p.slug === slug);
 export const featured = () => PRODUCTS.filter((p) => p.featured);
@@ -49,13 +55,13 @@ export const countByGoal = (id: GoalId) => PRODUCTS.filter((p) => p.goal === id)
 export const related = (product: Product, count = 4) =>
   [...PRODUCTS.filter((p) => p.goal === product.goal && p.slug !== product.slug), ...PRODUCTS.filter((p) => p.goal !== product.goal && p.slug !== product.slug)].slice(0, count);
 
-export const money = (value: number) => `$${value.toFixed(2)}`;
-export const priceLabel = (p: Product) => (p.price == null ? 'Coming soon' : money(p.price));
+export const money = (value: number) => `US$ ${value.toFixed(2)}`;
+export const priceLabel = (p: Product) => (p.price == null ? 'Consultar precio' : money(p.price));
 export const savings = (p: Product) => (p.price != null && p.compareAt != null ? p.compareAt - p.price : 0);
 export const percentOff = (p: Product) => (p.price != null && p.compareAt != null ? Math.round((1 - p.price / p.compareAt) * 100) : 0);
 
 export const asset = (path: string) => `${import.meta.env.BASE_URL}${path}`;
-export const productPath = (slug: string) => `product/${slug}`;
+export const productPath = (slug: string) => `producto/${slug}`;
 
 /**
  * Dirección absoluta de una ruta, para el QR y para canonical/og.
@@ -77,12 +83,15 @@ export function absoluteAsset(path: string): string {
 
 export type SortId = 'featured' | 'price-asc' | 'price-desc' | 'name';
 
+/** Sin tildes ni mayúsculas: «energia» encuentra «Energía». */
+export const plain = (text: string) => text.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
+
 export function searchProducts(query: string, goal: GoalId | 'all', sort: SortId): Product[] {
-  const q = query.trim().toLowerCase();
+  const q = plain(query.trim());
   const list = PRODUCTS.filter(
     (p) =>
       (goal === 'all' || p.goal === goal) &&
-      (!q || `${p.name} ${p.headline} ${p.summary} ${p.ingredients.join(' ')} ${p.benefits.join(' ')}`.toLowerCase().includes(q)),
+      (!q || plain(`${p.name} ${p.headline} ${p.tagline} ${p.summary} ${p.ingredients.join(' ')} ${p.benefits.join(' ')}`).includes(q)),
   );
   const price = (p: Product) => p.price ?? Number.POSITIVE_INFINITY;
   switch (sort) {
@@ -91,7 +100,7 @@ export function searchProducts(query: string, goal: GoalId | 'all', sort: SortId
     case 'price-desc':
       return [...list].sort((a, b) => (b.price ?? -1) - (a.price ?? -1));
     case 'name':
-      return [...list].sort((a, b) => a.name.localeCompare(b.name));
+      return [...list].sort((a, b) => a.name.localeCompare(b.name, 'es'));
     default:
       return list;
   }

@@ -17,7 +17,7 @@ const url = (path) => {
 };
 
 const products = JSON.parse(readFileSync('src/data/productos.generado.json', 'utf8'));
-const ROUTAS = ['/', '/catalog', '/wholesale', '/about', '/contact', '/legal/terms', '/legal/privacy', ...products.map((p) => `/product/${p.slug}`)];
+const ROUTAS = ['/', '/catalogo', '/mayoristas', '/nosotros', '/contacto', '/legal/terminos', '/legal/privacidad', ...products.map((p) => `/producto/${p.slug}`)];
 
 const pagina = readFileSync(resolve(DIST, 'index.html'), 'utf8');
 writeFileSync(resolve(DIST, '404.html'), pagina);

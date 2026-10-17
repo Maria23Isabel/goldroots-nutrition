@@ -9,7 +9,10 @@ Versión nueva, en paralelo al prototipo `goldroots-glow` (que queda intacto).
 - **Los 14 productos reales**: nombre, precio, beneficios, ingredientes, formato y foto salen de la tienda (`npm run datos`).
 - **QR por producto**: cada ficha genera su código QR con la dirección de esa ficha, para imprimirlo en el envase o en el mostrador, con descarga en PNG y el enlace copiable.
 - **Todos los productos visibles**: portada con la lista completa, catálogo en rejilla y en tabla de especificaciones, filtros por los 6 objetivos.
-- **Rutas limpias**: `/catalog`, `/product/shilajit-gold`. En GitHub Pages las resuelve el `404.html` que escribe `scripts/postbuild.mjs`.
+- **Todo en español**: la traducción de los 14 productos vive en `src/data/productos.es.ts` (el JSON de la tienda sigue en inglés y `lib/products.ts` los une por `slug`). Las direcciones en inglés de la versión anterior (y sus QR) redirigen a las nuevas.
+- **Tema oscuro y claro**: por defecto oscuro (índigo medianoche), con interruptor en la cabecera; se recuerda en el navegador (`lib/theme.ts`, colores en `styles.css`).
+- **«Mi pedido»**: se agregan fórmulas con un toque, se ajustan cantidades y un solo botón abre WhatsApp con el pedido completo ya escrito (`lib/order.ts`, `lib/whatsapp.ts`); el pedido vive en el navegador, no hay servidor.
+- **Rutas limpias**: `/catalogo`, `/producto/shilajit-gold`, `/mayoristas`, `/nosotros`, `/contacto`. En GitHub Pages las resuelve el `404.html` que escribe `scripts/postbuild.mjs`.
 - **Accesible y rápida**: texto salteable, LANDMARKS reales, filtros con `aria-pressed`, contador con `aria-live`, foco visible, contraste AA, `prefers-reduced-motion`, fotos con `lazy`/`decoding` y espacio reservado, `sitemap.xml` y metadatos por pantalla.
 
 ## Puesta en marcha
@@ -24,9 +27,9 @@ npm run build      # dist/ + 404.html + sitemap.xml + robots.txt
 
 ## Datos del negocio que faltan
 
-No se inventa nada. Mientras la marca no lo confirme, la pantalla lo muestra con un sello `to be confirmed`:
+No se inventa nada. Mientras la marca no lo confirme, la pantalla lo muestra con un sello `Por confirmar`:
 
-- **número de WhatsApp** (`whatsapp` en `src/lib/site.ts`, con código de país y solo dígitos, ej. `15551234567`; mientras falte, los botones abren WhatsApp para elegir contacto), horario, dirección y redes → `src/lib/site.ts`
+- **número de WhatsApp definitivo** (hoy usa el de pedidos de Herbavida, `51940176917`; se cambia en `whatsapp` de `src/lib/site.ts` o con `VITE_WHATSAPP` al compilar, y se pone `whatsappConfirmed: true`), horario, dirección y redes → `src/lib/site.ts`
 - envío y devoluciones, texto legal, precios de distribuidor y cantidad mínima
 - aviso FDA definitivo (el texto actual es el de la tienda original, pendiente de revisión)
 
@@ -52,7 +55,10 @@ Cada ruta limpia lleva su propia carpeta con `index.html` (lo escribe `scripts/p
 
 ```
 src/data/productos.generado.json  catálogo leído de la tienda (lo escribe npm run datos)
+src/data/productos.es.ts          textos de los 14 productos en español
 src/lib/products.ts               tipos, objetivos, búsqueda, precios y direcciones absolutas
+src/lib/order.ts                  «Mi pedido» (localStorage)
+src/lib/theme.ts                  tema oscuro/claro
 src/lib/site.ts                   datos del negocio (null = pendiente de confirmar)
 src/lib/meta.ts                   título, descripción, canonical y og por pantalla
 src/components/QrCard.tsx         QR del producto, copiar enlace y descargar PNG

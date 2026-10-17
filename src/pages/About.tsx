@@ -1,71 +1,71 @@
-import { IconArrowRight, IconQrcode, IconSearch, IconShieldCheck } from '@tabler/icons-react';
+import { IconArrowRight, IconFlask, IconLeaf, IconPackage } from '@tabler/icons-react';
 import { Link } from 'react-router';
-import { buttonClass, Reveal, SectionHeading } from '@/components/ui';
+import { ProductImage } from '@/components/ProductCard';
+import { PageHero } from '@/components/PageHero';
+import { buttonClass, GOAL_ICONS, Reveal, SectionHeading } from '@/components/ui';
 import { usePageMeta } from '@/lib/meta';
-import { asset, GOALS, PRODUCTS, countByGoal, goalOf } from '@/lib/products';
+import { countByGoal, findProduct, GOALS } from '@/lib/products';
 import { site } from '@/lib/site';
 
 const STEPS = [
-  { icon: IconSearch, title: 'Pick a goal', text: 'Six areas — energy, heart, brain, sleep, eye and skin, immune — each with the formulas built for it.' },
-  { icon: IconShieldCheck, title: 'Read the label', text: 'Benefits, ingredients and format come straight from the product, so what you see is what the bottle says.' },
-  { icon: IconQrcode, title: 'Scan on the shelf', text: 'Each page has its own QR code. Print it and a customer lands on that exact formula.' },
+  { Icon: IconLeaf, title: 'Ingredientes de raíz', text: 'Plantas, hongos y minerales con una larga historia de uso: maca, shilajit, cúrcuma, cardo mariano, melena de león.' },
+  { Icon: IconFlask, title: 'Una fórmula, un trabajo', text: 'Cada producto se construye alrededor de un objetivo claro, sin relleno innecesario y con etiquetas que dicen lo que lleva.' },
+  { Icon: IconPackage, title: 'Directo a ti', text: 'Eliges, armas tu pedido y lo coordinas por WhatsApp: disponibilidad, envío y pago, sin intermediarios.' },
 ];
 
 export function About() {
   usePageMeta({
-    title: 'About the brand — Gold Roots Nutrition',
-    description: 'Organic ingredients and powerful results: what Gold Roots Nutrition makes, and how this showcase page is meant to be used.',
-    path: '/about',
+    title: 'Nosotros — Gold Roots Nutrition',
+    description: 'Ingredientes orgánicos y resultados poderosos: qué hace Gold Roots Nutrition y cómo se usa esta vitrina.',
+    path: '/nosotros',
   });
-
-  const hero = PRODUCTS.find((p) => p.slug === 'shilajit-gold')!;
+  const hero = findProduct('shilajit-gold')!;
 
   return (
-    <div className="mx-auto max-w-7xl px-5 py-12 sm:py-16">
-      <header className="grid items-center gap-10 lg:grid-cols-[1.15fr_1fr]">
-        <div>
-          <p className="eyebrow">Our story</p>
-          <h1 className="mt-3 text-4xl leading-tight text-forest sm:text-6xl">Organic ingredients. Powerful results.</h1>
-          <p className="mt-5 text-lg leading-relaxed text-muted">
-            Gold Roots Nutrition makes high-quality supplements for people who expect more than average. The line stays deliberately small: fourteen formulas, each built around ingredients with a
-            long history of use and one clear job — so a customer can choose by what they want to support, not by a wall of similar bottles.
-          </p>
-          <p className="mt-4 leading-relaxed text-muted">
-            Everything shown here is <strong className="text-forest">pure, safe and effective</strong>: focused formulas without filler, vegetarian capsules, and labels that say what is inside.
-          </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Link to="/catalog" className={buttonClass('gold')}>
-              Browse the line <IconArrowRight size={18} aria-hidden="true" />
-            </Link>
-            <Link to="/wholesale" className={buttonClass('outline')}>
-              Wholesale
-            </Link>
-          </div>
-        </div>
+    <>
+      <PageHero eyebrow="Nuestra historia" title="Ingredientes orgánicos. Resultados poderosos." lead="Gold Roots Nutrition crea suplementos de alta calidad para quienes esperan más que lo común.">
+        <Link to="/catalogo" className={buttonClass('sun')}>
+          Ver el catálogo <IconArrowRight size={18} aria-hidden="true" />
+        </Link>
+        <Link to="/mayoristas" className={buttonClass('ghost-light')}>
+          Mayoristas
+        </Link>
+      </PageHero>
+
+      <section className="mx-auto grid max-w-6xl items-center gap-12 px-5 lg:grid-cols-[1.2fr_0.8fr]">
         <Reveal>
-          <div className="grain relative rounded-[2rem] bg-gradient-to-br from-forest to-forest-2 p-8 text-center">
-            <img src={asset(hero.image!)} alt={hero.name} width={420} height={600} loading="lazy" className="mx-auto aspect-[4/5] w-full max-w-xs object-contain" />
-            <p className="mt-4 font-serif text-xl text-gold">{goalOf(hero.goal).label}</p>
-            <p className="text-sm text-white/70">{hero.headline}</p>
+          <p className="text-xl leading-relaxed text-fg/85">
+            La línea se mantiene pequeña a propósito: <strong>catorce fórmulas</strong>, cada una pensada para un objetivo claro y construida con ingredientes de larga tradición de uso. Así eliges por lo que quieres apoyar, no entre una pared de frascos parecidos.
+          </p>
+          <p className="mt-5 text-xl leading-relaxed text-fg/85">
+            Todo lo que ves aquí es <strong>puro, seguro y efectivo</strong>: fórmulas enfocadas, sin relleno, en cápsulas vegetarianas y con etiquetas que dicen exactamente qué hay dentro.
+          </p>
+        </Reveal>
+        <Reveal delay={100}>
+          <div className={`g-${hero.goal} grad-goal grain relative grid place-items-center overflow-hidden rounded-[2.5rem] p-8 shadow-2xl`}>
+            <ProductImage product={hero} width={360} className="animate-float [--r:0deg] mx-auto h-72 w-auto object-contain" />
+            <p className="mt-4 font-display text-xl font-extrabold text-white">{hero.name}</p>
           </div>
         </Reveal>
-      </header>
+      </section>
 
-      <section className="mt-20">
-        <SectionHeading eyebrow="How the line works" title="Three steps, start to shelf" />
-        <ol className="mt-8 grid gap-4 lg:grid-cols-3">
-          {STEPS.map((s, i) => (
-            <li key={s.title}>
-              <Reveal delay={i * 80}>
-                <div className="flex h-full flex-col gap-3 rounded-3xl border border-line bg-white p-6">
-                  <span className="flex items-center gap-3">
-                    <span className="grid size-10 place-items-center rounded-full bg-sand text-gold-deep">
-                      <s.icon size={20} aria-hidden="true" />
+      <section aria-labelledby="pasos-title" className="mx-auto mt-24 max-w-6xl px-5">
+        <Reveal>
+          <SectionHeading eyebrow="Cómo funciona la línea" title={<span id="pasos-title">Tres ideas, de la raíz a tu mesa</span>} />
+        </Reveal>
+        <ol className="mt-10 grid gap-5 md:grid-cols-3">
+          {STEPS.map(({ Icon, title, text }, i) => (
+            <li key={title}>
+              <Reveal delay={i * 80} className="h-full">
+                <div className="card-lift h-full rounded-[2rem] bg-surface p-7 ring-1 ring-line">
+                  <div className="flex items-center justify-between">
+                    <span className="grad-sun grid size-14 place-items-center rounded-2xl text-night">
+                      <Icon size={28} aria-hidden="true" />
                     </span>
-                    <span className="text-xs font-bold tracking-[0.2em] text-muted uppercase">Step {i + 1}</span>
-                  </span>
-                  <h3 className="font-serif text-2xl text-forest">{s.title}</h3>
-                  <p className="text-muted">{s.text}</p>
+                    <span className="font-display text-5xl font-extrabold text-sand">{i + 1}</span>
+                  </div>
+                  <h3 className="mt-5 font-display text-xl font-extrabold">{title}</h3>
+                  <p className="mt-2 leading-relaxed text-muted">{text}</p>
                 </div>
               </Reveal>
             </li>
@@ -73,32 +73,45 @@ export function About() {
         </ol>
       </section>
 
-      <section className="mt-20">
-        <SectionHeading eyebrow="Coverage" title="What the fourteen formulas support" />
-        <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {GOALS.map((g) => (
-            <li key={g.id} className="rounded-3xl border border-line bg-white p-6">
-              <span className={`inline-block h-1 w-12 rounded-full ${g.bar}`} aria-hidden="true" />
-              <h3 className="mt-3 font-serif text-xl text-forest">{g.label}</h3>
-              <p className="mt-1 text-sm text-muted">{g.blurb}</p>
-              <Link to={`/catalog?goal=${g.id}`} className="mt-3 inline-block text-sm font-bold tracking-wider text-gold-deep uppercase hover:text-forest">
-                {countByGoal(g.id)} {countByGoal(g.id) === 1 ? 'formula' : 'formulas'}
-              </Link>
-            </li>
-          ))}
+      <section aria-labelledby="cobertura-title" className="mx-auto mt-24 max-w-6xl px-5">
+        <Reveal>
+          <SectionHeading eyebrow="Cobertura" title={<span id="cobertura-title">Lo que apoyan las catorce fórmulas</span>} />
+        </Reveal>
+        <ul className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {GOALS.map((g, i) => {
+            const IconG = GOAL_ICONS[g.id];
+            return (
+              <li key={g.id}>
+                <Reveal delay={i * 60} className="h-full">
+                  <Link to={`/catalogo?objetivo=${g.slug}`} className={`g-${g.id} card-lift flex h-full items-start gap-4 rounded-[2rem] bg-surface p-6 ring-1 ring-line`}>
+                    <span className="grad-goal grid size-12 shrink-0 place-items-center rounded-2xl text-white">
+                      <IconG size={24} aria-hidden="true" />
+                    </span>
+                    <span>
+                      <span className="block font-display text-lg font-extrabold">{g.label}</span>
+                      <span className="mt-1 block text-sm text-muted">{g.blurb}</span>
+                      <span className="text-goal mt-2 block text-sm font-bold">{countByGoal(g.id)} {countByGoal(g.id) === 1 ? 'fórmula' : 'fórmulas'} →</span>
+                    </span>
+                  </Link>
+                </Reveal>
+              </li>
+            );
+          })}
         </ul>
       </section>
 
-      <section className="mt-20 rounded-[2rem] bg-sand p-8 sm:p-12">
-        <h2 className="font-serif text-3xl text-forest">About this page</h2>
-        <p className="mt-4 max-w-3xl leading-relaxed text-muted">
-          This is a showcase site: there is no cart and no online payment, and orders are arranged by WhatsApp. Product names, prices, benefits, ingredients and photography come from{' '}
-          <a href={site.originalShop} className="font-semibold text-forest underline underline-offset-4 hover:text-gold-deep">
-            {site.originalShop.replace(/^https?:\/\//, '')}
-          </a>
-          , and the contact details, shipping terms and legal text still need to be confirmed by the brand before it goes live.
-        </p>
+      <section className="mx-auto mt-24 max-w-3xl px-5">
+        <div className="rounded-[2rem] bg-sun/25 p-8 ring-1 ring-sun/60">
+          <h2 className="text-2xl font-extrabold">Sobre esta página</h2>
+          <p className="mt-3 leading-relaxed text-fg/80">
+            Es una vitrina informativa: no hay carrito ni pago en línea, y los pedidos se coordinan por WhatsApp. Los nombres, precios, beneficios, ingredientes y fotos provienen de{' '}
+            <a href={site.originalShop} target="_blank" rel="noopener noreferrer" className="font-bold underline underline-offset-4">
+              la tienda original de la marca
+            </a>
+            ; los datos de contacto, las condiciones de envío y los textos legales aún deben ser confirmados por la marca antes de salir a producción.
+          </p>
+        </div>
       </section>
-    </div>
+    </>
   );
 }

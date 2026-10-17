@@ -1,108 +1,82 @@
-import { IconBuildingStore, IconCheck } from '@tabler/icons-react';
+import { IconBuildingStore, IconQrcode, IconTags, IconTruckDelivery } from '@tabler/icons-react';
 import { Link } from 'react-router';
-import { buttonClass, Pending, Reveal, SectionHeading, ToConfirm } from '@/components/ui';
-import { usePageMeta } from '@/lib/meta';
-import { GOALS, PRODUCTS, countByGoal, goalLabel, money } from '@/lib/products';
 import { InquiryForm } from '@/components/InquiryForm';
+import { PageHero } from '@/components/PageHero';
+import { GoalBadge, Pending, PriceTag, Reveal, SectionHeading } from '@/components/ui';
+import { usePageMeta } from '@/lib/meta';
+import { PRODUCTS, productPath } from '@/lib/products';
 
-const INCLUDED = [
-  'A product page per formula with benefits, ingredients and format',
-  'A printable QR code on every formula, pointing straight to its page',
-  'Catalog views: grid for a wall display, list for a spec sheet',
-  'Goal-first navigation, so a shop can browse by what a customer asks for',
-  'Photography of every product already in place, with no cart to maintain',
+const PERKS = [
+  { Icon: IconTags, title: 'Una línea corta y clara', text: 'Catorce fórmulas organizadas por objetivo: fáciles de explicar y de exhibir.' },
+  { Icon: IconQrcode, title: 'Un QR por producto', text: 'Cada ficha genera su código QR para el envase, el exhibidor o tu catálogo.' },
+  { Icon: IconBuildingStore, title: 'Material listo', text: 'Fotos limpias, descripciones y listas de ingredientes por cada fórmula.' },
+  { Icon: IconTruckDelivery, title: 'Trato directo', text: 'Cantidades, precios y envíos se conversan contigo por WhatsApp.' },
 ];
 
 export function Wholesale() {
   usePageMeta({
-    title: 'Wholesale & distribution — Gold Roots Nutrition',
-    description: 'Bring the fourteen Gold Roots formulas to your store, gym or clinic. Product pages, printable QR codes and a catalog sheet.',
-    path: '/wholesale',
+    title: 'Mayoristas y distribuidores — Gold Roots Nutrition',
+    description: 'Lleva la línea Gold Roots Nutrition a tu tienda, farmacia o red de distribución. Cuéntanos de tu negocio por WhatsApp.',
+    path: '/mayoristas',
   });
-
-  const from = Math.min(...PRODUCTS.filter((p) => p.price != null).map((p) => p.price!));
-  const to = Math.max(...PRODUCTS.map((p) => p.price ?? 0));
-
   return (
-    <div className="mx-auto max-w-7xl px-5 py-12 sm:py-16">
-      <header className="max-w-3xl">
-        <p className="eyebrow">Wholesale &amp; distribution</p>
-        <h1 className="mt-3 text-4xl text-forest sm:text-6xl">Stock the line in your store</h1>
-        <p className="mt-4 text-lg leading-relaxed text-muted">
-          This site is built to show the range to shops, gyms, spas and clinics: every formula has its own page, its own QR code and a clear place it supports. Retail prices run {money(from)}–{money(to)} per bottle.
-        </p>
-      </header>
+    <>
+      <PageHero eyebrow="Mayoristas y distribución" title="Lleva la línea a tu tienda" lead="Si tienes una tienda, farmacia, gimnasio o red de venta, hablemos. Te contamos cómo trabajar con Gold Roots Nutrition." />
 
-      <section className="mt-12 grid gap-8 lg:grid-cols-[1.1fr_1fr]">
+      <section aria-labelledby="ventajas-title" className="mx-auto max-w-6xl px-5">
         <Reveal>
-          <div className="rounded-[2rem] border border-line bg-white p-8">
-            <div className="flex items-center gap-3">
-              <span className="grid size-11 place-items-center rounded-full bg-sand text-gold-deep">
-                <IconBuildingStore size={22} aria-hidden="true" />
-              </span>
-              <SectionHeading eyebrow="What you get" title="A shelf-ready line" as="h2" />
-            </div>
-            <ul className="mt-6 grid gap-3 text-forest">
-              {INCLUDED.map((t) => (
-                <li key={t} className="flex gap-3">
-                  <IconCheck size={20} className="mt-0.5 shrink-0 text-moss" aria-hidden="true" />
-                  <span>{t}</span>
-                </li>
-              ))}
-            </ul>
-            <Pending>Minimum order, case quantities and tier pricing are decided by the brand.</Pending>
-          </div>
+          <SectionHeading eyebrow="Qué recibes" title={<span id="ventajas-title">Una línea lista para la repisa</span>} />
         </Reveal>
-
-        <Reveal delay={100}>
-          <div className="h-full rounded-[2rem] bg-forest p-8 text-white">
-            <h2 className="font-serif text-2xl">The range, by goal</h2>
-            <ul className="mt-6 divide-y divide-white/12">
-              {GOALS.map((g) => (
-                <li key={g.id} className="flex items-center justify-between gap-4 py-3">
-                  <Link to={`/catalog?goal=${g.id}`} className="font-semibold hover:text-gold">
-                    {g.label}
-                  </Link>
-                  <span className="text-white/60">
-                    {countByGoal(g.id)} {countByGoal(g.id) === 1 ? 'formula' : 'formulas'}
+        <ul className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {PERKS.map(({ Icon, title, text }, i) => (
+            <li key={title}>
+              <Reveal delay={i * 70} className="h-full">
+                <div className="card-lift h-full rounded-[2rem] bg-surface p-7 ring-1 ring-line">
+                  <span className="grad-sun grid size-14 place-items-center rounded-2xl text-night">
+                    <Icon size={28} aria-hidden="true" />
                   </span>
-                </li>
-              ))}
-            </ul>
-            <Link to="/catalog?view=list" className={buttonClass('gold', 'mt-8 w-full')}>
-              Open the full spec list
-            </Link>
-            <p className="mt-3 text-xs text-white/60">
-              A public price list for distributors is not confirmed yet. <ToConfirm />
-            </p>
-          </div>
-        </Reveal>
+                  <h3 className="mt-5 font-display text-xl font-extrabold">{title}</h3>
+                  <p className="mt-2 leading-relaxed text-muted">{text}</p>
+                </div>
+              </Reveal>
+            </li>
+          ))}
+        </ul>
+        <p className="mt-6">
+          <Pending>pedido mínimo, cantidades por caja y precios por volumen</Pending>
+        </p>
       </section>
 
-      <section className="mt-16">
-        <SectionHeading eyebrow="Every formula" title="Fourteen products, one catalog" />
-        <div className="mt-8 overflow-x-auto rounded-3xl border border-line bg-white">
-          <table className="w-full min-w-[40rem] border-collapse text-left text-sm">
-            <caption className="sr-only">The full Gold Roots line with the goal each formula supports and its retail price</caption>
+      <section aria-labelledby="lista-title" className="mx-auto mt-24 max-w-6xl px-5">
+        <Reveal>
+          <SectionHeading eyebrow="Toda la línea" title={<span id="lista-title">Catorce productos, un solo catálogo</span>} />
+        </Reveal>
+        <div className="mt-8 overflow-x-auto rounded-[2rem] bg-surface ring-1 ring-line">
+          <table className="w-full min-w-[40rem] text-left">
+            <caption className="sr-only">La línea completa de Gold Roots con el objetivo de cada fórmula y su precio al público</caption>
             <thead>
-              <tr className="border-b border-line text-xs tracking-[0.16em] text-muted uppercase">
-                <th scope="col" className="px-5 py-4">Formula</th>
-                <th scope="col" className="px-5 py-4">Supports</th>
-                <th scope="col" className="px-5 py-4">Format</th>
-                <th scope="col" className="px-5 py-4">Retail</th>
+              <tr className="border-b border-line text-xs tracking-[0.14em] text-muted uppercase">
+                <th scope="col" className="px-6 py-4 font-extrabold">Fórmula</th>
+                <th scope="col" className="px-6 py-4 font-extrabold">Objetivo</th>
+                <th scope="col" className="px-6 py-4 font-extrabold">Presentación</th>
+                <th scope="col" className="px-6 py-4 font-extrabold">Precio al público</th>
               </tr>
             </thead>
             <tbody>
               {PRODUCTS.map((p) => (
-                <tr key={p.slug} className="border-b border-line/70 last:border-0">
-                  <th scope="row" className="px-5 py-3.5 font-bold tracking-wide text-forest uppercase">
-                    <Link to={`/product/${p.slug}`} className="hover:text-gold-deep">
+                <tr key={p.slug} className="border-b border-line/60 last:border-0 hover:bg-sun/10">
+                  <th scope="row" className="px-6 py-4 font-display text-base font-extrabold">
+                    <Link to={`/${productPath(p.slug)}`} className="hover:text-coral-deep">
                       {p.name}
                     </Link>
                   </th>
-                  <td className="px-5 py-3.5 text-muted">{goalLabel(p.goal)}</td>
-                  <td className="px-5 py-3.5 text-muted">{p.format || '—'}</td>
-                  <td className="px-5 py-3.5 font-bold text-forest">{p.price != null ? money(p.price) : 'Soon'}</td>
+                  <td className="px-6 py-4">
+                    <GoalBadge goal={p.goal} small />
+                  </td>
+                  <td className="px-6 py-4 text-sm text-muted">{p.format || 'Por confirmar'}</td>
+                  <td className="px-6 py-4">
+                    <PriceTag product={p} />
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -110,13 +84,17 @@ export function Wholesale() {
         </div>
       </section>
 
-      <section className="mt-16 grid gap-8 lg:grid-cols-2">
-        <div>
-          <SectionHeading eyebrow="Send an inquiry" title="Tell us about your store" lead="Tell us about your store and we open WhatsApp with your message ready to send." />
-          <Pending>WhatsApp number and minimum order for wholesale.</Pending>
-        </div>
-        <InquiryForm kind="wholesale" />
+      <section aria-labelledby="consulta-title" className="mx-auto mt-24 grid max-w-6xl gap-12 px-5 lg:grid-cols-[0.8fr_1.2fr]">
+        <Reveal>
+          <SectionHeading eyebrow="Escríbenos" title={<span id="consulta-title">Cuéntanos de tu negocio</span>} lead="Llena el formulario y se abre WhatsApp con tu mensaje ya escrito. Te respondemos con las condiciones para mayoristas." />
+          <p className="mt-6">
+            <Pending>número de WhatsApp exclusivo para mayoristas</Pending>
+          </p>
+        </Reveal>
+        <Reveal delay={100}>
+          <InquiryForm kind="wholesale" />
+        </Reveal>
       </section>
-    </div>
+    </>
   );
 }

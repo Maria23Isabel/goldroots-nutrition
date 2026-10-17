@@ -1,14 +1,21 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
+    <script>
+      try {
+        document.documentElement.dataset.theme = localStorage.getItem('gold-roots:tema') || 'dark';
+      } catch (e) {
+        document.documentElement.dataset.theme = 'dark';
+      }
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#0d2a1e" />
+    <meta name="theme-color" content="#14112e" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <title>Gold Roots Nutrition — Essential nutrition for daily wellness</title>
+    <title>Gold Roots Nutrition — Nutrición esencial para tu bienestar diario</title>
     <meta
       name="description"
-      content="Fourteen focused supplements for energy, heart, brain, sleep, eye and skin and immune support. Pure, safe and effective formulas."
+      content="Catorce suplementos enfocados en energía, corazón, mente, sueño, vista y piel, y defensas. Fórmulas puras, seguras y efectivas. Arma tu pedido y envíalo por WhatsApp."
     />
     <meta property="og:site_name" content="Gold Roots Nutrition" />
     <meta property="og:type" content="website" />
