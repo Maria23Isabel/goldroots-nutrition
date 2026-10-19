@@ -5,7 +5,6 @@ import { PageHero } from '@/components/PageHero';
 import { buttonClass, GOAL_ICONS, Reveal, SectionHeading } from '@/components/ui';
 import { usePageMeta } from '@/lib/meta';
 import { countByGoal, findProduct, GOALS } from '@/lib/products';
-import { site } from '@/lib/site';
 
 const STEPS = [
   { Icon: IconLeaf, title: 'Ingredientes de raíz', text: 'Plantas, hongos y minerales con una larga historia de uso: maca, shilajit, cúrcuma, cardo mariano, melena de león.' },
@@ -104,11 +103,7 @@ export function About() {
         <div className="rounded-[2rem] bg-sun/25 p-8 ring-1 ring-sun/60">
           <h2 className="text-2xl font-extrabold">Sobre esta página</h2>
           <p className="mt-3 leading-relaxed text-fg/80">
-            Es una vitrina informativa: no hay carrito ni pago en línea, y los pedidos se coordinan por WhatsApp. Los nombres, precios, beneficios, ingredientes y fotos provienen de{' '}
-            <a href={site.originalShop} target="_blank" rel="noopener noreferrer" className="font-bold underline underline-offset-4">
-              la tienda original de la marca
-            </a>
-            ; los datos de contacto, las condiciones de envío y los textos legales aún deben ser confirmados por la marca antes de salir a producción.
+            Es una vitrina informativa: no hay carrito ni pago en línea, y los pedidos se coordinan por WhatsApp. Los nombres, precios, beneficios, ingredientes y fotos provienen del catálogo de la marca; los datos de contacto, las condiciones de envío y los textos legales aún deben ser confirmados por la marca antes de salir a producción.
           </p>
         </div>
       </section>

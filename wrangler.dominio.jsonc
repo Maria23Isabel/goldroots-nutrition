@@ -1,0 +1,17 @@
+// Gold Roots Nutrition en su dominio propio (goldrootsvitamins.com y www). Requiere que el dominio ya esté en la cuenta de Cloudflare
+// (zona activa): Cloudflare crea solo los registros DNS de estos dos nombres, y falla si ya existe uno que apunte a otro sitio (por ejemplo, a Shopify).
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "goldroots-nutrition",
+  "compatibility_date": "2026-10-01",
+  "workers_dev": false,
+  "preview_urls": false,
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page"
+  },
+  "routes": [
+    { "pattern": "goldrootsvitamins.com", "custom_domain": true },
+    { "pattern": "www.goldrootsvitamins.com", "custom_domain": true }
+  ]
+}

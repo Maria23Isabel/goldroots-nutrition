@@ -16,7 +16,6 @@ export const site = {
   instagram: null as string | null,
   facebook: null as string | null,
   tiktok: null as string | null,
-  originalShop: 'https://goldrootsvitamins.com/',
 };
 
 export const isConfirmed = (value: string | null) => Boolean(value);

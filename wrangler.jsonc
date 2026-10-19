@@ -1,0 +1,14 @@
+// Gold Roots Nutrition en Cloudflare: un Worker que solo entrega los archivos de dist/ (sin código de servidor).
+// Esta configuración publica en la dirección de pruebas *.workers.dev. Para el dominio propio se usa wrangler.dominio.jsonc
+// (npm run desplegar:dominio), que solo funciona cuando el dominio ya está en la cuenta de Cloudflare.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "goldroots-nutrition",
+  "compatibility_date": "2026-10-01",
+  "workers_dev": true,
+  "assets": {
+    "directory": "./dist",
+    // Cada ruta del sitio ya tiene su carpeta con index.html (scripts/postbuild.mjs); lo que no existe devuelve el 404.html del sitio
+    "not_found_handling": "404-page"
+  }
+}

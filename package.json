@@ -15,7 +15,9 @@
     "datos": "node scripts/traer-productos.mjs",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
-    "publicar": "npm run build:pages && node scripts/publicar-pages.mjs"
+    "publicar": "npm run build:pages && node scripts/publicar-pages.mjs",
+    "desplegar": "node scripts/desplegar.mjs",
+    "desplegar:dominio": "node scripts/desplegar.mjs --dominio"
   },
   "dependencies": {
     "@fontsource-variable/bricolage-grotesque": "^5.3.0",
@@ -38,6 +40,7 @@
     "tailwindcss": "^4.3.3",
     "typescript": "^5.9.3",
     "vite": "^8.3.1",
-    "vitest": "^3.2.7"
+    "vitest": "^3.2.7",
+    "wrangler": "^4.86.0"
   }
 }

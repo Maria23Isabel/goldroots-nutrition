@@ -65,3 +65,16 @@ src/components/QrCard.tsx         QR del producto, copiar enlace y descargar PNG
 src/pages/                        inicio, catálogo, ficha, mayoreo, marca, contacto, legal
 scripts/postbuild.mjs             404.html, sitemap.xml y robots.txt
 ```
+
+## Cloudflare (hosting definitivo)
+
+El sitio también se publica en Cloudflare como Worker de solo archivos (`wrangler.jsonc`):
+
+```bash
+npx wrangler login          # una vez
+npm run desplegar           # dirección de pruebas *.workers.dev (con noindex)
+npm run desplegar:dominio   # goldrootsvitamins.com y www (el dominio tiene que estar ya en la cuenta de Cloudflare)
+```
+
+Cómo mover el dominio desde Shopify/GoDaddy a Cloudflare, paso a paso: [docs/dominio-cloudflare.md](docs/dominio-cloudflare.md).
+
