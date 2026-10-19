@@ -55,59 +55,59 @@ export function Reveal({ children, className = '', delay = 0 }: { children: Reac
   );
 }
 
-export function Logo({ light = false }: { light?: boolean }) {
+export function Logo({ onDark = false }: { onDark?: boolean }) {
   return (
     <Link to="/" aria-label="Gold Roots Nutrition, inicio" className="inline-flex items-center gap-2.5 whitespace-nowrap">
-      <span className="grad-sun grid size-10 place-items-center rounded-2xl text-night shadow-lg shadow-coral/30">
-        <IconLeaf size={22} stroke={2.2} aria-hidden="true" />
+      <span className={`grid size-9 place-items-center rounded-lg ${onDark ? 'bg-white/12 text-white' : 'bg-night text-white'}`}>
+        <IconLeaf size={19} stroke={1.9} aria-hidden="true" />
       </span>
-      <span className={`font-display text-xl leading-none font-extrabold tracking-tight ${light ? 'text-white' : 'text-fg'}`}>
-        Gold<span className="text-grad">Roots</span>
-      </span>
+      <span className={`font-display text-[1.15rem] leading-none font-medium tracking-tight ${onDark ? 'text-white' : 'text-fg'}`}>Gold Roots</span>
     </Link>
   );
 }
 
-export function SectionHeading({ eyebrow, title, lead, center = false, light = false, as = 'h2' }: { eyebrow: string; title: ReactNode; lead?: string; center?: boolean; light?: boolean; as?: 'h2' | 'h3' }) {
+/** Título de sección: el tamaño de las páginas de referencia (28–36 px), no los 72 px de la versión anterior. */
+export function SectionHeading({ eyebrow, title, lead, center = false, onDark = false, as = 'h2', className = '' }: { eyebrow: string; title: ReactNode; lead?: string; center?: boolean; onDark?: boolean; as?: 'h2' | 'h3'; className?: string }) {
   const Heading = as;
   return (
-    <div className={center ? 'mx-auto max-w-2xl text-center' : 'max-w-2xl'}>
-      <p className={`eyebrow ${light ? '!text-sun' : ''}`}>{eyebrow}</p>
-      <Heading className={`mt-3 text-4xl leading-[1.05] font-extrabold sm:text-5xl ${light ? 'text-white' : 'text-fg'}`}>{title}</Heading>
-      {lead && <p className={`mt-4 text-lg leading-relaxed ${light ? 'text-white/75' : 'text-muted'}`}>{lead}</p>}
+    <div className={`max-w-2xl ${center ? 'mx-auto text-center' : ''} ${className}`}>
+      <p className={`eyebrow ${onDark ? '!text-white/55' : ''}`}>{eyebrow}</p>
+      <Heading className={`mt-2.5 text-[1.75rem] leading-[1.15] font-medium sm:text-[2.1rem] ${onDark ? 'text-white' : 'text-fg'}`}>{title}</Heading>
+      {lead && <p className={`mt-3 text-[1.05rem] leading-relaxed ${onDark ? 'text-white/70' : 'text-muted'}`}>{lead}</p>}
     </div>
   );
 }
 
-type Variant = 'sun' | 'ink' | 'outline' | 'light' | 'wa' | 'ghost-light';
+type Variant = 'primary' | 'night' | 'outline' | 'light' | 'wa' | 'ghost-dark';
 const VARIANTS: Record<Variant, string> = {
-  sun: 'grad-sun text-night shadow-lg shadow-coral/25 hover:brightness-105 hover:shadow-xl hover:shadow-coral/35',
-  ink: 'bg-inv text-inv-fg hover:opacity-85',
-  outline: 'border-2 border-fg/15 text-fg hover:border-fg hover:bg-inv hover:text-inv-fg',
-  light: 'bg-paper text-night hover:bg-sun',
-  wa: 'bg-wa text-night shadow-lg shadow-wa/30 hover:brightness-105',
-  'ghost-light': 'border-2 border-white/25 text-white hover:bg-white hover:text-night',
+  primary: 'bg-accent text-white hover:bg-accent-deep',
+  night: 'bg-night text-white hover:bg-fg/85',
+  outline: 'border border-line-strong bg-surface text-fg hover:border-fg hover:bg-sand',
+  light: 'border border-white/25 bg-white/10 text-white hover:bg-white hover:text-night',
+  wa: 'bg-wa text-white hover:bg-wa-deep',
+  'ghost-dark': 'border border-white/25 text-white hover:bg-white/10',
 };
 
-export const buttonClass = (variant: Variant = 'sun', extra = '') =>
-  `inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-7 whitespace-nowrap text-[0.95rem] font-bold transition active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-50 ${VARIANTS[variant]} ${extra}`;
+export const buttonClass = (variant: Variant = 'primary', extra = '') =>
+  `inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-5 whitespace-nowrap text-[0.9rem] font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${VARIANTS[variant]} ${extra}`;
 
 export function WhatsAppButton({ text, children, variant = 'wa', className = '' }: { text: string; children: ReactNode; variant?: Variant; className?: string }) {
   return (
     <a href={waLink(text)} target="_blank" rel="noopener noreferrer" className={buttonClass(variant, className)}>
-      <IconBrandWhatsapp size={21} aria-hidden="true" />
+      <IconBrandWhatsapp size={18} aria-hidden="true" />
       {children}
       <span className="sr-only"> (se abre en una pestaña nueva)</span>
     </a>
   );
 }
 
+/** La etiqueta de objetivo: fondo pastel y texto del mismo family, siempre legible. */
 export function GoalBadge({ goal, small = false }: { goal: GoalId; small?: boolean }) {
   const g = goalOf(goal);
   const IconG = GOAL_ICONS[goal];
   return (
-    <span className={`g-${goal} soft-goal text-goal inline-flex items-center gap-1.5 rounded-full font-bold ${small ? 'px-2.5 py-1 text-xs' : 'px-3.5 py-1.5 text-sm'}`}>
-      <IconG size={small ? 14 : 17} stroke={2.4} aria-hidden="true" />
+    <span className={`g-${goal} goal-block text-goal goal-ring inline-flex items-center gap-1.5 rounded-full font-semibold ${small ? 'px-2.5 py-0.5 text-[0.7rem]' : 'px-3 py-1 text-[0.8rem]'}`}>
+      <IconG size={small ? 12 : 14} stroke={2} aria-hidden="true" />
       {g.short}
     </span>
   );
@@ -115,18 +115,18 @@ export function GoalBadge({ goal, small = false }: { goal: GoalId; small?: boole
 
 export function PriceTag({ product, big = false }: { product: Product; big?: boolean }) {
   if (product.price == null) {
-    return <span className={`font-display font-bold text-muted ${big ? 'text-2xl' : 'text-base'}`}>Consultar precio</span>;
+    return <span className={`font-display font-medium text-muted ${big ? 'text-2xl' : 'text-base'}`}>Consultar precio</span>;
   }
   const off = percentOff(product);
   return (
-    <span className="inline-flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
-      <span className={`font-display font-extrabold text-fg ${big ? 'text-4xl' : 'text-xl'}`}>{money(product.price)}</span>
+    <span className="inline-flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+      <span className={`font-display font-medium text-fg ${big ? 'text-3xl' : 'text-lg'}`}>{money(product.price)}</span>
       {product.compareAt != null && (
         <>
-          <s className={`text-muted ${big ? 'text-lg' : 'text-sm'}`} aria-label={`Precio normal ${money(product.compareAt)}`}>
+          <s className={`text-muted ${big ? 'text-base' : 'text-sm'}`} aria-label={`Precio normal ${money(product.compareAt)}`}>
             {money(product.compareAt)}
           </s>
-          <span className={`grad-sun rounded-full font-extrabold text-night ${big ? 'px-3 py-1 text-sm' : 'px-2 py-0.5 text-xs'}`}>−{off}%</span>
+          {off > 0 && <span className="text-[0.8rem] font-semibold text-wa-deep">−{off}%</span>}
         </>
       )}
     </span>
@@ -134,24 +134,24 @@ export function PriceTag({ product, big = false }: { product: Product; big?: boo
 }
 
 export function QtyStepper({ value, onChange, label }: { value: number; onChange: (n: number) => void; label: string }) {
-  const btn = 'grid size-10 place-items-center rounded-full bg-surface text-fg shadow-sm ring-1 ring-line transition hover:bg-sun hover:text-night disabled:opacity-40 disabled:hover:bg-surface';
+  const btn = 'grid size-9 place-items-center rounded-full border border-line-strong bg-surface text-fg transition hover:bg-sand disabled:opacity-40';
   return (
-    <div className="inline-flex items-center gap-2" role="group" aria-label={`Cantidad de ${label}`}>
+    <div className="inline-flex items-center gap-1.5" role="group" aria-label={`Cantidad de ${label}`}>
       <button type="button" className={btn} onClick={() => onChange(value - 1)} aria-label={`Quitar una unidad de ${label}`}>
-        <IconMinus size={16} aria-hidden="true" />
+        <IconMinus size={15} aria-hidden="true" />
       </button>
-      <output className="w-8 text-center font-display text-lg font-extrabold" aria-live="polite">
+      <output className="w-8 text-center font-display text-base font-medium" aria-live="polite">
         {value}
       </output>
       <button type="button" className={btn} onClick={() => onChange(value + 1)} disabled={value >= MAX_QTY} aria-label={`Agregar una unidad de ${label}`}>
-        <IconPlus size={16} aria-hidden="true" />
+        <IconPlus size={15} aria-hidden="true" />
       </button>
     </div>
   );
 }
 
 /** Agrega al pedido y avisa un instante con un check; no abre el panel si `quiet`. */
-export function AddButton({ product, qty = 1, variant = 'ink', className = '', compact = false, quiet = false }: { product: Product; qty?: number; variant?: Variant; className?: string; compact?: boolean; quiet?: boolean }) {
+export function AddButton({ product, qty = 1, variant = 'night', className = '', compact = false, quiet = false }: { product: Product; qty?: number; variant?: Variant; className?: string; compact?: boolean; quiet?: boolean }) {
   const [done, setDone] = useState(false);
   useEffect(() => {
     if (!done) return;
@@ -165,10 +165,10 @@ export function AddButton({ product, qty = 1, variant = 'ink', className = '', c
         orderActions.add(product.slug, qty, !quiet);
         setDone(true);
       }}
-      className={buttonClass(variant, `${compact ? '!min-h-11 !px-4 !text-sm' : ''} ${className}`)}
+      className={buttonClass(variant, `${compact ? '!min-h-10 !px-4 !text-[0.82rem]' : ''} ${className}`)}
     >
-      {done ? <IconCheck size={19} stroke={3} className="pop" aria-hidden="true" /> : <IconShoppingBagPlus size={19} aria-hidden="true" />}
-      {done ? '¡Agregado!' : 'Agregar al pedido'}
+      {done ? <IconCheck size={17} stroke={2.4} className="pop" aria-hidden="true" /> : <IconShoppingBagPlus size={17} aria-hidden="true" />}
+      {done ? 'Agregado' : 'Agregar al pedido'}
     </button>
   );
 }
@@ -176,16 +176,16 @@ export function AddButton({ product, qty = 1, variant = 'ink', className = '', c
 export function Accordion({ title, children, defaultOpen = false }: { title: string; children: ReactNode; defaultOpen?: boolean }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className="border-b border-line">
+    <div className="border-b border-line last:border-0">
       <h3>
-        <button type="button" aria-expanded={open} onClick={() => setOpen(!open)} className="flex w-full items-center justify-between gap-4 py-5 text-left font-display text-lg font-bold text-fg">
+        <button type="button" aria-expanded={open} onClick={() => setOpen(!open)} className="flex w-full items-center justify-between gap-6 py-4 text-left font-display text-[1.05rem] font-medium text-fg">
           {title}
-          <IconChevronDown size={22} aria-hidden="true" className={`shrink-0 text-coral-deep transition-transform ${open ? 'rotate-180' : ''}`} />
+          <IconChevronDown size={18} aria-hidden="true" className={`shrink-0 text-muted transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
         </button>
       </h3>
-      <div className={`grid transition-[grid-template-rows] duration-300 ${open ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
+      <div className={`grid transition-[grid-template-rows] duration-250 ${open ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
         <div className="overflow-hidden">
-          <div className="pb-5 leading-relaxed text-muted">{children}</div>
+          <div className="max-w-2xl pb-5 text-[0.95rem] leading-relaxed text-muted">{children}</div>
         </div>
       </div>
     </div>
@@ -195,9 +195,23 @@ export function Accordion({ title, children, defaultOpen = false }: { title: str
 /** Sello para lo que la marca aún no confirma: no se inventa, se marca. */
 export function Pending({ children }: { children: ReactNode }) {
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full bg-sun/25 px-3 py-1 text-xs font-bold text-coral-deep ring-1 ring-sun/60">
-      <span className="size-1.5 rounded-full bg-coral" aria-hidden="true" />
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-sand px-2.5 py-1 text-[0.72rem] font-semibold text-muted ring-1 ring-line-strong">
+      <span className="size-1.5 rounded-full bg-accent" aria-hidden="true" />
       Por confirmar: {children}
     </span>
+  );
+}
+
+/** Fila de datos reales de la línea (los que se pueden afirmar del catálogo; no se inventan certificaciones ni reseñas). */
+export function TrustMarks({ items, onDark = false }: { items: Array<{ Icon: Icon; text: string }>; onDark?: boolean }) {
+  return (
+    <ul className={`grid gap-x-6 gap-y-3 ${items.length > 3 ? 'sm:grid-cols-2 lg:grid-cols-4' : 'sm:grid-cols-3'}`}>
+      {items.map(({ Icon, text }) => (
+        <li key={text} className={`flex items-center gap-2.5 text-[0.88rem] font-medium ${onDark ? 'text-white/80' : 'text-fg'}`}>
+          <Icon size={17} stroke={1.9} aria-hidden="true" className={`shrink-0 ${onDark ? 'text-white/60' : 'text-muted'}`} />
+          {text}
+        </li>
+      ))}
+    </ul>
   );
 }

@@ -1,6 +1,8 @@
+import { IconLeaf } from '@tabler/icons-react';
 import { Link, useParams } from 'react-router';
 import { buttonClass } from '@/components/ui';
 import { usePageMeta } from '@/lib/meta';
+import { PRODUCTS } from '@/lib/products';
 
 const FDA = 'Estas declaraciones no han sido evaluadas por la Administración de Alimentos y Medicamentos de EE. UU. (FDA). Estos productos no están destinados a diagnosticar, tratar, curar ni prevenir ninguna enfermedad.';
 
@@ -40,15 +42,15 @@ export function Legal() {
   usePageMeta({ title: `${content.title} — Gold Roots Nutrition`, description: `${content.title} de la vitrina de Gold Roots Nutrition.`, path: `/legal/${key}` });
 
   return (
-    <article className="mx-auto max-w-3xl px-5 pt-36 pb-12 sm:pt-44">
+    <article className="wrap max-w-3xl py-16 sm:py-20">
       <p className="eyebrow">Legal</p>
-      <h1 className="mt-3 text-5xl font-extrabold sm:text-6xl">{content.title}</h1>
-      <p className="mt-4 inline-block rounded-full bg-sun/30 px-4 py-1.5 text-sm font-bold text-coral-deep">Borrador para la marca: aún no está revisado ni en vigor.</p>
+      <h1 className="mt-2.5 text-[2rem] font-medium sm:text-[2.4rem]">{content.title}</h1>
+      <p className="mt-4 inline-block rounded-full bg-accent-soft px-3 py-1.5 text-[0.82rem] font-medium text-accent-deep">Borrador para la marca: aún no está revisado ni en vigor.</p>
       {content.blocks.map((b) => (
-        <section key={b.h} className="mt-10">
-          <h2 className="text-2xl font-extrabold">{b.h}</h2>
+        <section key={b.h} className="mt-9 border-t border-line pt-6">
+          <h2 className="font-display text-[1.25rem] font-medium">{b.h}</h2>
           {b.p.map((text) => (
-            <p key={text} className="mt-3 text-lg leading-relaxed text-muted">
+            <p key={text} className="mt-3 text-[0.98rem] leading-relaxed text-muted">
               {text}
             </p>
           ))}
@@ -61,14 +63,14 @@ export function Legal() {
 export function NotFound() {
   usePageMeta({ title: 'Página no encontrada — Gold Roots Nutrition', description: 'Esta página no existe en la vitrina de Gold Roots Nutrition.', path: '/' });
   return (
-    <div className="mx-auto grid max-w-2xl place-items-center px-5 pt-40 pb-16 text-center">
-      <p className="text-8xl" aria-hidden="true">🌱</p>
+    <div className="wrap grid max-w-2xl place-items-center py-24 text-center">
+      <IconLeaf size={40} stroke={1.6} aria-hidden="true" className="text-line-strong" />
       <p className="eyebrow mt-4">Error 404</p>
-      <h1 className="mt-3 text-5xl font-extrabold sm:text-6xl">No encontramos esa página</h1>
-      <p className="mt-4 text-lg text-muted">Puede que la fórmula haya cambiado de nombre. El catálogo muestra todo lo que hay hoy en la línea.</p>
-      <div className="mt-8 flex flex-wrap justify-center gap-3">
-        <Link to="/catalogo" className={buttonClass('sun')}>
-          Ver las 14 fórmulas
+      <h1 className="mt-2.5 text-[2rem] font-medium sm:text-[2.4rem]">No encontramos esa página</h1>
+      <p className="mt-4 text-[1rem] text-muted">Puede que la fórmula haya cambiado de nombre. El catálogo muestra todo lo que hay hoy en la línea.</p>
+      <div className="mt-8 flex flex-wrap justify-center gap-2.5">
+        <Link to="/catalogo" className={buttonClass('primary')}>
+          Ver las {PRODUCTS.length} fórmulas
         </Link>
         <Link to="/" className={buttonClass('outline')}>
           Volver al inicio

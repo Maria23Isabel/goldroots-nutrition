@@ -15,7 +15,7 @@ export function QrCard({ slug, name }: { slug: string; name: string }) {
     let vivo = true;
     // El generador de QR solo hace falta en las fichas: se carga aparte para no pesar en el resto del sitio.
     import('qrcode')
-      .then(({ default: QRCode }) => QRCode.toDataURL(url, { errorCorrectionLevel: 'M', margin: 2, width: 320, color: { dark: '#14112e', light: '#ffffff' } }))
+      .then(({ default: QRCode }) => QRCode.toDataURL(url, { errorCorrectionLevel: 'M', margin: 2, width: 320, color: { dark: '#23231f', light: '#ffffff' } }))
       .then((data) => vivo && setPng(data))
       .catch(() => vivo && setPng(null));
     return () => {
@@ -37,30 +37,30 @@ export function QrCard({ slug, name }: { slug: string; name: string }) {
   };
 
   return (
-    <section aria-labelledby="qr-title" className="rounded-[2rem] bg-surface p-6 ring-1 ring-line">
+    <section aria-labelledby="qr-title" className="rounded-2xl border border-line bg-surface p-6">
       <h2 id="qr-title" className="eyebrow">
         Código QR del producto
       </h2>
-      <p className="mt-2 text-sm leading-relaxed text-muted">Escanéalo con la cámara de cualquier celular para abrir esta página. Sirve en el envase, en un exhibidor o en una hoja de catálogo.</p>
+      <p className="mt-2 text-[0.88rem] leading-relaxed text-muted">Escanéalo con la cámara de cualquier celular para abrir esta página. Sirve en el envase, en un exhibidor o en una hoja de catálogo.</p>
       <div className="mt-5 flex flex-wrap items-center gap-5">
-        <div className="grid size-36 shrink-0 place-items-center overflow-hidden rounded-3xl bg-surface p-1 ring-1 ring-line">
-          {png ? <img src={png} alt={`Código QR que abre la página de ${name}`} width={144} height={144} className="size-full object-contain" /> : <IconQrcode size={40} className="text-line" aria-hidden="true" />}
+        <div className="grid size-32 shrink-0 place-items-center overflow-hidden rounded-xl border border-line bg-surface p-1">
+          {png ? <img src={png} alt={`Código QR que abre la página de ${name}`} width={128} height={128} className="size-full object-contain" /> : <IconQrcode size={36} className="text-line-strong" aria-hidden="true" />}
         </div>
         <div className="min-w-0 flex-1">
-          <p className="text-xs font-bold tracking-[0.16em] text-muted uppercase">Lleva a</p>
-          <p className="mt-1 text-sm break-all text-fg select-all">{url}</p>
+          <p className="text-[0.72rem] font-semibold tracking-[0.14em] text-muted uppercase">Lleva a</p>
+          <p className="mt-1 text-[0.85rem] break-all text-fg select-all">{url}</p>
           <div className="mt-4 flex flex-wrap gap-2">
-            <button type="button" onClick={copy} className="inline-flex min-h-11 items-center gap-2 rounded-full border-2 border-fg/15 bg-surface px-4 text-sm font-bold text-fg transition hover:border-fg">
-              {copied ? <IconCheck size={17} stroke={3} aria-hidden="true" /> : <IconCopy size={17} aria-hidden="true" />}
-              {copied ? '¡Copiado!' : 'Copiar enlace'}
+            <button type="button" onClick={copy} className="inline-flex min-h-10 items-center gap-2 rounded-full border border-line-strong bg-surface px-4 text-[0.85rem] font-semibold text-fg transition-colors hover:border-fg hover:bg-sand">
+              {copied ? <IconCheck size={16} stroke={2.4} aria-hidden="true" /> : <IconCopy size={16} aria-hidden="true" />}
+              {copied ? 'Copiado' : 'Copiar enlace'}
             </button>
             <a
               href={png ?? undefined}
               download={`goldroots-${slug}-qr.png`}
               aria-disabled={!png}
-              className={`inline-flex min-h-11 items-center gap-2 rounded-full bg-inv px-4 text-sm font-bold text-inv-fg transition hover:opacity-85 ${png ? '' : 'pointer-events-none opacity-40'}`}
+              className={`inline-flex min-h-10 items-center gap-2 rounded-full bg-night px-4 text-[0.85rem] font-semibold text-white transition-colors hover:bg-fg/85 ${png ? '' : 'pointer-events-none opacity-40'}`}
             >
-              <IconDownload size={17} aria-hidden="true" /> Descargar PNG
+              <IconDownload size={16} aria-hidden="true" /> Descargar PNG
             </a>
           </div>
         </div>

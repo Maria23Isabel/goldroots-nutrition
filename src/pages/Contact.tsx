@@ -25,23 +25,23 @@ export function Contact() {
   });
   return (
     <>
-      <PageHero eyebrow="Contacto" title={<>Hablemos por <span className="text-grad">WhatsApp</span></>} lead="Pregunta por una fórmula, haz tu pedido o ve cómo vender la línea. No hay caja de pago aquí: te respondemos en el chat y coordinamos disponibilidad, envío y pago contigo.">
+      <PageHero eyebrow="Contacto" title="Hablemos por WhatsApp" lead="Pregunta por una fórmula, haz tu pedido o ve cómo vender la línea. No hay caja de pago aquí: te respondemos en el chat y coordinamos disponibilidad, envío y pago contigo.">
         <WhatsAppButton text={GENERAL_MESSAGE}>Abrir el chat ahora</WhatsAppButton>
-        <span className="inline-flex min-h-12 items-center rounded-full bg-white/10 px-6 font-bold ring-1 ring-white/20">{prettyPhone(site.whatsapp)}</span>
+        <span className="inline-flex min-h-11 items-center rounded-full border border-line-strong bg-surface px-5 text-[0.9rem] font-semibold text-fg">{prettyPhone(site.whatsapp)}</span>
       </PageHero>
 
-      <section className="mx-auto max-w-6xl px-5">
-        <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      <section className="wrap section">
+        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {CHANNELS.map(({ Icon, label, value, hint, pending }, i) => (
             <li key={label}>
-              <Reveal delay={i * 70} className="h-full">
-                <div className="h-full rounded-[2rem] bg-surface p-6 ring-1 ring-line">
-                  <span className="grad-sun grid size-12 place-items-center rounded-2xl text-night">
-                    <Icon size={24} aria-hidden="true" />
+              <Reveal delay={Math.min(i, 5) * 60} className="h-full">
+                <div className="card h-full p-5">
+                  <span className="grid size-10 place-items-center rounded-xl bg-sand text-fg">
+                    <Icon size={19} stroke={1.8} aria-hidden="true" />
                   </span>
-                  <h2 className="mt-4 font-display text-lg font-extrabold">{label}</h2>
-                  <p className="mt-1 font-semibold">{isConfirmed(value) ? value : pending ? <Pending>{pending}</Pending> : 'Por WhatsApp'}</p>
-                  <p className="mt-1 text-sm text-muted">{hint}</p>
+                  <h2 className="mt-4 font-display text-[1rem] font-medium">{label}</h2>
+                  <p className="mt-1 text-[0.9rem] font-medium">{isConfirmed(value) ? value : pending ? <Pending>{pending}</Pending> : 'Por WhatsApp'}</p>
+                  <p className="mt-1 text-[0.82rem] text-muted">{hint}</p>
                 </div>
               </Reveal>
             </li>
@@ -49,18 +49,20 @@ export function Contact() {
         </ul>
       </section>
 
-      <section aria-labelledby="escribe-title" className="mx-auto mt-24 grid max-w-6xl gap-12 px-5 lg:grid-cols-[0.8fr_1.2fr]">
-        <Reveal>
-          <SectionHeading eyebrow="Escríbenos" title={<span id="escribe-title">Pregunta lo que necesites</span>} lead="Dudas sobre una fórmula, pedidos, venta al por mayor o ese producto que tus clientes te piden. Tu mensaje se abre en WhatsApp, listo para enviar." />
-          {!site.whatsappConfirmed && (
-            <p className="mt-6">
-              <Pending>número de WhatsApp definitivo de la marca</Pending>
-            </p>
-          )}
-        </Reveal>
-        <Reveal delay={100}>
-          <InquiryForm kind="contact" defaultProduct={asked} />
-        </Reveal>
+      <section aria-labelledby="escribe-title" className="border-t border-line bg-surface">
+        <div className="wrap section grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-14">
+          <Reveal>
+            <SectionHeading eyebrow="Escríbenos" title={<span id="escribe-title">Pregunta lo que necesites</span>} lead="Dudas sobre una fórmula, pedidos, venta al por mayor o ese producto que tus clientes te piden. Tu mensaje se abre en WhatsApp, listo para enviar." />
+            {!site.whatsappConfirmed && (
+              <p className="mt-5">
+                <Pending>número de WhatsApp definitivo de la marca</Pending>
+              </p>
+            )}
+          </Reveal>
+          <Reveal delay={90}>
+            <InquiryForm kind="contact" defaultProduct={asked} />
+          </Reveal>
+        </div>
       </section>
     </>
   );

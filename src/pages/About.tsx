@@ -4,7 +4,7 @@ import { ProductImage } from '@/components/ProductCard';
 import { PageHero } from '@/components/PageHero';
 import { buttonClass, GOAL_ICONS, Reveal, SectionHeading } from '@/components/ui';
 import { usePageMeta } from '@/lib/meta';
-import { countByGoal, findProduct, GOALS } from '@/lib/products';
+import { countByGoal, findProduct, GOALS, PRODUCTS } from '@/lib/products';
 
 const STEPS = [
   { Icon: IconLeaf, title: 'Ingredientes de raíz', text: 'Plantas, hongos y minerales con una larga historia de uso: maca, shilajit, cúrcuma, cardo mariano, melena de león.' },
@@ -15,81 +15,84 @@ const STEPS = [
 export function About() {
   usePageMeta({
     title: 'Nosotros — Gold Roots Nutrition',
-    description: 'Ingredientes orgánicos y resultados poderosos: qué hace Gold Roots Nutrition y cómo se usa esta vitrina.',
+    description: 'Ingredientes de raíz y fórmulas con criterio: qué hace Gold Roots Nutrition y cómo se usa esta vitrina.',
     path: '/nosotros',
   });
   const hero = findProduct('shilajit-gold')!;
 
   return (
     <>
-      <PageHero eyebrow="Nuestra historia" title="Ingredientes orgánicos. Resultados poderosos." lead="Gold Roots Nutrition crea suplementos de alta calidad para quienes esperan más que lo común.">
-        <Link to="/catalogo" className={buttonClass('sun')}>
-          Ver el catálogo <IconArrowRight size={18} aria-hidden="true" />
+      <PageHero eyebrow="Nuestra historia" title="Ingredientes de raíz. Fórmulas con criterio." lead="Gold Roots Nutrition hace suplementos para quienes esperan más que lo común: pocas fórmulas, cada una con un trabajo claro.">
+        <Link to="/catalogo" className={buttonClass('primary')}>
+          Ver el catálogo <IconArrowRight size={17} aria-hidden="true" />
         </Link>
-        <Link to="/mayoristas" className={buttonClass('ghost-light')}>
+        <Link to="/mayoristas" className={buttonClass('outline')}>
           Mayoristas
         </Link>
       </PageHero>
 
-      <section className="mx-auto grid max-w-6xl items-center gap-12 px-5 lg:grid-cols-[1.2fr_0.8fr]">
+      <section className="wrap grid items-center gap-12 py-14 sm:py-16 lg:grid-cols-[1.2fr_0.8fr]">
         <Reveal>
-          <p className="text-xl leading-relaxed text-fg/85">
-            La línea se mantiene pequeña a propósito: <strong>catorce fórmulas</strong>, cada una pensada para un objetivo claro y construida con ingredientes de larga tradición de uso. Así eliges por lo que quieres apoyar, no entre una pared de frascos parecidos.
+          <p className="text-[1.15rem] leading-relaxed text-fg/90">
+            La línea se mantiene pequeña a propósito: <strong>{PRODUCTS.length} fórmulas</strong>, cada una pensada para un objetivo claro y construida con ingredientes de larga tradición de uso. Así eliges por lo que quieres apoyar, no entre una pared de frascos parecidos.
           </p>
-          <p className="mt-5 text-xl leading-relaxed text-fg/85">
-            Todo lo que ves aquí es <strong>puro, seguro y efectivo</strong>: fórmulas enfocadas, sin relleno, en cápsulas vegetarianas y con etiquetas que dicen exactamente qué hay dentro.
+          <p className="mt-5 text-[1.15rem] leading-relaxed text-fg/90">
+            Todo lo que ves aquí es <strong>claro y verificable</strong>: fórmulas enfocadas, sin relleno, en cápsulas vegetarianas y con etiquetas que dicen exactamente qué hay dentro.
           </p>
         </Reveal>
         <Reveal delay={100}>
-          <div className={`g-${hero.goal} grad-goal grain relative grid place-items-center overflow-hidden rounded-[2.5rem] p-8 shadow-2xl`}>
-            <ProductImage product={hero} width={360} className="animate-float [--r:0deg] mx-auto h-72 w-auto object-contain" />
-            <p className="mt-4 font-display text-xl font-extrabold text-white">{hero.name}</p>
+          <div className={`g-${hero.goal} goal-block grid place-items-center overflow-hidden rounded-2xl p-8`}>
+            <ProductImage product={hero} width={360} className="mx-auto h-64 w-auto object-contain" />
+            <p className="mt-3 font-display text-[1.05rem] font-medium text-[color:var(--gi)]">{hero.name}</p>
           </div>
         </Reveal>
       </section>
 
-      <section aria-labelledby="pasos-title" className="mx-auto mt-24 max-w-6xl px-5">
-        <Reveal>
-          <SectionHeading eyebrow="Cómo funciona la línea" title={<span id="pasos-title">Tres ideas, de la raíz a tu mesa</span>} />
-        </Reveal>
-        <ol className="mt-10 grid gap-5 md:grid-cols-3">
-          {STEPS.map(({ Icon, title, text }, i) => (
-            <li key={title}>
-              <Reveal delay={i * 80} className="h-full">
-                <div className="card-lift h-full rounded-[2rem] bg-surface p-7 ring-1 ring-line">
-                  <div className="flex items-center justify-between">
-                    <span className="grad-sun grid size-14 place-items-center rounded-2xl text-night">
-                      <Icon size={28} aria-hidden="true" />
-                    </span>
-                    <span className="font-display text-5xl font-extrabold text-sand">{i + 1}</span>
+      <section aria-labelledby="pasos-title" className="border-y border-line bg-surface">
+        <div className="wrap section">
+          <Reveal>
+            <SectionHeading eyebrow="Cómo funciona la línea" title={<span id="pasos-title">Tres ideas, de la raíz a tu mesa</span>} />
+          </Reveal>
+          <ol className="mt-10 grid gap-8 md:grid-cols-3">
+            {STEPS.map(({ Icon, title, text }, i) => (
+              <li key={title}>
+                <Reveal delay={i * 70} className="h-full">
+                  <div className="h-full border-t border-line pt-5">
+                    <div className="flex items-center justify-between">
+                      <span className="grid size-10 place-items-center rounded-xl bg-sand text-fg">
+                        <Icon size={20} stroke={1.8} aria-hidden="true" />
+                      </span>
+                      <span className="font-display text-[1.6rem] leading-none font-medium text-line-strong">0{i + 1}</span>
+                    </div>
+                    <h3 className="mt-4 font-display text-[1.08rem] font-medium">{title}</h3>
+                    <p className="mt-1.5 text-[0.92rem] leading-relaxed text-muted">{text}</p>
                   </div>
-                  <h3 className="mt-5 font-display text-xl font-extrabold">{title}</h3>
-                  <p className="mt-2 leading-relaxed text-muted">{text}</p>
-                </div>
-              </Reveal>
-            </li>
-          ))}
-        </ol>
+                </Reveal>
+              </li>
+            ))}
+          </ol>
+        </div>
       </section>
 
-      <section aria-labelledby="cobertura-title" className="mx-auto mt-24 max-w-6xl px-5">
+      <section aria-labelledby="cobertura-title" className="wrap section">
         <Reveal>
-          <SectionHeading eyebrow="Cobertura" title={<span id="cobertura-title">Lo que apoyan las catorce fórmulas</span>} />
+          <SectionHeading eyebrow="Cobertura" title={<span id="cobertura-title">Lo que apoyan las {PRODUCTS.length} fórmulas</span>} />
         </Reveal>
-        <ul className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {GOALS.map((g, i) => {
             const IconG = GOAL_ICONS[g.id];
+            const n = countByGoal(g.id);
             return (
               <li key={g.id}>
-                <Reveal delay={i * 60} className="h-full">
-                  <Link to={`/catalogo?objetivo=${g.slug}`} className={`g-${g.id} card-lift flex h-full items-start gap-4 rounded-[2rem] bg-surface p-6 ring-1 ring-line`}>
-                    <span className="grad-goal grid size-12 shrink-0 place-items-center rounded-2xl text-white">
-                      <IconG size={24} aria-hidden="true" />
+                <Reveal delay={Math.min(i, 5) * 55} className="h-full">
+                  <Link to={`/catalogo?objetivo=${g.slug}`} className={`g-${g.id} card card-lift flex h-full items-start gap-4 p-5`}>
+                    <span className="goal-block text-goal grid size-10 shrink-0 place-items-center rounded-lg">
+                      <IconG size={19} stroke={1.9} aria-hidden="true" />
                     </span>
-                    <span>
-                      <span className="block font-display text-lg font-extrabold">{g.label}</span>
-                      <span className="mt-1 block text-sm text-muted">{g.blurb}</span>
-                      <span className="text-goal mt-2 block text-sm font-bold">{countByGoal(g.id)} {countByGoal(g.id) === 1 ? 'fórmula' : 'fórmulas'} →</span>
+                    <span className="min-w-0">
+                      <span className="block font-display text-[1.02rem] font-medium">{g.label}</span>
+                      <span className="mt-0.5 block text-[0.88rem] leading-snug text-muted">{g.blurb}</span>
+                      <span className="text-goal mt-2 block text-[0.82rem] font-semibold">{n} {n === 1 ? 'fórmula' : 'fórmulas'} →</span>
                     </span>
                   </Link>
                 </Reveal>
@@ -99,11 +102,11 @@ export function About() {
         </ul>
       </section>
 
-      <section className="mx-auto mt-24 max-w-3xl px-5">
-        <div className="rounded-[2rem] bg-sun/25 p-8 ring-1 ring-sun/60">
-          <h2 className="text-2xl font-extrabold">Sobre esta página</h2>
-          <p className="mt-3 leading-relaxed text-fg/80">
-            Es una vitrina informativa: no hay carrito ni pago en línea, y los pedidos se coordinan por WhatsApp. Los nombres, precios, beneficios, ingredientes y fotos provienen del catálogo de la marca; los datos de contacto, las condiciones de envío y los textos legales aún deben ser confirmados por la marca antes de salir a producción.
+      <section className="wrap pb-14">
+        <div className="rounded-2xl border border-line bg-sand p-7">
+          <h2 className="font-display text-[1.2rem] font-medium">Sobre esta página</h2>
+          <p className="mt-2.5 text-[0.95rem] leading-relaxed text-muted">
+            Es una vitrina informativa: no hay carrito ni pago en línea, y los pedidos se coordinan por WhatsApp. Los nombres, precios, beneficios, ingredientes y fotos provienen del catálogo de la marca; los datos de contacto, las condiciones de envío y los textos legales aún deben ser confirmados por la marca antes de darse por definitivos.
           </p>
         </div>
       </section>
