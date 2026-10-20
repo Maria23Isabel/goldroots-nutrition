@@ -2,7 +2,7 @@ import { IconBrandFacebook, IconBrandInstagram, IconBrandTiktok, IconBrandWhatsa
 import { useEffect, useState } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router';
 import { OrderDrawer } from './OrderDrawer';
-import { Logo, Pending, WhatsAppButton } from './ui';
+import { Logo, WhatsAppButton } from './ui';
 import { orderActions, useOrder } from '@/lib/order';
 import { GOALS, PRODUCTS } from '@/lib/products';
 import { isConfirmed, prettyPhone, site } from '@/lib/site';
@@ -217,11 +217,6 @@ function Footer() {
               </WhatsAppButton>
             </li>
           </ul>
-          {!site.whatsappConfirmed && (
-            <p className="mt-4">
-              <Pending>número definitivo de la marca</Pending>
-            </p>
-          )}
         </div>
       </div>
       <div className="wrap mt-12 border-t border-white/12 pt-7 text-[0.82rem] text-white/55">
