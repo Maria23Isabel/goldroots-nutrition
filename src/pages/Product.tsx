@@ -3,7 +3,7 @@ import { useEffect, useRef, useState, type RefObject } from 'react';
 import { Link, useParams } from 'react-router';
 import { ProductCard, ProductImage } from '@/components/ProductCard';
 import { QrCard } from '@/components/QrCard';
-import { Accordion, AddButton, buttonClass, GoalBadge, Pending, PriceTag, QtyStepper, Reveal, SectionHeading, TrustMarks, WhatsAppButton } from '@/components/ui';
+import { Accordion, AddButton, buttonClass, d, GoalBadge, Pending, PriceTag, QtyStepper, Reveal, SectionHeading, TrustMarks, WhatsAppButton } from '@/components/ui';
 import { usePageMeta } from '@/lib/meta';
 import { findProduct, goalOf, money, productPath, related, savings } from '@/lib/products';
 import { productMessage } from '@/lib/whatsapp';
@@ -85,7 +85,7 @@ export function Product() {
           {/* Foto protagonista sobre un bloque pastel plano, sin degradado ni reflejo. */}
           <div className="lg:sticky lg:top-28 lg:self-start">
             <div className="goal-block grid aspect-[4/4.2] place-items-center overflow-hidden rounded-2xl">
-              <ProductImage product={product} width={560} eager className="h-[85%] w-auto object-contain" />
+              <ProductImage product={product} width={560} eager className="float h-[85%] w-auto object-contain" />
             </div>
             <div className="mt-3 flex items-center justify-between gap-3 rounded-xl border border-line bg-surface px-4 py-2.5 text-[0.82rem] text-muted">
               <span className="flex items-center gap-2">
@@ -96,16 +96,24 @@ export function Product() {
           </div>
 
           <div>
-            <GoalBadge goal={product.goal} />
-            <h1 className="mt-3 text-[1.9rem] leading-[1.15] font-medium sm:text-[2.4rem]">{product.name}</h1>
-            <p className="mt-2 text-[1.05rem] leading-relaxed text-muted">{product.headline}</p>
+            <div className="rise" style={d(0)}>
+              <GoalBadge goal={product.goal} />
+            </div>
+            <h1 className="rise mt-3 text-[1.9rem] leading-[1.15] font-medium sm:text-[2.4rem]" style={d(60)}>
+              {product.name}
+            </h1>
+            <p className="rise mt-2 text-[1.05rem] leading-relaxed text-muted" style={d(130)}>
+              {product.headline}
+            </p>
 
-            <div className="mt-5 flex flex-wrap items-baseline gap-x-4 gap-y-1 border-y border-line py-4">
+            <div className="rise mt-5 flex flex-wrap items-baseline gap-x-4 gap-y-1 border-y border-line py-4" style={d(200)}>
               <PriceTag product={product} big />
               <p className="text-[0.82rem] text-muted">{soon ? 'Escríbenos y te pasamos el precio y la disponibilidad.' : 'Precio en dólares. El envío se calcula en el chat.'}</p>
             </div>
 
-            <p className="mt-5 text-[1rem] leading-relaxed text-fg/90">{product.summary}</p>
+            <p className="rise mt-5 text-[1rem] leading-relaxed text-fg/90" style={d(260)}>
+              {product.summary}
+            </p>
 
             <div ref={buyBox} className="mt-6 rounded-2xl border border-line bg-surface p-5">
               {soon ? (

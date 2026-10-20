@@ -3,10 +3,10 @@ import { useRef, useState } from 'react';
 import { Link } from 'react-router';
 import { FormulaFinder } from '@/components/FormulaFinder';
 import { ProductCard, ProductImage } from '@/components/ProductCard';
-import { Accordion, buttonClass, GOAL_ICONS, Reveal, SectionHeading, TrustMarks, WhatsAppButton } from '@/components/ui';
+import { Accordion, buttonClass, CountUp, d, GOAL_ICONS, Reveal, SectionHeading, TrustMarks, WhatsAppButton } from '@/components/ui';
 import { usePageMeta } from '@/lib/meta';
 import { useOrder } from '@/lib/order';
-import { countByGoal, featured, findProduct, GOALS, money, PRODUCTS, type GoalId } from '@/lib/products';
+import { countByGoal, featured, findProduct, GOALS, PRODUCTS, type GoalId } from '@/lib/products';
 import { site } from '@/lib/site';
 import { GENERAL_MESSAGE, orderMessage, type OrderLine } from '@/lib/whatsapp';
 
@@ -18,31 +18,31 @@ function Hero() {
   const hero = findProduct('shilajit-gold')!;
   const alsoOnScreen = featured().filter((p) => p.slug !== hero.slug).slice(0, 3);
   const stats = [
-    { n: String(PRODUCTS.length), label: 'fórmulas' },
-    { n: String(GOALS.length), label: 'objetivos' },
-    { n: money(cheapest).replace('.00', ''), label: 'desde' },
+    { to: PRODUCTS.length, label: 'fórmulas' },
+    { to: GOALS.length, label: 'objetivos' },
+    { to: Math.round(cheapest), prefix: 'US$ ', label: 'desde' },
   ];
   return (
     <section className="border-b border-line bg-canvas">
       <div className="wrap grid items-center gap-12 py-14 sm:py-20 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
         <div>
-          <p className="eyebrow">Suplementos en cápsulas vegetarianas</p>
-          <h1 className="mt-3 text-[2.35rem] leading-[1.08] font-medium sm:text-[3.1rem]">
+          <p className="eyebrow rise" style={d(0)}>Suplementos en cápsulas vegetarianas</p>
+          <h1 className="rise mt-3 text-[2.35rem] leading-[1.08] font-medium sm:text-[3.1rem]" style={d(70)}>
             Ingredientes de raíz.
             <span className="mt-1 block text-accent">Formulados con criterio.</span>
           </h1>
-          <p className="mt-5 max-w-xl text-[1.08rem] leading-relaxed text-muted">
+          <p className="rise mt-5 max-w-xl text-[1.08rem] leading-relaxed text-muted" style={d(150)}>
             {PRODUCTS.length} fórmulas enfocadas en energía, corazón, mente, sueño, vista y defensas. Etiquetas claras, sin relleno, y un pedido que armas aquí en segundos y envías por WhatsApp.
           </p>
-          <div className="mt-8 flex flex-wrap gap-2.5">
-            <Link to="/catalogo" className={buttonClass('primary')}>
-              Ver el catálogo <IconArrowRight size={17} aria-hidden="true" />
+          <div className="rise mt-8 flex flex-wrap gap-2.5" style={d(220)}>
+            <Link to="/catalogo" className={`${buttonClass('primary')} group`}>
+              Ver el catálogo <IconArrowRight size={17} aria-hidden="true" className="transition-transform duration-200 group-hover:translate-x-1" />
             </Link>
             <a href="#buscador" className={buttonClass('outline')}>
               <IconSearch size={17} aria-hidden="true" /> Encuentra tu fórmula
             </a>
           </div>
-          <div className="mt-9 border-t border-line pt-6">
+          <div className="rise mt-9 border-t border-line pt-6" style={d(300)}>
             <TrustMarks
               items={[
                 { Icon: IconLeaf, text: 'Cápsulas vegetarianas' },
@@ -54,21 +54,23 @@ function Hero() {
         </div>
 
         <div className="relative">
-          <div className={`g-${hero.goal} goal-block overflow-hidden rounded-[1.5rem] p-6 sm:p-10`}>
-            <ProductImage product={hero} width={520} eager className="mx-auto h-[20rem] w-auto object-contain sm:h-[26rem]" />
+          <div className={`g-${hero.goal} goal-block rise overflow-hidden rounded-[1.5rem] p-6 sm:p-10`} style={d(120)}>
+            <ProductImage product={hero} width={520} eager className="float mx-auto h-[20rem] w-auto object-contain sm:h-[26rem]" />
           </div>
           <div className="mt-3 grid grid-cols-3 gap-3">
-            {alsoOnScreen.map((p) => (
-              <Link key={p.slug} to={`/${`producto/${p.slug}`}`} className={`g-${p.goal} goal-block card group relative grid aspect-[4/3] place-items-center overflow-hidden rounded-xl transition-colors hover:ring-1 hover:ring-line-strong`}>
-                <ProductImage product={p} width={200} className="h-[68%] w-auto object-contain transition-transform duration-300 group-hover:scale-[1.05]" />
+            {alsoOnScreen.map((p, i) => (
+              <Link key={p.slug} to={`/${`producto/${p.slug}`}`} className={`g-${p.goal} card group rise relative grid aspect-[4/3] place-items-center overflow-hidden rounded-xl ring-1 ring-line transition-colors hover:ring-1 hover:ring-line-strong`} style={d(360 + i * 90)}>
+                <ProductImage product={p} width={200} className="h-[68%] w-auto object-contain transition-transform duration-300 group-hover:scale-[1.07]" />
                 <span className="absolute bottom-1.5 left-2 max-w-[90%] truncate text-[0.68rem] font-medium text-fg/70">{p.name}</span>
               </Link>
             ))}
           </div>
-          <dl className="mt-6 flex divide-x divide-line rounded-xl border border-line bg-surface">
+          <dl className="rise mt-6 flex divide-x divide-line rounded-xl border border-line bg-surface" style={d(600)}>
             {stats.map((s) => (
               <div key={s.label} className="flex-1 px-4 py-3">
-                <dd className="font-display text-[1.45rem] leading-none font-medium">{s.n}</dd>
+                <dd className="font-display text-[1.45rem] leading-none font-medium tabular-nums">
+                  <CountUp to={s.to} prefix={s.prefix ?? ''} />
+                </dd>
                 <dt className="mt-1 text-[0.78rem] text-muted">{s.label}</dt>
               </div>
             ))}
@@ -95,8 +97,8 @@ function Goals() {
             <li key={g.id}>
               <Reveal delay={Math.min(i, 5) * 50} className="h-full">
                 <Link to={`/catalogo?objetivo=${g.slug}`} className={`g-${g.id} card card-lift group flex h-full flex-col p-6`}>
-                  <span className="goal-block text-goal grid size-11 place-items-center rounded-xl transition-colors group-hover:bg-[color-mix(in_srgb,var(--gb)_70%,var(--gi))]">
-                    <IconG size={21} stroke={1.9} aria-hidden="true" />
+                  <span className="goal-block text-goal grid size-11 place-items-center rounded-xl transition-all duration-200 group-hover:-translate-y-0.5 group-hover:bg-[color-mix(in_srgb,var(--gb)_70%,var(--gi))]">
+                    <IconG size={21} stroke={1.9} aria-hidden="true" className="transition-transform duration-300 group-hover:rotate-6" />
                   </span>
                   <h3 className="mt-4 font-display text-[1.15rem] font-medium">{g.label}</h3>
                   <p className="mt-1.5 flex-1 text-[0.9rem] leading-relaxed text-muted">{g.blurb}</p>
@@ -190,18 +192,22 @@ function HowTo() {
         <div>
           <SectionHeading as="h2" eyebrow="Cómo pedir" title={<span id="como-title">Tres pasos, sin cuentas ni tarjetas</span>} lead="La vitrina no cobra: escribe tu pedido y lo coordinamos en el chat." />
           <ol className="mt-9 space-y-6">
-            {steps.map((s) => (
-              <li key={s.n} className="flex gap-5">
-                <span className="font-display text-[0.95rem] leading-none font-medium text-accent">{s.n}</span>
-                <div className="border-l border-line pl-5">
-                  <h3 className="font-display text-[1.1rem] font-medium">{s.title}</h3>
-                  <p className="mt-1 text-[0.92rem] leading-relaxed text-muted">{s.text}</p>
-                </div>
+            {steps.map((s, i) => (
+              <li key={s.n} className="group flex gap-5">
+                <Reveal delay={i * 90}>
+                  <span className="font-display text-[0.95rem] leading-none font-medium text-accent transition-transform duration-200 group-hover:scale-125">{s.n}</span>
+                </Reveal>
+                <Reveal delay={i * 90 + 60} className="flex-1">
+                  <div className="border-l border-line pl-5 transition-colors duration-200 group-hover:border-accent-soft">
+                    <h3 className="font-display text-[1.1rem] font-medium">{s.title}</h3>
+                    <p className="mt-1 text-[0.92rem] leading-relaxed text-muted">{s.text}</p>
+                  </div>
+                </Reveal>
               </li>
             ))}
           </ol>
-          <Link to="/catalogo" className={`${buttonClass('primary')} mt-9`}>
-            Empezar mi pedido <IconArrowRight size={17} aria-hidden="true" />
+          <Link to="/catalogo" className={`${buttonClass('primary')} group mt-9`}>
+            Empezar mi pedido <IconArrowRight size={17} aria-hidden="true" className="transition-transform duration-200 group-hover:translate-x-1" />
           </Link>
         </div>
 
@@ -290,11 +296,13 @@ function Ingredients() {
         <SectionHeading eyebrow="Busca por ingrediente" title={<span id="ingredientes-title">¿Ya sabes lo que buscas?</span>} lead="Toca un ingrediente y te mostramos las fórmulas que lo llevan." />
       </Reveal>
       <ul className="mt-8 flex flex-wrap gap-2">
-        {INGREDIENTS.map(([label, q]) => (
+        {INGREDIENTS.map(([label, q], i) => (
           <li key={q}>
-            <Link to={`/catalogo?q=${q}`} className="inline-flex min-h-10 items-center rounded-full border border-line-strong bg-surface px-4 text-[0.88rem] font-medium text-fg transition-colors hover:border-fg hover:bg-night hover:text-white">
-              {label}
-            </Link>
+            <Reveal delay={Math.min(i, 14) * 40}>
+              <Link to={`/catalogo?q=${q}`} className="press inline-flex min-h-10 items-center rounded-full border border-line-strong bg-surface px-4 text-[0.88rem] font-medium text-fg transition-colors hover:-translate-y-0.5 hover:border-fg hover:bg-night hover:text-white">
+                {label}
+              </Link>
+            </Reveal>
           </li>
         ))}
       </ul>
@@ -305,22 +313,27 @@ function Ingredients() {
 function WholesaleBanner() {
   return (
     <section aria-labelledby="mayor-title" className="wrap pb-4">
-      <div className="g-immune goal-block rounded-2xl p-8 sm:p-12">
-        <div className="max-w-2xl">
-          <p className="eyebrow !text-[color:var(--gi)]">Tiendas, farmacias y distribuidores</p>
-          <h2 id="mayor-title" className="mt-2 font-display text-[1.75rem] leading-[1.2] font-medium sm:text-[2.1rem]">
-            Lleva la línea a tu tienda
-          </h2>
-          <p className="mt-3 max-w-xl text-[1rem] leading-relaxed text-[color:var(--gi)]">
-            {PRODUCTS.length} fórmulas con fotos, fichas y un QR por producto listos para exhibir. Cuéntanos de tu negocio y te respondemos por WhatsApp.
-          </p>
-          <div className="mt-7">
-            <Link to="/mayoristas" className={buttonClass('night')}>
-              Quiero vender Gold Roots <IconArrowRight size={17} aria-hidden="true" />
-            </Link>
+      <Reveal>
+        <div className="g-immune goal-block relative overflow-hidden rounded-2xl p-8 sm:p-12">
+          {/* Dos manchas de color que derivan despacio: el bloque se mueve aunque el texto no. */}
+          <span aria-hidden="true" className="drift pointer-events-none absolute -right-10 -top-16 size-48 rounded-full bg-white/35 blur-2xl" />
+          <span aria-hidden="true" className="drift pointer-events-none absolute -bottom-20 left-1/3 size-56 rounded-full bg-[color:var(--gi)]/10 blur-2xl" style={{ animationDelay: '-8s' }} />
+          <div className="relative max-w-2xl">
+            <p className="eyebrow !text-[color:var(--gi)]">Tiendas, farmacias y distribuidores</p>
+            <h2 id="mayor-title" className="mt-2 font-display text-[1.75rem] leading-[1.2] font-medium sm:text-[2.1rem]">
+              Lleva la línea a tu tienda
+            </h2>
+            <p className="mt-3 max-w-xl text-[1rem] leading-relaxed text-[color:var(--gi)]">
+              {PRODUCTS.length} fórmulas con fotos, fichas y un QR por producto listos para exhibir. Cuéntanos de tu negocio y te respondemos por WhatsApp.
+            </p>
+            <div className="mt-7">
+              <Link to="/mayoristas" className={`${buttonClass('night')} group`}>
+                Quiero vender Gold Roots <IconArrowRight size={17} aria-hidden="true" className="transition-transform duration-200 group-hover:translate-x-1" />
+              </Link>
+            </div>
           </div>
         </div>
-      </div>
+      </Reveal>
     </section>
   );
 }
@@ -334,38 +347,73 @@ function Faq() {
           Preguntar por WhatsApp
         </WhatsAppButton>
       </Reveal>
-      <Reveal delay={80}>
-        <div className="border-t border-line">
+      <div className="border-t border-line">
+        <Reveal delay={60}>
           <Accordion title="¿Cómo hago mi pedido?" defaultOpen>
             Agrega las fórmulas a «Mi pedido» y toca «Enviar mi pedido por WhatsApp». Se abre el chat con la lista, las cantidades y el total referencial ya escritos; solo lo envías.
           </Accordion>
+        </Reveal>
+        <Reveal delay={110}>
           <Accordion title="¿Puedo pagar en la página?">No. Esta es una vitrina informativa: no hay carrito ni pago en línea. La disponibilidad, el envío y la forma de pago se confirman contigo en la conversación.</Accordion>
+        </Reveal>
+        <Reveal delay={160}>
           <Accordion title="¿Hacen envíos a mi país?">El envío y su costo se coordinan por WhatsApp según tu ciudad o país. Indícalo en tu pedido para que la respuesta sea más rápida.</Accordion>
+        </Reveal>
+        <Reveal delay={210}>
           <Accordion title="¿Cómo se toman las cápsulas?">Sigue siempre la indicación de la etiqueta y consulta con un profesional de la salud antes de empezar, sobre todo si estás embarazada, en lactancia o tomas medicamentos.</Accordion>
+        </Reveal>
+        <Reveal delay={260}>
           <Accordion title="¿Para qué sirve el código QR de cada producto?">Cada ficha genera un QR que abre esa misma página. Puedes imprimirlo para el envase, un exhibidor o una hoja de catálogo.</Accordion>
+        </Reveal>
+        <Reveal delay={310}>
           <Accordion title="¿Son medicamentos?">No. Son suplementos alimenticios y no están destinados a diagnosticar, tratar, curar ni prevenir ninguna enfermedad.</Accordion>
-        </div>
-      </Reveal>
+        </Reveal>
+      </div>
     </section>
   );
 }
 
 function FinalCta() {
   return (
-    <section aria-labelledby="final-title" className="border-t border-line bg-night">
-      <div className="wrap py-16 text-center sm:py-20">
-        <h2 id="final-title" className="mx-auto max-w-2xl font-display text-[1.8rem] leading-[1.2] font-medium text-white sm:text-[2.3rem]">
-          Empieza por el objetivo, no por el frasco
-        </h2>
-        <p className="mx-auto mt-3 max-w-xl text-[1.02rem] leading-relaxed text-white/65">Escoge, arma tu pedido y escríbenos. Del otro lado hay una persona lista para ayudarte.</p>
-        <div className="mt-8 flex flex-wrap justify-center gap-2.5">
-          <Link to="/catalogo" className={buttonClass('primary')}>
-            Ver el catálogo <IconArrowRight size={17} aria-hidden="true" />
-          </Link>
-          <WhatsAppButton text={GENERAL_MESSAGE} variant="light">
-            Hablar con nosotros
-          </WhatsAppButton>
-        </div>
+    <section aria-labelledby="final-title" className="relative overflow-hidden border-t border-line bg-night">
+      {/* Ambiente: tres manchas de color que derivan muy despacio detrás del cierre. */}
+      <span aria-hidden="true" className="drift pointer-events-none absolute -left-16 top-4 size-64 rounded-full bg-[#f7efdc]/12 blur-3xl" />
+      <span aria-hidden="true" className="drift pointer-events-none absolute -bottom-16 -right-12 size-72 rounded-full bg-[#e4f0e7]/14 blur-3xl" style={{ animationDelay: '-7s' }} />
+      <span aria-hidden="true" className="drift pointer-events-none absolute left-1/2 top-1/3 size-56 rounded-full bg-accent/12 blur-3xl" style={{ animationDelay: '-12s' }} />
+      <div className="wrap relative py-16 text-center sm:py-20">
+        <Reveal>
+          <h2 id="final-title" className="mx-auto max-w-2xl font-display text-[1.8rem] leading-[1.2] font-medium text-white sm:text-[2.3rem]">
+            Empieza por el objetivo, no por el frasco
+          </h2>
+        </Reveal>
+        <Reveal delay={70}>
+          <p className="mx-auto mt-3 max-w-xl text-[1.02rem] leading-relaxed text-white/65">Escoge, arma tu pedido y escríbenos. Del otro lado hay una persona lista para ayudarte.</p>
+        </Reveal>
+        <Reveal delay={140}>
+          <ul className="mx-auto mt-8 flex max-w-2xl flex-wrap justify-center gap-2">
+            {GOALS.map((g) => {
+              const IconG = GOAL_ICONS[g.id];
+              return (
+                <li key={g.id}>
+                  <Link to={`/catalogo?objetivo=${g.slug}`} className="press inline-flex min-h-10 items-center gap-2 rounded-full border border-white/20 px-4 text-[0.85rem] font-medium text-white/80 transition-colors hover:-translate-y-0.5 hover:border-white hover:bg-white hover:text-night">
+                    <IconG size={16} stroke={1.9} aria-hidden="true" />
+                    {g.short}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </Reveal>
+        <Reveal delay={210}>
+          <div className="mt-8 flex flex-wrap justify-center gap-2.5">
+            <Link to="/catalogo" className={`${buttonClass('primary')} group`}>
+              Ver el catálogo <IconArrowRight size={17} aria-hidden="true" className="transition-transform duration-200 group-hover:translate-x-1" />
+            </Link>
+            <WhatsAppButton text={GENERAL_MESSAGE} variant="light">
+              Hablar con nosotros
+            </WhatsAppButton>
+          </div>
+        </Reveal>
       </div>
     </section>
   );

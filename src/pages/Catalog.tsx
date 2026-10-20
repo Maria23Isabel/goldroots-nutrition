@@ -2,7 +2,7 @@ import { IconLayoutGrid, IconList, IconSearch, IconX } from '@tabler/icons-react
 import { useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router';
 import { ProductCard, ProductImage } from '@/components/ProductCard';
-import { AddButton, buttonClass, GOAL_ICONS, GoalBadge, PriceTag } from '@/components/ui';
+import { AddButton, buttonClass, d, GOAL_ICONS, GoalBadge, PriceTag } from '@/components/ui';
 import { usePageMeta } from '@/lib/meta';
 import { countByGoal, goalBySlug, GOALS, PRODUCTS, productPath, searchProducts, type GoalId, type SortId } from '@/lib/products';
 
@@ -150,8 +150,8 @@ export function Catalog() {
           </ul>
         ) : (
           <ul className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {results.map((p) => (
-              <li key={p.slug}>
+            {results.map((p, i) => (
+              <li key={p.slug} className="rise" style={d(Math.min(i, 8) * 55)}>
                 <ProductCard product={p} />
               </li>
             ))}

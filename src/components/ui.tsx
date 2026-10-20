@@ -14,7 +14,7 @@ import {
   IconLeaf,
   type Icon,
 } from '@tabler/icons-react';
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { Link } from 'react-router';
 import { MAX_QTY, orderActions } from '@/lib/order';
 import { goalOf, money, percentOff, type GoalId, type Product } from '@/lib/products';
@@ -28,6 +28,9 @@ export const GOAL_ICONS: Record<GoalId, Icon> = {
   'eye-skin': IconEye,
   immune: IconShieldCheck,
 };
+
+/** Retardo de la entrada escalonada (.rise en styles.css). */
+export const d = (ms: number) => ({ '--d': `${ms}ms` }) as CSSProperties;
 
 /** Aparece suavemente al entrar en pantalla; respeta «reducir movimiento» con la media query de styles.css. */
 export function Reveal({ children, className = '', delay = 0 }: { children: ReactNode; className?: string; delay?: number }) {
@@ -52,6 +55,45 @@ export function Reveal({ children, className = '', delay = 0 }: { children: Reac
     <div ref={ref} className={`reveal ${className}`} style={{ transitionDelay: `${delay}ms` }}>
       {children}
     </div>
+  );
+}
+
+/** Cuenta hasta el número cuando el bloque entra en pantalla; con «reducir movimiento» lo muestra de una. */
+export function CountUp({ to, decimals = 0, prefix = '', suffix = '', duration = 1200, className = '' }: { to: number; decimals?: number; prefix?: string; suffix?: string; duration?: number; className?: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const [n, setN] = useState(0);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const quiet = typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (quiet || typeof IntersectionObserver === 'undefined') return void setN(to);
+    let raf = 0;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((e) => e.isIntersecting)) return;
+        io.disconnect();
+        const t0 = performance.now();
+        const step = (now: number) => {
+          const p = Math.min(1, (now - t0) / duration);
+          setN(to * (1 - Math.pow(1 - p, 3)));
+          if (p < 1) raf = requestAnimationFrame(step);
+        };
+        raf = requestAnimationFrame(step);
+      },
+      { threshold: 0.4 },
+    );
+    io.observe(el);
+    return () => {
+      io.disconnect();
+      cancelAnimationFrame(raf);
+    };
+  }, [to, duration]);
+  return (
+    <span ref={ref} className={className}>
+      {prefix}
+      {n.toFixed(decimals)}
+      {suffix}
+    </span>
   );
 }
 
@@ -89,7 +131,7 @@ const VARIANTS: Record<Variant, string> = {
 };
 
 export const buttonClass = (variant: Variant = 'primary', extra = '') =>
-  `inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-5 whitespace-nowrap text-[0.9rem] font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${VARIANTS[variant]} ${extra}`;
+  `press inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-5 whitespace-nowrap text-[0.9rem] font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${VARIANTS[variant]} ${extra}`;
 
 export function WhatsAppButton({ text, children, variant = 'wa', className = '' }: { text: string; children: ReactNode; variant?: Variant; className?: string }) {
   return (
