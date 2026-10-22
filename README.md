@@ -38,9 +38,16 @@ El hosting es Cloudflare (Worker de solo archivos, `wrangler.jsonc`):
 
 ```bash
 npx wrangler login          # una vez
-npm run desplegar           # QA: dirección *.workers.dev, con X-Robots-Tag: noindex en dist/_headers
-npm run desplegar:dominio   # goldrootsvitamins.com y www (solo cuando toque producción)
+npm run desplegar:qa        # QA: Worker aparte goldroots-nutrition-qa (wrangler.qa.jsonc), con noindex; no toca producción
+npm run desplegar           # Worker goldroots-nutrition en *.workers.dev (con noindex)
+npm run desplegar:dominio   # goldrootsvitamins.com y www (solo cuando toque producción, con aprobación)
 ```
+
+Antes de desplegar: `npm run typecheck && npm test && npm run build`. Las cabeceras de seguridad y de caché (`dist/_headers`) las genera `scripts/cabeceras.mjs` según el ambiente; los 301 de rutas viejas, `scripts/postbuild.mjs`.
+
+### Rendimiento (QA, Lighthouse 12, 22 oct 2026)
+
+Móvil (4G simulada, CPU ×4): Performance 82, Accesibilidad 100, Buenas prácticas 100, LCP 3,7 s (**por encima de 2,5 s**), CLS 0, TBT 150 ms. Escritorio: Performance 99, LCP 0,9 s, CLS 0,001. SEO sale 69 solo porque QA lleva `noindex` a propósito. Carga inicial ≈ 80 KB de JS comprimido: las páginas y las escenas pesadas se cargan bajo demanda (`src/lib/lazy.tsx`), las funciones de layout de Motion aparte (`LayoutMotion`) y las fuentes van locales en `src/assets/fonts/`. INP no se midió (hace falta interacción real).
 
 `VITE_SITE_URL` se usa para el QR, el `canonical`, los `og:` y el sitemap. Sin esa variable el QR toma el origen por el que se está navegando. Cada ruta limpia lleva su propia carpeta con `index.html` (la escribe `scripts/postbuild.mjs`) y `404.html` cubre las direcciones escritas a mano que no cuadran.
 
@@ -69,7 +76,7 @@ El sitio también se publica en Cloudflare como Worker de solo archivos (`wrangl
 
 ```bash
 npx wrangler login          # una vez
-npm run desplegar           # dirección de pruebas *.workers.dev (con noindex)
+npm run desplegar:qa        # QA aparte (goldroots-nutrition-qa), con noindex
 npm run desplegar:dominio   # goldrootsvitamins.com y www (el dominio tiene que estar ya en la cuenta de Cloudflare)
 ```
 
