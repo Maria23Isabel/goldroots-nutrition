@@ -3,7 +3,7 @@ import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import raw from '@/data/productos.generado.json';
 import { PRODUCTOS_ES } from '@/data/productos.es';
-import { rank } from '@/components/FormulaFinder';
+import { rank } from '@/lib/showcase';
 import { GOALS, PRODUCTS, absoluteUrl, countByGoal, featured, findProduct, goalBySlug, goalOf, plain, productPath, related, searchProducts } from '@/lib/products';
 import { GENERAL_MESSAGE, inquiryMessage, waLink } from '../src/lib/whatsapp';
 

@@ -1,6 +1,9 @@
 import { IconBolt, IconBrain, IconBrandWhatsapp, IconChevronDown, IconEye, IconHeartbeat, IconMoon, IconShieldCheck, type Icon } from '@tabler/icons-react';
-import { useEffect, useRef, useState, type CSSProperties, type ReactNode, type SVGProps } from 'react';
+import { useEffect, useId, useRef, useState, type CSSProperties, type ReactNode, type SVGProps } from 'react';
+import { AnimatePresence } from 'motion/react';
+import * as m from 'motion/react-m';
 import { Link } from 'react-router';
+import { EASE_OUT } from '@/lib/motion';
 import { asset, goalOf, type GoalId } from '@/lib/products';
 import { waLink, INFO_MESSAGE } from '@/lib/whatsapp';
 
@@ -15,28 +18,22 @@ export const GOAL_ICONS: Record<GoalId, Icon> = {
 
 export const d = (ms: number) => ({ '--d': `${ms}ms` }) as CSSProperties;
 
-export function Reveal({ children, className = '', delay = 0 }: { children: ReactNode; className?: string; delay?: number }) {
-  const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    if (typeof IntersectionObserver === 'undefined') return void el.classList.add('in');
-    const io = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((entry) => entry.isIntersecting)) {
-          el.classList.add('in');
-          io.disconnect();
-        }
-      },
-      { threshold: 0.1, rootMargin: '0px 0px -40px' },
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
+/** Cinco maneras de entrar, para que no todo aparezca con el mismo fundido: sube, se destapa de arriba a abajo, entra de lado, crece o solo se aclara. */
+export type RevealKind = 'rise' | 'mask' | 'slide' | 'scale' | 'fade';
+const REVEALS = {
+  rise: { hidden: { opacity: 0, y: 30 }, show: { opacity: 1, y: 0 } },
+  mask: { hidden: { opacity: 0, clipPath: 'inset(0 0 100% 0)', y: 14 }, show: { opacity: 1, clipPath: 'inset(0 0 0% 0)', y: 0 } },
+  slide: { hidden: { opacity: 0, x: -42 }, show: { opacity: 1, x: 0 } },
+  scale: { hidden: { opacity: 0, scale: 0.93 }, show: { opacity: 1, scale: 1 } },
+  fade: { hidden: { opacity: 0 }, show: { opacity: 1 } },
+} as const;
+
+/** Entra una sola vez al acercarse a la pantalla. El movimiento (no la opacidad) se apaga solo con «reducir movimiento». */
+export function Reveal({ children, className = '', delay = 0, kind = 'rise' }: { children: ReactNode; className?: string; delay?: number; kind?: RevealKind }) {
   return (
-    <div ref={ref} className={`reveal ${className}`} style={{ transitionDelay: `${delay}ms` }}>
+    <m.div className={className} initial="hidden" whileInView="show" viewport={{ once: true, margin: '0px 0px -12% 0px' }} variants={REVEALS[kind]} transition={{ duration: 0.8, delay: delay / 1000, ease: EASE_OUT }}>
       {children}
-    </div>
+    </m.div>
   );
 }
 
@@ -72,7 +69,7 @@ export function CountUp({ to, suffix = '', duration = 1200, className = '' }: { 
 export function Logo({ onDark = false }: { onDark?: boolean }) {
   return (
     <Link to="/" aria-label="Gold Roots Nutrition, inicio" className="inline-flex items-center">
-      <img src={asset('brand/logo-gold.webp')} alt="Gold Roots" width="196" height="74" className={`h-10 w-auto object-contain ${onDark ? 'brightness-125' : ''}`} />
+      <img src={asset('brand/logo-gold-240.webp')} alt="Gold Roots" width="240" height="108" className={`h-10 w-auto object-contain ${onDark ? 'brightness-125' : ''}`} />
     </Link>
   );
 }
@@ -118,12 +115,12 @@ const VARIANTS: Record<Variant, string> = {
 };
 
 export const buttonClass = (variant: Variant = 'primary', extra = '') =>
-  `press inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-5 whitespace-nowrap text-[0.88rem] font-semibold transition-colors ${VARIANTS[variant]} ${extra}`;
+  `press btn-shine group relative isolate inline-flex min-h-11 items-center justify-center gap-2 overflow-hidden rounded-full px-5 whitespace-nowrap text-[0.88rem] font-semibold transition-colors ${VARIANTS[variant]} ${extra}`;
 
-export function WhatsAppButton({ text, children, variant = 'wa', className = '' }: { text: string; children: ReactNode; variant?: Variant; className?: string }) {
+export function WhatsAppButton({ text, children, variant = 'wa', className = '', icon = true }: { text: string; children: ReactNode; variant?: Variant; className?: string; icon?: boolean }) {
   return (
     <a href={waLink(text)} target="_blank" rel="noopener noreferrer" className={buttonClass(variant, className)}>
-      <IconBrandWhatsapp size={18} aria-hidden="true" />
+      {icon && <IconBrandWhatsapp size={18} aria-hidden="true" />}
       {children}
       <span className="sr-only"> (se abre en una pestaña nueva)</span>
     </a>
@@ -157,17 +154,26 @@ export function GoalBadge({ goal, small = false }: { goal: GoalId; small?: boole
 
 export function Accordion({ title, children, defaultOpen = false }: { title: string; children: ReactNode; defaultOpen?: boolean }) {
   const [open, setOpen] = useState(defaultOpen);
+  const id = useId();
   return (
     <div className="border-b border-line last:border-0">
       <h3>
-        <button type="button" aria-expanded={open} onClick={() => setOpen(!open)} className="flex w-full items-center justify-between gap-6 py-5 text-left font-display text-[1.05rem] font-medium text-fg">
-          {title}
-          <IconChevronDown size={18} aria-hidden="true" className={`shrink-0 text-muted transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
+        <button type="button" aria-expanded={open} aria-controls={`${id}-panel`} onClick={() => setOpen(!open)} className="group flex w-full items-center justify-between gap-6 py-5 text-left font-display text-[1.05rem] font-medium text-fg">
+          <span className="transition-colors group-hover:text-accent-deep">{title}</span>
+          <span className={`grid size-8 shrink-0 place-items-center rounded-full border transition-all duration-300 ${open ? 'rotate-180 border-accent bg-accent-soft text-accent-deep' : 'border-line-strong text-muted group-hover:border-night'}`}>
+            <IconChevronDown size={16} aria-hidden="true" />
+          </span>
         </button>
       </h3>
-      <div className={`grid transition-[grid-template-rows] duration-250 ${open ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
-        <div className="overflow-hidden"><div className="max-w-2xl pb-5 text-[0.95rem] leading-relaxed text-muted">{children}</div></div>
-      </div>
+      <AnimatePresence initial={false}>
+        {open && (
+          <m.div id={`${id}-panel`} key="panel" initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.34, ease: EASE_OUT }} className="overflow-hidden">
+            <m.div initial={{ y: -8 }} animate={{ y: 0 }} exit={{ y: -8 }} transition={{ duration: 0.34, ease: EASE_OUT }} className="max-w-2xl pb-5 text-[0.95rem] leading-relaxed text-muted">
+              {children}
+            </m.div>
+          </m.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

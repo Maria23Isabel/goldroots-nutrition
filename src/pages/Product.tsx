@@ -5,7 +5,7 @@ import { QrCard } from '@/components/QrCard';
 import { Accordion, buttonClass, d, GoalBadge, Reveal, SectionHeading, TrustMarks } from '@/components/ui';
 import { usePageMeta } from '@/lib/meta';
 import { findProduct, goalOf, productPath, related } from '@/lib/products';
-import { NotFound } from './Legal';
+import { NotFound } from './NotFound';
 
 export function Product() {
   const { slug } = useParams();

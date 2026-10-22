@@ -3,18 +3,15 @@ import { useMemo, useState } from 'react';
 import { Link } from 'react-router';
 import { ProductImage } from './ProductCard';
 import { GOAL_ICONS, SectionHeading, buttonClass } from './ui';
-import { countByGoal, goalOf, GOALS, PRODUCTS, productPath, type GoalId, type Product } from '@/lib/products';
-
-export function rank(goal: GoalId): Product[] {
-  return PRODUCTS.filter((product) => product.goal === goal).sort((a, b) => Number(b.featured) - Number(a.featured) || a.name.localeCompare(b.name, 'es'));
-}
+import { countByGoal, goalOf, GOALS, productPath, type GoalId } from '@/lib/products';
+import { rank } from '@/lib/showcase';
 
 export function FormulaFinder() {
   const [goal, setGoal] = useState<GoalId>('energy');
   const matches = useMemo(() => rank(goal), [goal]);
 
   return (
-    <section id="explorador" aria-labelledby="explorador-title" className="wrap section">
+    <section aria-labelledby="explorador-title" className="wrap section">
       <SectionHeading eyebrow="Explorador" title={<span id="explorador-title">Empieza por lo que quieres conocer</span>} lead="Selecciona un objetivo y revisa las fórmulas relacionadas. La elección final debe considerar la etiqueta y la orientación de un profesional de la salud." />
       <div className="scroll-x -mx-5 mt-8 flex gap-2 overflow-x-auto px-5 pb-2 sm:mx-0 sm:px-0" role="group" aria-label="Elegir objetivo">
         {GOALS.map((item) => {

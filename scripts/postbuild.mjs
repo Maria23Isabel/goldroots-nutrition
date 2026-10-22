@@ -28,9 +28,19 @@ for (const ruta of ROUTAS) {
   writeFileSync(resolve(carpeta, 'index.html'), pagina);
 }
 writeFileSync(resolve(DIST, '.nojekyll'), '');
-// Las dos rutas comerciales que ya no existen llevan al catálogo informativo: Cloudflare lee _redirects
-// (GitHub Pages lo ignora, pero ahí ya devolvía 404).
-writeFileSync(resolve(DIST, '_redirects'), ['/mayoristas  /catalogo  301', '/mayoristas/ /catalogo  301', '/wholesale  /catalogo  301', '/wholesale/ /catalogo  301', ''].join('\n'));
+// Cloudflare lee _redirects (GitHub Pages lo ignora): las rutas comerciales que ya no existen y las direcciones en inglés de la
+// primera versión (con sus QR ya impresos) llevan por 301 a su página nueva, con barra final para no dar un segundo salto.
+const REDIRECCIONES = [
+  ['/mayoristas', '/catalogo/'],
+  ['/wholesale', '/catalogo/'],
+  ['/catalog', '/catalogo/'],
+  ['/about', '/nosotros/'],
+  ['/contact', '/contacto/'],
+];
+writeFileSync(
+  resolve(DIST, '_redirects'),
+  [...REDIRECCIONES.flatMap(([desde, hacia]) => [`${desde} ${hacia} 301`, `${desde}/ ${hacia} 301`]), '/product/:slug /producto/:slug/ 301', '/product/:slug/ /producto/:slug/ 301', ''].join('\n'),
+);
 writeFileSync(resolve(DIST, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${ROUTAS.map((r) => `  <url><loc>${url(r)}</loc></url>`).join('\n')}

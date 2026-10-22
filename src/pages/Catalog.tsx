@@ -1,9 +1,11 @@
 import { IconArrowRight, IconLayoutGrid, IconList, IconSearch, IconX } from '@tabler/icons-react';
+import * as m from 'motion/react-m';
 import { useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router';
 import { ProductCard, ProductImage } from '@/components/ProductCard';
 import { buttonClass, d, GOAL_ICONS, GoalBadge } from '@/components/ui';
 import { usePageMeta } from '@/lib/meta';
+import { LayoutMotion } from '@/lib/motion';
 import { asset, countByGoal, goalBySlug, GOALS, PRODUCTS, productPath, searchProducts, type GoalId, type SortId } from '@/lib/products';
 
 const SORTS: { id: SortId; label: string }[] = [
@@ -33,10 +35,13 @@ export function Catalog() {
     path: '/catalogo',
   });
 
-  const chip = (active: boolean) => `inline-flex shrink-0 items-center gap-2 rounded-full px-3.5 py-2 text-[0.84rem] font-semibold transition-colors ${active ? 'bg-night text-white' : 'border border-line-strong bg-surface text-muted hover:border-night hover:text-night'}`;
+  /* La pastilla oscura del filtro activo es un solo nodo que viaja de una categoría a otra: al cambiar de objetivo
+     no aparece y desaparece un fondo, se mueve. El rótulo va por encima porque también está posicionado. */
+  const chip = (active: boolean) => `relative inline-flex shrink-0 items-center gap-2 rounded-full px-3.5 py-2 text-[0.84rem] font-semibold transition-colors ${active ? 'text-white' : 'border border-line-strong bg-surface text-muted hover:border-night hover:text-night'}`;
+  const pill = <m.span layoutId="chip-pill" transition={{ type: 'spring', stiffness: 380, damping: 32 }} aria-hidden="true" className="absolute inset-0 rounded-full bg-night" />;
 
   return (
-    <>
+    <LayoutMotion>
       <header className="catalog-hero border-b border-line">
         <div className="wrap py-16 sm:py-20 lg:py-24">
           <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_17rem] lg:items-end lg:gap-16">
@@ -89,10 +94,10 @@ export function Catalog() {
             </div>
           </div>
           <div role="group" aria-label="Filtrar por objetivo" className="scroll-x -mx-1 mt-2.5 flex gap-2 overflow-x-auto px-1 pb-1">
-            <button type="button" aria-pressed={goal === 'all'} onClick={() => set({ objetivo: null })} className={chip(goal === 'all')}>Todas <span className="opacity-70">{PRODUCTS.length}</span></button>
+            <button type="button" aria-pressed={goal === 'all'} onClick={() => set({ objetivo: null })} className={chip(goal === 'all')}>{goal === 'all' && pill}<span className="relative">Todas</span> <span className="relative opacity-70">{PRODUCTS.length}</span></button>
             {GOALS.map((item) => {
               const GoalIcon = GOAL_ICONS[item.id];
-              return <button key={item.id} type="button" aria-pressed={goal === item.id} onClick={() => set({ objetivo: item.slug })} className={chip(goal === item.id)}><GoalIcon size={15} aria-hidden="true" />{item.short}<span className="opacity-70">{countByGoal(item.id)}</span></button>;
+              return <button key={item.id} type="button" aria-pressed={goal === item.id} onClick={() => set({ objetivo: item.slug })} className={chip(goal === item.id)}>{goal === item.id && pill}<GoalIcon size={15} className="relative" aria-hidden="true" /><span className="relative">{item.short}</span><span className="relative opacity-70">{countByGoal(item.id)}</span></button>;
             })}
           </div>
         </div>
@@ -105,9 +110,9 @@ export function Catalog() {
         ) : view === 'lista' ? (
           <ul className="mt-6 space-y-3">{results.map((product) => <li key={product.slug} className={`g-${product.goal} card flex items-center gap-5 p-3 sm:p-4`}><Link to={`/${productPath(product.slug)}`} className="goal-block grid size-24 shrink-0 place-items-center overflow-hidden rounded-2xl sm:size-28"><ProductImage product={product} width={220} className="h-full w-full object-contain p-2" /></Link><div className="min-w-0 flex-1"><GoalBadge goal={product.goal} small /><h2 className="mt-2 text-[1.08rem]"><Link to={`/${productPath(product.slug)}`} className="hover:text-accent-deep">{product.name}</Link></h2><p className="mt-1 line-clamp-2 text-[0.87rem] text-muted">{product.tagline}</p></div><Link to={`/${productPath(product.slug)}`} className="hidden items-center gap-2 pr-4 text-[0.82rem] font-semibold sm:flex">Ver ficha <IconArrowRight size={15} aria-hidden="true" /></Link></li>)}</ul>
         ) : (
-          <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">{results.map((product, index) => <li key={product.slug} className="rise" style={d(Math.min(index, 8) * 45)}><ProductCard product={product} /></li>)}</ul>
+          <ul key={`${goal}-${query}-${sort}`} className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">{results.map((product, index) => <li key={product.slug} className="rise" style={d(Math.min(index, 8) * 45)}><ProductCard product={product} /></li>)}</ul>
         )}
       </section>
-    </>
+    </LayoutMotion>
   );
 }

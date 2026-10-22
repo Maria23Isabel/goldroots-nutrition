@@ -5,6 +5,9 @@ export const GENERAL_MESSAGE = `Hola, ${site.brand}. Quisiera hacer una consulta
 /** El mensaje precargado del botón flotante, tal como lo pidió la marca. */
 export const INFO_MESSAGE = 'Hola, quisiera recibir información sobre los productos Gold Roots';
 
+/** El mensaje de información con el nombre de la fórmula por la que se pregunta. */
+export const infoAbout = (name: string) => `${INFO_MESSAGE} (${name})`;
+
 export function inquiryMessage(input: { name: string; message: string; product?: string }): string {
   const lines = [`Hola, ${site.brand}. Me llamo ${input.name.trim()}.`];
   if (input.product) lines.push(`Fórmula de interés: ${input.product}`);

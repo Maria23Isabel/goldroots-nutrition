@@ -1,8 +1,5 @@
-import { IconLeaf } from '@tabler/icons-react';
-import { Link, useParams } from 'react-router';
-import { buttonClass } from '@/components/ui';
+import { useParams } from 'react-router';
 import { usePageMeta } from '@/lib/meta';
-import { PRODUCTS } from '@/lib/products';
 
 const FDA = 'Estas declaraciones no han sido evaluadas por la Administración de Alimentos y Medicamentos de EE. UU. (FDA). Estos productos no están destinados a diagnosticar, tratar, curar ni prevenir ninguna enfermedad.';
 
@@ -33,9 +30,4 @@ export function Legal() {
   usePageMeta({ title: `${content.title} — Gold Roots Nutrition`, description: `${content.title} del sitio informativo de Gold Roots Nutrition.`, path: `/legal/${key}` });
 
   return <article className="wrap max-w-3xl py-16 sm:py-24"><p className="eyebrow text-accent-deep">Legal</p><h1 className="mt-4 text-[clamp(2.5rem,5vw,4.6rem)] leading-[0.98]">{content.title}</h1><p className="mt-5 inline-block rounded-full bg-accent-soft px-3 py-1.5 text-[0.8rem] font-semibold text-accent-deep">Borrador pendiente de revisión por la marca.</p>{content.blocks.map((block) => <section key={block.h} className="mt-10 border-t border-line pt-7"><h2 className="text-[1.3rem]">{block.h}</h2>{block.p.map((text) => <p key={text} className="mt-3 text-[0.96rem] leading-relaxed text-muted">{text}</p>)}</section>)}</article>;
-}
-
-export function NotFound() {
-  usePageMeta({ title: 'Página no encontrada — Gold Roots Nutrition', description: 'Esta página no existe en el sitio de Gold Roots Nutrition.', path: '/' });
-  return <div className="wrap grid max-w-2xl place-items-center py-24 text-center"><IconLeaf size={40} stroke={1.6} className="text-accent-deep" aria-hidden="true" /><p className="eyebrow mt-5">Error 404</p><h1 className="mt-3 text-[2.2rem] sm:text-[3rem]">No encontramos esa página</h1><p className="mt-4 text-[0.98rem] text-muted">El catálogo contiene las fichas disponibles actualmente.</p><div className="mt-8 flex flex-wrap justify-center gap-3"><Link to="/catalogo" className={buttonClass('primary')}>Ver las {PRODUCTS.length} fórmulas</Link><Link to="/" className={buttonClass('outline')}>Volver al inicio</Link></div></div>;
 }

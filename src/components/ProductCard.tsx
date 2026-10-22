@@ -1,6 +1,7 @@
 import { IconArrowUpRight } from '@tabler/icons-react';
 import { Link } from 'react-router';
 import { GoalBadge } from './ui';
+import { useCursorCard } from '@/lib/cursor';
 import { asset, productPath, type Product } from '@/lib/products';
 
 export function ProductImage({ product, width = 480, eager = false, className = '' }: { product: Product; width?: number; eager?: boolean; className?: string }) {
@@ -9,8 +10,10 @@ export function ProductImage({ product, width = 480, eager = false, className = 
 }
 
 export function ProductCard({ product, className = '' }: { product: Product; className?: string }) {
+  // La tarjeta sigue al cursor (luz dorada e inclinación mínima) solo con mouse; en el celular queda quieta.
+  const cursor = useCursorCard<HTMLElement>(3.5);
   return (
-    <article className={`g-${product.goal} card card-lift group flex h-full flex-col overflow-hidden ${className}`}>
+    <article {...cursor} className={`g-${product.goal} card tilt spot group flex h-full flex-col overflow-hidden hover:shadow-[0_1px_2px_rgb(30_43_60/0.06),0_22px_44px_-22px_rgb(34_55_92/0.36),inset_0_0_0_1px_var(--color-line-strong)] ${className}`}>
       <Link to={`/${productPath(product.slug)}`} aria-label={`Ver ficha de ${product.name}`} className="block">
         <div className="goal-block relative grid aspect-[4/3.6] place-items-center overflow-hidden">
           <ProductImage product={product} className="absolute inset-0 size-full object-contain p-5 transition-transform duration-500 group-hover:scale-[1.045]" />
