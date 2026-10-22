@@ -73,7 +73,7 @@ describe('sigue siendo una vitrina informativa: nada de tienda', () => {
   });
 
   it('las fotos y el favicon de las tres hojas existen', () => {
-    for (const archivo of ['favicon.svg', 'favicon.ico', 'icon-32.png', 'apple-touch-icon.png', 'brand/hero-cover.webp', 'brand/hero-cover-640.webp', 'brand/logo-gold-240.webp', 'brand/floating.webp', 'brand/zinc-scene.webp']) {
+    for (const archivo of ['favicon.svg', 'favicon.ico', 'icon-32.png', 'apple-touch-icon.png', 'brand/hero-gold.webp', 'brand/hero-gold-640.webp', 'brand/logo-gold-240.webp', 'brand/floating.webp', 'brand/zinc-scene.webp']) {
       expect(existsSync(resolve('public', archivo)), archivo).toBe(true);
     }
   });

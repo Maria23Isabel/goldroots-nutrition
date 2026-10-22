@@ -5,9 +5,9 @@ import { statSync } from 'node:fs';
 import sharp from 'sharp';
 
 const TAREAS = [
-  { de: 'fuentes/hero-cover.jpg', a: 'public/brand/hero-cover.webp', ancho: 1600, calidad: 84 },
-  { de: 'fuentes/hero-cover.jpg', a: 'public/brand/hero-cover-900.webp', ancho: 900, calidad: 82 },
-  { de: 'fuentes/hero-cover.jpg', a: 'public/brand/hero-cover-640.webp', ancho: 640, calidad: 80 },
+  { de: 'fuentes/hero-gold.jpg', a: 'public/brand/hero-gold.webp', ancho: 1600, calidad: 84 },
+  { de: 'fuentes/hero-gold.jpg', a: 'public/brand/hero-gold-900.webp', ancho: 900, calidad: 82 },
+  { de: 'fuentes/hero-gold.jpg', a: 'public/brand/hero-gold-640.webp', ancho: 640, calidad: 80 },
   { de: 'public/brand/floating.webp', a: 'public/brand/floating-640.webp', ancho: 640, calidad: 80 },
   { de: 'fuentes/logo-gold.webp', a: 'public/brand/logo-gold-240.webp', ancho: 240, calidad: 90 },
 ];

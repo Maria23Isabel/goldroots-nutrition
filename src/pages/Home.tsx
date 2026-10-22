@@ -70,8 +70,8 @@ function GoalCard({ goal, index }: { goal: (typeof GOALS)[number]; index: number
 function BrandMoment() {
   return (
     <section className="wrap section" aria-labelledby="brand-title">
-      <div className="grid overflow-hidden rounded-[2rem] border border-line bg-surface lg:grid-cols-[0.78fr_1.22fr]">
-        <div className="flex flex-col justify-center p-8 sm:p-12 lg:p-14">
+      <div className="overflow-hidden rounded-[2rem] border border-line bg-surface">
+        <div className="grid gap-10 p-8 sm:p-12 lg:grid-cols-[1.15fr_0.85fr] lg:items-end lg:gap-16 lg:p-14">
           <Reveal kind="slide">
             <p className="eyebrow text-accent-deep">La colección completa</p>
             <h2 id="brand-title" className="mt-4 text-[clamp(2.2rem,4.5vw,4rem)] leading-[0.98]">
@@ -80,7 +80,7 @@ function BrandMoment() {
             <p className="mt-5 max-w-lg text-[1rem] leading-relaxed text-muted">Frascos, ingredientes y fichas conviven en un sistema consistente para que comparar resulte más simple.</p>
           </Reveal>
           <Reveal kind="scale" delay={120}>
-            <dl className="mt-9 grid grid-cols-2 gap-5 border-t border-line pt-7">
+            <dl className="grid grid-cols-2 gap-5 border-t border-line pt-7">
               <div>
                 <dd className="font-display text-4xl text-night">
                   <CountUp to={PRODUCTS.length} />
@@ -96,11 +96,9 @@ function BrandMoment() {
             </dl>
           </Reveal>
         </div>
-        {/* La foto respira sola al entrar y se corre apenas al pasar el puntero: nada de saltos de layout. */}
-        <m.div initial={{ opacity: 0, scale: 1.08 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true, margin: '-15%' }} transition={{ duration: 1.2, ease: [0.22, 0.61, 0.36, 1] }} className="relative aspect-[16/9] overflow-hidden bg-[#f1eee7] lg:aspect-auto lg:min-h-[30rem]">
-          <img src={asset('brand/lineup-premium.webp')} srcSet={`${asset('brand/lineup-premium-900.webp')} 900w, ${asset('brand/lineup-premium.webp')} 1600w`} sizes="(max-width: 1024px) 100vw, 56vw" width="1600" height="914" loading="lazy" decoding="async" alt="La colección Gold Roots completa, con sus frascos al frente y sus ingredientes alrededor" className="absolute inset-0 size-full object-cover object-left transition-transform duration-700 hover:scale-[1.02]" />
-          {/* El degradado de la izquierda es lo que hace que la foto salga del panel blanco en vez de cortarse en seco. */}
-          <div className="pointer-events-none absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-surface via-surface/70 to-transparent lg:w-32" aria-hidden="true" />
+        {/* La foto entra con un fundido corto y se muestra completa, a su proporción real (16:9): sin recorte ni ampliación, así nunca se pixela. */}
+        <m.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-12%' }} transition={{ duration: 0.9, ease: [0.22, 0.61, 0.36, 1] }} className="overflow-hidden bg-[#f1eee7]">
+          <img src={asset('brand/lineup-premium.webp')} srcSet={`${asset('brand/lineup-premium-900.webp')} 900w, ${asset('brand/lineup-premium.webp')} 1600w`} sizes="(max-width: 1280px) 92vw, 76rem" width="1600" height="914" loading="lazy" decoding="async" alt="La colección Gold Roots completa, con sus frascos al frente y sus ingredientes alrededor" className="block h-auto w-full" />
         </m.div>
       </div>
     </section>
@@ -154,7 +152,7 @@ export function Home() {
     title: 'Gold Roots Nutrition — Fórmulas para tu bienestar diario',
     description: `Conoce las ${PRODUCTS.length} fórmulas de Gold Roots Nutrition: ingredientes, objetivos, presentaciones y fichas informativas con QR.`,
     path: '/',
-    image: 'brand/hero-cover.webp',
+    image: 'brand/hero-gold.webp',
   });
   return (
     <>

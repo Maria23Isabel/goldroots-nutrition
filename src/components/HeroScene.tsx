@@ -10,7 +10,7 @@ import { EASE_OUT, useDesktop, useFinePointer, useQuietMotion } from '@/lib/moti
 import { asset } from '@/lib/products';
 import { INFO_MESSAGE } from '@/lib/whatsapp';
 
-const cover = { xs: asset('brand/hero-cover-640.webp'), small: asset('brand/hero-cover-900.webp'), large: asset('brand/hero-cover.webp') };
+const cover = { xs: asset('brand/hero-gold-640.webp'), small: asset('brand/hero-gold-900.webp'), large: asset('brand/hero-gold.webp') };
 
 /* El titular entra línea por línea, destapado desde abajo: cada línea vive dentro de su propia máscara. */
 const STAGGER = { hidden: {}, show: { transition: { staggerChildren: 0.07, delayChildren: 0.04 } } };

@@ -14,7 +14,7 @@ const pillars = [
 ];
 
 export function About() {
-  usePageMeta({ title: 'La marca — Gold Roots Nutrition', description: 'Conoce el enfoque visual e informativo de Gold Roots Nutrition y la estructura de su línea de suplementos.', path: '/nosotros', image: 'brand/hero-cover.webp' });
+  usePageMeta({ title: 'La marca — Gold Roots Nutrition', description: 'Conoce el enfoque visual e informativo de Gold Roots Nutrition y la estructura de su línea de suplementos.', path: '/nosotros', image: 'brand/hero-gold.webp' });
   const shilajit = findProduct('shilajit-gold')!;
   const zinc = findProduct('zinc-triple-play')!;
 
