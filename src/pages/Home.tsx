@@ -97,8 +97,8 @@ function BrandMoment() {
           </Reveal>
         </div>
         {/* La foto respira sola al entrar y se corre apenas al pasar el puntero: nada de saltos de layout. */}
-        <m.div initial={{ opacity: 0, scale: 1.08 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true, margin: '-15%' }} transition={{ duration: 1.2, ease: [0.22, 0.61, 0.36, 1] }} className="relative min-h-[24rem] overflow-hidden bg-[#f1eee7] lg:min-h-[38rem]">
-          <img src={asset('brand/flatlay.webp')} alt="Composición de la línea Gold Roots con sus ingredientes" width="1400" height="800" loading="lazy" decoding="async" className="absolute inset-0 size-full object-cover object-center transition-transform duration-700 hover:scale-[1.02]" />
+        <m.div initial={{ opacity: 0, scale: 1.08 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true, margin: '-15%' }} transition={{ duration: 1.2, ease: [0.22, 0.61, 0.36, 1] }} className="relative aspect-[16/9] overflow-hidden bg-[#f1eee7] lg:aspect-auto lg:min-h-[30rem]">
+          <img src={asset('brand/lineup-premium.webp')} srcSet={`${asset('brand/lineup-premium-900.webp')} 900w, ${asset('brand/lineup-premium.webp')} 1600w`} sizes="(max-width: 1024px) 100vw, 56vw" width="1600" height="914" loading="lazy" decoding="async" alt="La colección Gold Roots completa, con sus frascos al frente y sus ingredientes alrededor" className="absolute inset-0 size-full object-cover object-left transition-transform duration-700 hover:scale-[1.02]" />
           {/* El degradado de la izquierda es lo que hace que la foto salga del panel blanco en vez de cortarse en seco. */}
           <div className="pointer-events-none absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-surface via-surface/70 to-transparent lg:w-32" aria-hidden="true" />
         </m.div>

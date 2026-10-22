@@ -14,7 +14,7 @@ const pillars = [
 ];
 
 export function About() {
-  usePageMeta({ title: 'La marca — Gold Roots Nutrition', description: 'Conoce el enfoque visual e informativo de Gold Roots Nutrition y la estructura de su línea de suplementos.', path: '/nosotros', image: 'brand/cover-alt.webp' });
+  usePageMeta({ title: 'La marca — Gold Roots Nutrition', description: 'Conoce el enfoque visual e informativo de Gold Roots Nutrition y la estructura de su línea de suplementos.', path: '/nosotros', image: 'brand/hero-cover.webp' });
   const shilajit = findProduct('shilajit-gold')!;
   const zinc = findProduct('zinc-triple-play')!;
 
@@ -27,7 +27,7 @@ export function About() {
       <section className="wrap section">
         <div className="grid items-center gap-12 lg:grid-cols-[0.72fr_1.28fr] lg:gap-20">
           <Reveal><div><p className="eyebrow text-accent-deep">El punto de partida</p><h2 className="mt-4 text-[clamp(2rem,3.4vw,3.1rem)] leading-[1.02]">Una colección que se entiende como un sistema.</h2><p className="mt-6 text-[1.05rem] leading-[1.8] text-muted">Gold Roots reúne {PRODUCTS.length} fórmulas en seis territorios de bienestar. El sitio pone esa estructura en primer plano para que cada visitante pueda recorrerla por objetivo, ingrediente o producto.</p></div></Reveal>
-          <Reveal delay={80}><div className="relative"><LeafMark className="absolute -top-6 -left-2 size-10 opacity-90" /><div className="overflow-hidden rounded-[2rem] bg-sand"><img src={asset('brand/cover-alt.webp')} alt="La línea Gold Roots con sus ingredientes, en la composición oficial de la marca" width="1400" height="800" loading="lazy" decoding="async" className="block h-auto w-full" /></div></div></Reveal>
+          <Reveal delay={80}><div className="relative"><LeafMark className="absolute -top-6 -left-2 size-10 opacity-90" /><div className="overflow-hidden rounded-[2rem] bg-sand"><img src={asset('brand/lineup-premium.webp')} srcSet={`${asset('brand/lineup-premium-900.webp')} 900w, ${asset('brand/lineup-premium.webp')} 1600w`} sizes="(max-width: 1024px) 92vw, 46vw" alt="La línea Gold Roots con sus ingredientes, en la composición oficial de la marca" width="1600" height="914" loading="lazy" decoding="async" className="block h-auto w-full" /></div></div></Reveal>
         </div>
       </section>
 

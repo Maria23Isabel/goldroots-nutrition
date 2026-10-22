@@ -28,7 +28,7 @@ npm run build      # dist/ + 404.html + sitemap.xml + robots.txt
 
 No se inventa nada. Mientras la marca no lo confirme, la pantalla lo muestra como pendiente:
 
-- **medio de contacto definitivo** (hoy `src/lib/site.ts` trae el número provisional de Herbavida con `whatsappConfirmed: false`; con ese valor, Contacto muestra «Canal oficial por confirmar» y oculta el formulario y el botón de chat. Para activarlo: confirmar el número —o pasar `VITE_WHATSAPP` al compilar— y poner `whatsappConfirmed: true`), horario, dirección y redes → `src/lib/site.ts`
+- **WhatsApp oficial** (hoy `src/lib/site.ts` trae un número provisional de ejemplo, +1 202 555 0143, para ver el diseño completo; **no es de la marca**. Para el oficial: ponerlo en `site.ts` o pasar `VITE_WHATSAPP` al compilar), horario, dirección y redes → `src/lib/site.ts`
 - textos legales definitivos y aviso FDA (el texto actual es el de la tienda original, pendiente de revisión)
 - certificaciones que aparecen en el arte de las fotos pero no están confirmadas (orgánico, third-party tested, GMP, Made in USA, vegano): no se publican y esas imágenes no se usan
 
