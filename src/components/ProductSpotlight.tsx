@@ -72,7 +72,7 @@ export function ProductSpotlight() {
 
   return (
     <section ref={section} className="relative border-y border-line bg-surface" aria-labelledby="spotlight-title">
-      <div className="h-[260svh]">
+      <div className="h-[200svh]">
         <div className="sticky top-0 flex h-[100svh] items-center overflow-hidden">
           <div className="wrap grid w-full items-center gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
             {/* La escena oficial, quieta: solo se desliza unos píxeles y su luz respira con el avance. */}

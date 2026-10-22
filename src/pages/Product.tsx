@@ -1,7 +1,6 @@
-import { IconCheck, IconChevronRight, IconInfoCircle, IconLeaf, IconPackage, IconScan } from '@tabler/icons-react';
+import { IconCheck, IconChevronRight, IconLeaf, IconPackage } from '@tabler/icons-react';
 import { Link, useParams } from 'react-router';
 import { ProductCard, ProductImage } from '@/components/ProductCard';
-import { QrCard } from '@/components/QrCard';
 import { Accordion, buttonClass, d, GoalBadge, Reveal, SectionHeading, TrustMarks } from '@/components/ui';
 import { usePageMeta } from '@/lib/meta';
 import { findProduct, goalOf, productPath, related } from '@/lib/products';
@@ -44,7 +43,7 @@ export function Product() {
             <div className="rule-gold rise mt-7 w-32" style={d(150)} aria-hidden="true" />
             <p className="rise mt-7 text-[1rem] leading-[1.8] text-fg/88" style={d(180)}>{product.summary}</p>
             <div className="rise mt-8" style={d(240)}>
-              <TrustMarks items={[{ Icon: IconLeaf, text: goal.label }, { Icon: IconPackage, text: product.format || 'Presentación por confirmar' }, { Icon: IconScan, text: 'Ficha enlazada por QR' }]} />
+              <TrustMarks items={[{ Icon: IconLeaf, text: goal.label }, { Icon: IconPackage, text: product.format || 'Presentación por confirmar' }]} />
             </div>
             <div className="rise mt-9 flex flex-wrap gap-3" style={d(300)}><a href="#ficha" className={buttonClass('primary')}>Leer la ficha completa</a><Link to="/catalogo" className={buttonClass('outline')}>Volver al catálogo</Link></div>
           </div>
@@ -67,10 +66,6 @@ export function Product() {
             <Accordion title="Aviso importante">Estas declaraciones no han sido evaluadas por la FDA de EE. UU. Este producto no está destinado a diagnosticar, tratar, curar ni prevenir ninguna enfermedad.</Accordion>
           </section>
         </div>
-
-        <div className="mt-12"><QrCard slug={product.slug} name={product.name} /></div>
-
-        <aside className="mt-8 flex items-start gap-3 rounded-2xl bg-sand p-5 text-[0.86rem] leading-relaxed text-muted"><IconInfoCircle size={19} className="mt-0.5 shrink-0 text-accent-deep" aria-hidden="true" /><p>El QR abre esta ficha informativa. No es un sistema de autenticación ni confirma por sí solo el origen de una unidad física.</p></aside>
 
         <section aria-labelledby="related-title" className="mt-20 border-t border-line pt-14">
           <Reveal><SectionHeading eyebrow="Continúa explorando" title={<span id="related-title">Otras fórmulas de la línea</span>} /></Reveal>

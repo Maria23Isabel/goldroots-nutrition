@@ -37,6 +37,11 @@ export function Reveal({ children, className = '', delay = 0, kind = 'rise' }: {
   );
 }
 
+/** Filete dorado que se dibuja de izquierda a derecha al entrar en pantalla: separa y presenta bloques sin ruido. */
+export function DrawLine({ className = '', delay = 0 }: { className?: string; delay?: number }) {
+  return <m.span aria-hidden="true" className={`block h-px origin-left bg-gradient-to-r from-accent to-accent/0 ${className}`} initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true, margin: '0px 0px -10% 0px' }} transition={{ duration: 1.1, delay: delay / 1000, ease: EASE_OUT }} />;
+}
+
 export function CountUp({ to, suffix = '', duration = 1200, className = '' }: { to: number; suffix?: string; duration?: number; className?: string }) {
   const ref = useRef<HTMLSpanElement>(null);
   const [n, setN] = useState(0);

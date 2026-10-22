@@ -14,7 +14,7 @@ import { featuredStories, stepAt } from '@/lib/showcase';
 
 const stories = featuredStories();
 
-/* Los tres tramos se escriven sobre datos que ya están en el catálogo: nombre, objetivo, ficha y QR. */
+/* Los tres tramos se escriven sobre datos que ya están en el catálogo: nombre, objetivo y ficha. */
 const STEPS = [
   {
     n: '01',
@@ -36,7 +36,7 @@ const STEPS = [
     n: '03',
     eyebrow: 'Profundizar',
     title: 'Lleva la ficha contigo.',
-    text: (product: Product) => `${product.name} conserva una dirección propia y un QR que abre esta misma página, para volver a consultarla cuando quieras.`,
+    text: (product: Product) => `${product.name} conserva una dirección propia que abre esta misma página, para volver a consultarla cuando quieras.`,
     to: (product: Product) => `/producto/${product.slug}`,
     cta: 'Ver producto',
   },
@@ -64,7 +64,7 @@ export function StoryScene() {
   if (desktop && !quiet) {
     return (
       <section ref={section} className="story-section relative text-white" aria-labelledby="story-title">
-        <div className="relative h-[300svh]">
+        <div className="relative h-[190svh]">
           <div className="sticky top-0 flex h-[100svh] items-center overflow-hidden">
             <div className="wrap grid w-full items-center gap-10 lg:grid-cols-[1fr_1fr] lg:gap-16">
               {/* El escenario: las tres placas comparten el mismo centro y solo cambia cuál manda. */}

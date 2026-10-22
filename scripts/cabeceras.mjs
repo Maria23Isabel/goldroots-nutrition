@@ -4,7 +4,7 @@
 //   - /brand/* y /products/*: fotos con nombre fijo; una semana y, vencida, se sirven mientras se revalidan.
 //   - HTML: sin cabecera propia; Cloudflare ya manda «max-age=0, must-revalidate» con ETag, así que un cambio llega al instante.
 // CSP: todo sale del propio sitio (scripts, fuentes y fotos). Motion escribe estilos en línea, por eso style-src admite 'unsafe-inline';
-// los scripts, no. Las fotos admiten data: porque el QR de cada ficha se dibuja en el navegador.
+// los scripts, no. Las imágenes admiten data: por si alguna se incrusta en línea.
 export function cabeceras({ noindex }) {
   const csp = ["default-src 'self'", "script-src 'self'", "style-src 'self' 'unsafe-inline'", "img-src 'self' data:", "font-src 'self'", "connect-src 'self'", "object-src 'none'", "base-uri 'self'", "form-action 'self'", "frame-ancestors 'none'"].join('; ');
   const seguridad = [

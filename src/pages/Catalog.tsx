@@ -3,7 +3,7 @@ import * as m from 'motion/react-m';
 import { useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router';
 import { ProductCard, ProductImage } from '@/components/ProductCard';
-import { buttonClass, d, GOAL_ICONS, GoalBadge } from '@/components/ui';
+import { buttonClass, d, GOAL_ICONS, GoalBadge, Reveal } from '@/components/ui';
 import { usePageMeta } from '@/lib/meta';
 import { LayoutMotion } from '@/lib/motion';
 import { asset, countByGoal, goalBySlug, GOALS, PRODUCTS, productPath, searchProducts, type GoalId, type SortId } from '@/lib/products';
@@ -70,11 +70,11 @@ export function Catalog() {
               alineados. Esta escena trae fondo gris de estudio, así que va en panel redondeado: sobre el crema,
               el multiply la dejaría como un rectángulo cortado en seco. */}
           {!current && (
-            <div className="rise mt-10 sm:mt-12" style={d(210)}>
-              <div className="mx-auto max-w-[76rem] overflow-hidden rounded-[2rem]">
-                <img src={asset('brand/lineup.webp')} srcSet={`${asset('brand/lineup-900.webp')} 900w, ${asset('brand/lineup.webp')} 1600w`} sizes="(max-width: 1280px) 92vw, 76rem" width="1600" height="914" loading="lazy" decoding="async" alt="Los frascos de la línea Gold Roots alineados bajo su logotipo" className="block h-auto w-full" />
+            <Reveal kind="mask" className="mt-10 sm:mt-12">
+              <div className="mx-auto max-w-[84rem] overflow-hidden rounded-[2rem]">
+                <img src={asset('brand/lineup.webp')} srcSet={`${asset('brand/lineup-900.webp')} 900w, ${asset('brand/lineup.webp')} 1600w`} sizes="(max-width: 1280px) 92vw, 84rem" width="1600" height="914" loading="lazy" decoding="async" alt="Los frascos de la línea Gold Roots alineados bajo su logotipo" className="block h-auto w-full" />
               </div>
-            </div>
+            </Reveal>
           )}
         </div>
       </header>
@@ -110,7 +110,7 @@ export function Catalog() {
         ) : view === 'lista' ? (
           <ul className="mt-6 space-y-3">{results.map((product) => <li key={product.slug} className={`g-${product.goal} card flex items-center gap-5 p-3 sm:p-4`}><Link to={`/${productPath(product.slug)}`} className="goal-block grid size-24 shrink-0 place-items-center overflow-hidden rounded-2xl sm:size-28"><ProductImage product={product} width={220} className="h-full w-full object-contain p-2" /></Link><div className="min-w-0 flex-1"><GoalBadge goal={product.goal} small /><h2 className="mt-2 text-[1.08rem]"><Link to={`/${productPath(product.slug)}`} className="hover:text-accent-deep">{product.name}</Link></h2><p className="mt-1 line-clamp-2 text-[0.87rem] text-muted">{product.tagline}</p></div><Link to={`/${productPath(product.slug)}`} className="hidden items-center gap-2 pr-4 text-[0.82rem] font-semibold sm:flex">Ver ficha <IconArrowRight size={15} aria-hidden="true" /></Link></li>)}</ul>
         ) : (
-          <ul key={`${goal}-${query}-${sort}`} className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">{results.map((product, index) => <li key={product.slug} className="rise" style={d(Math.min(index, 8) * 45)}><ProductCard product={product} /></li>)}</ul>
+          <ul key={`${goal}-${query}-${sort}`} className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">{results.map((product, index) => <li key={product.slug}><Reveal kind={index % 2 === 0 ? 'rise' : 'scale'} delay={(index % 4) * 70} className="h-full"><ProductCard product={product} /></Reveal></li>)}</ul>
         )}
       </section>
     </LayoutMotion>

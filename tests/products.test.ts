@@ -115,7 +115,7 @@ describe('buscar y filtrar', () => {
   });
 });
 
-describe('la dirección que codifica el QR', () => {
+describe('la dirección de cada ficha', () => {
   it('apunta a la ficha del producto', () => {
     for (const p of PRODUCTS) expect(absoluteUrl(productPath(p.slug)).endsWith(`producto/${p.slug}/`)).toBe(true);
   });

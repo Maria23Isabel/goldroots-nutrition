@@ -20,13 +20,10 @@ export function UniverseBand() {
 
   /* La banda entra antes de verse y sale después de pasar: el recorrido completo da para un parallax largo. */
   const { scrollYProgress } = useScroll({ target: section, offset: ['start end', 'end start'] });
-  const photoY = useTransform(scrollYProgress, [0, 1], ['8%', '-8%']);
   const copyY = useTransform(scrollYProgress, [0, 0.6], ['-4%', '7%']);
   const sweep = useTransform(scrollYProgress, [0.1, 0.9], ['-30%', '112%']);
   const ribbonA = useTransform(scrollYProgress, [0.18, 0.62], [0, 1]);
   const ribbonB = useTransform(scrollYProgress, [0.26, 0.72], [0, 1]);
-  /* El fondo pasa de marfil a tinta al final de la banda: es lo que une esta escena con la historia oscura. */
-  const veil = useTransform(scrollYProgress, [0.62, 1], [0, 1]);
 
   return (
     <section ref={section} className="float-band relative overflow-clip border-b border-line py-16 sm:py-20" aria-labelledby="float-title">
@@ -49,9 +46,11 @@ export function UniverseBand() {
         </m.p>
       </m.div>
 
-      <div className="relative mt-10 sm:mt-14">
-        <m.div className="relative" style={live ? { y: photoY } : undefined}>
-          <img src={art.large} srcSet={`${art.xs} 640w, ${art.small} 900w, ${art.large} 1600w`} sizes="100vw" width="1600" height="914" loading="lazy" decoding="async" alt="Frasco de suplementos Gold Roots flotando entre cintas doradas e ingredientes" className="float-art block h-auto w-full" />
+      {/* La foto oficial mide 1600 px: se muestra dentro del contenedor (máximo 1408 px) y nunca de borde a borde, para
+          que no se amplíe por encima de su tamaño real. El recorte redondeado también contiene las cintas y la luz. */}
+      <div className="wrap relative mt-10 sm:mt-14">
+        <div className="relative overflow-hidden rounded-[1.75rem] sm:rounded-[2.25rem]">
+          <img src={art.large} srcSet={`${art.xs} 640w, ${art.small} 900w, ${art.large} 1600w`} sizes="(max-width: 1408px) 92vw, 1408px" width="1600" height="914" loading="lazy" decoding="async" alt="Frasco de suplementos Gold Roots flotando entre cintas doradas e ingredientes" className="float-art block h-auto w-full" />
           {/* Las cintas que se dibujan siguen la curva de las que ya trae la fotografía; la luz cruza una sola vez. */}
           <svg viewBox="0 0 1600 914" aria-hidden="true" preserveAspectRatio="none" className="pointer-events-none absolute inset-0 size-full">
             <defs>
@@ -64,11 +63,8 @@ export function UniverseBand() {
             <m.path d="M-40 640C260 520 470 760 760 640S1240 380 1660 500" className="gold-thread" strokeWidth="2.5" style={{ pathLength: live ? ribbonA : 1, opacity: 0.55 }} />
             <m.path d="M-40 300C300 380 520 180 840 260S1300 420 1660 300" className="gold-thread" strokeWidth="1.6" style={{ pathLength: live ? ribbonB : 1, opacity: 0.4 }} />
           </svg>
-          {live && (
-            <m.span aria-hidden="true" className="pointer-events-none absolute inset-y-0 w-1/3 bg-gradient-to-r from-transparent via-white/45 to-transparent" style={{ x: sweep }} />
-          )}
-        </m.div>
-        <m.span aria-hidden="true" className="pointer-events-none absolute inset-0 bg-night" style={live ? { opacity: veil } : undefined} />
+          {live && <m.span aria-hidden="true" className="pointer-events-none absolute inset-y-0 w-1/3 bg-gradient-to-r from-transparent via-white/45 to-transparent" style={{ x: sweep }} />}
+        </div>
       </div>
     </section>
   );

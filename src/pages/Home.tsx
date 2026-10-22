@@ -1,12 +1,14 @@
 import { IconArrowRight } from '@tabler/icons-react';
 import * as m from 'motion/react-m';
 import { Link } from 'react-router';
+import { GoalTree } from '@/components/GoalPaths';
 import { HeroScene } from '@/components/HeroScene';
 import { SectionRail, type RailItem } from '@/components/SectionRail';
 import { Accordion, buttonClass, CountUp, LeafMark, Reveal, SectionHeading, WhatsAppButton } from '@/components/ui';
 import { useCursorCard } from '@/lib/cursor';
 import { Defer, lazyNamed } from '@/lib/lazy';
 import { usePageMeta } from '@/lib/meta';
+import { useMedia } from '@/lib/motion';
 import { asset, GOALS, PRODUCTS } from '@/lib/products';
 import { INFO_MESSAGE } from '@/lib/whatsapp';
 
@@ -30,40 +32,48 @@ const RAIL: RailItem[] = [
 ];
 
 function Goals() {
+  const tree = useMedia('(min-width: 1280px)');
   return (
     <section id="objetivos" className="wrap section" aria-labelledby="goals-title">
       <Reveal kind="fade">
         <SectionHeading eyebrow="Explora por objetivo" title={<span id="goals-title">Seis puertas de entrada</span>} lead="No son diagnósticos ni recomendaciones médicas. Son categorías para orientarte dentro del catálogo y revisar la información de cada fórmula." />
       </Reveal>
-      <ul className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {GOALS.map((goal, index) => (
-          <li key={goal.id}>
-            <GoalCard goal={goal} index={index} />
-          </li>
-        ))}
-      </ul>
+      {tree ? (
+        /* Escritorio ancho: las seis puertas cuelgan de una línea dorada que se ramifica con el scroll. */
+        <div className="mt-6">
+          <GoalTree count={GOALS.length}>{(index) => <GoalCard goal={GOALS[index]} index={index} compact />}</GoalTree>
+        </div>
+      ) : (
+        <ul className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {GOALS.map((goal, index) => (
+            <li key={goal.id}>
+              <Reveal kind={index % 2 === 0 ? 'rise' : 'mask'} delay={(index % 3) * 70} className="h-full">
+                <GoalCard goal={goal} index={index} />
+              </Reveal>
+            </li>
+          ))}
+        </ul>
+      )}
     </section>
   );
 }
 
 /* Cada puerta reacciona al cursor con la misma luz dorada de las tarjetas de producto. */
-function GoalCard({ goal, index }: { goal: (typeof GOALS)[number]; index: number }) {
+function GoalCard({ goal, index, compact = false }: { goal: (typeof GOALS)[number]; index: number; compact?: boolean }) {
   const cursor = useCursorCard<HTMLAnchorElement>(2.5);
   return (
-    <Reveal kind={index % 2 === 0 ? 'rise' : 'mask'} delay={index * 40} className="h-full">
-      <Link
-        {...cursor}
-        to={`/catalogo?objetivo=${goal.slug}`}
-        className={`g-${goal.id} goal-block tilt spot group flex h-full min-h-56 flex-col rounded-3xl p-6 transition-transform duration-300 hover:-translate-y-1`}
-      >
-        <span className="text-goal text-[0.72rem] font-bold tracking-[0.14em] uppercase">0{index + 1}</span>
-        <h3 className="mt-auto text-[1.55rem] leading-tight">{goal.label}</h3>
-        <p className="mt-3 max-w-sm text-[0.9rem] leading-relaxed text-muted">{goal.blurb}.</p>
-        <span className="mt-5 inline-flex items-center gap-2 text-[0.82rem] font-semibold text-night">
-          Explorar <IconArrowRight size={15} className="transition-transform group-hover:translate-x-1" aria-hidden="true" />
-        </span>
-      </Link>
-    </Reveal>
+    <Link
+      {...cursor}
+      to={`/catalogo?objetivo=${goal.slug}`}
+      className={`g-${goal.id} goal-block tilt spot group flex h-full flex-col rounded-3xl transition-transform duration-300 hover:-translate-y-1 ${compact ? 'min-h-64 p-5' : 'min-h-56 p-6'}`}
+    >
+      <span className="text-goal text-[0.72rem] font-bold tracking-[0.14em] uppercase">0{index + 1}</span>
+      <h3 className={`mt-auto leading-tight ${compact ? 'text-[1.3rem]' : 'text-[1.55rem]'}`}>{goal.label}</h3>
+      <p className={`mt-3 max-w-sm leading-relaxed text-muted ${compact ? 'text-[0.84rem]' : 'text-[0.9rem]'}`}>{goal.blurb}.</p>
+      <span className="mt-5 inline-flex items-center gap-2 text-[0.82rem] font-semibold text-night">
+        Explorar <IconArrowRight size={15} className="transition-transform group-hover:translate-x-1" aria-hidden="true" />
+      </span>
+    </Link>
   );
 }
 
@@ -115,9 +125,8 @@ function Faq() {
         <Accordion title="¿Puedo comprar desde esta página?" defaultOpen>
           No. Gold Roots funciona aquí como una experiencia corporativa e informativa. No hay precios, carrito, cantidades ni flujo de compra. Para cualquier consulta, el canal es WhatsApp.
         </Accordion>
-        <Accordion title="¿Qué información tiene cada ficha?">Nombre, objetivo, descripción, ingredientes, presentación, beneficios declarados por el catálogo y un QR que abre la misma página.</Accordion>
+        <Accordion title="¿Qué información tiene cada ficha?">Nombre, objetivo, descripción, ingredientes, presentación, beneficios declarados por el catálogo.</Accordion>
         <Accordion title="¿El sitio recomienda qué suplemento tomar?">No. Las categorías ayudan a navegar la línea, pero no constituyen una recomendación médica ni reemplazan la evaluación de un profesional.</Accordion>
-        <Accordion title="¿Para qué sirve el código QR?">Permite abrir y compartir la ficha informativa de un producto mediante una dirección estable. No afirma autenticidad por sí solo.</Accordion>
         <Accordion title="¿Son medicamentos?">No. Son suplementos alimenticios y no están destinados a diagnosticar, tratar, curar ni prevenir ninguna enfermedad.</Accordion>
       </div>
     </section>
@@ -150,7 +159,7 @@ function FinalCta() {
 export function Home() {
   usePageMeta({
     title: 'Gold Roots Nutrition — Fórmulas para tu bienestar diario',
-    description: `Conoce las ${PRODUCTS.length} fórmulas de Gold Roots Nutrition: ingredientes, objetivos, presentaciones y fichas informativas con QR.`,
+    description: `Conoce las ${PRODUCTS.length} fórmulas de Gold Roots Nutrition: ingredientes, objetivos, presentaciones y fichas informativas.`,
     path: '/',
     image: 'brand/hero-gold.webp',
   });
@@ -159,10 +168,10 @@ export function Home() {
       <SectionRail items={RAIL} />
       <HeroScene />
       <Defer reserve="min-h-[60svh]"><UniverseBand /></Defer>
-      <Defer id="historia" reserve="min-h-[120svh] lg:min-h-[300svh]"><StoryScene /></Defer>
+      <Defer id="historia" reserve="min-h-[120svh] lg:min-h-[190svh]"><StoryScene /></Defer>
       <Goals />
       <Defer id="explorador" reserve="min-h-[48rem]"><FormulaFinder /></Defer>
-      <Defer id="destacado" reserve="min-h-[90svh] lg:min-h-[260svh]"><ProductSpotlight /></Defer>
+      <Defer id="destacado" reserve="min-h-[90svh] lg:min-h-[200svh]"><ProductSpotlight /></Defer>
       <Defer id="coleccion" reserve="min-h-[56rem]"><ProductShowcase /></Defer>
       <BrandMoment />
       <Defer id="calidad" reserve="min-h-[60rem]"><TrustScene /></Defer>

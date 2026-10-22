@@ -160,9 +160,10 @@ strong {
     color: var(--color-accent-deep);
   }
 
-  /* Contenido: 1280 px como máximo, con aire lateral en móvil. */
-  .wrap { margin-inline: auto; width: 100%; max-width: 80rem; padding-inline: 1.25rem; }
+  /* Contenido: 1408 px como máximo (los textos largos llevan su propio max-w para leerse cómodos). */
+  .wrap { margin-inline: auto; width: 100%; max-width: 88rem; padding-inline: 1.25rem; }
   @media (min-width: 640px) { .wrap { padding-inline: 2rem; } }
+  @media (min-width: 1280px) { .wrap { padding-inline: 3rem; } }
 
   /* Ritmo vertical: 64 px en móvil, 88 en escritorio. */
   .section { padding-block: 4rem; }
@@ -396,6 +397,7 @@ strong {
 
   /* --- El hilo dorado que une la portada con la escena siguiente --- */
   .gold-thread { stroke: url(#thread-oro); stroke-linecap: round; fill: none; }
+  .gold-line { stroke: var(--color-accent); stroke-linecap: round; fill: none; }
 }
 
 /* La flecha de la portada: un empujón corto cada tres segundos, no un rebote continuo. */

@@ -1,6 +1,6 @@
 // Experiencia D — «Calidad y confianza». Aquí lo que aparece no se funde: primero se traza el riel, después van
 // cayendo los nodos uno por uno y las cifras del catálogo cuentan hacia arriba. Solo datos comprobables en la web.
-import { IconFlask, IconQrcode, IconRoute, IconShieldCheck, type Icon } from '@tabler/icons-react';
+import { IconFlask, IconLink, IconRoute, IconShieldCheck, type Icon } from '@tabler/icons-react';
 import * as m from 'motion/react-m';
 import { Link } from 'react-router';
 import { CountUp, SectionHeading } from '@/components/ui';
@@ -18,7 +18,7 @@ const TEXT = { hidden: { opacity: 0, clipPath: 'inset(0 0 100% 0)' }, show: { op
 const items: { Icon: Icon; title: string; text: string; check: string; to: string }[] = [
   { Icon: IconFlask, title: 'Fórmula completa', text: `Ingredientes, presentación y objetivo declarado en cada una de las ${facts.formulas} fichas.`, check: 'Ver una ficha', to: '/producto/zinc-triple-play' },
   { Icon: IconRoute, title: 'Información primero', text: 'Sin precios, sin carrito y sin presión: la página describe, no vende.', check: 'Recorrer el catálogo', to: '/catalogo' },
-  { Icon: IconQrcode, title: 'Rutas que permanecen', text: 'Cada ficha conserva una dirección propia y un QR para volver a consultarla.', check: 'Preguntar por una ficha', to: '/contacto' },
+  { Icon: IconLink, title: 'Rutas que permanecen', text: 'Cada ficha conserva una dirección propia para volver a consultarla cuando quieras.', check: 'Preguntar por una ficha', to: '/contacto' },
   { Icon: IconShieldCheck, title: 'Límites claros', text: 'Suplementos alimenticios: no sustituyen una dieta variada ni la consulta profesional.', check: 'Leer los avisos', to: '/legal/terminos' },
 ];
 

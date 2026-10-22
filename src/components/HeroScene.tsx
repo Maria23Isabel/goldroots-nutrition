@@ -96,12 +96,12 @@ export function HeroScene() {
           </m.a>
         </m.div>
 
-        {/* La portada oficial: entra destapándose de abajo a arriba dentro de su tarjeta, respira con CSS y se cierra
-            con el scroll. El puntero mueve un envoltorio aparte para no pelearse con ninguna de las dos. */}
+        {/* La portada oficial: en escritorio entra destapándose de abajo a arriba dentro de su tarjeta (en celular se ve desde el primer cuadro,
+            porque es lo que mide el LCP), respira con CSS y se cierra con el scroll. El puntero mueve un envoltorio aparte para no pelearse con ninguna de las dos. */}
         <div className="order-1 -mx-5 sm:-mx-8 lg:order-none lg:mx-0">
           <m.div style={{ x: live ? artX : undefined, y: live ? artY : undefined }} className="relative">
             <m.div
-              initial={{ clipPath: 'inset(0 0 100% 0)', opacity: 0 }}
+              initial={desktop ? { clipPath: 'inset(0 0 100% 0)', opacity: 0 } : false}
               animate={{ clipPath: 'inset(0 0 0% 0)', opacity: 1 }}
               transition={{ duration: 0.9, delay: 0.1, ease: EASE_OUT }}
               className="relative overflow-hidden lg:mx-auto lg:max-w-[62rem] lg:rounded-[1.25rem]"
