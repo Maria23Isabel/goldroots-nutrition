@@ -3,25 +3,30 @@
 import { IconArrowRight } from '@tabler/icons-react';
 import { AnimatePresence } from 'motion/react';
 import * as m from 'motion/react-m';
-import { useCallback, useRef, useState, type KeyboardEvent } from 'react';
+import { useCallback, useMemo, useRef, useState, type KeyboardEvent } from 'react';
 import { Link } from 'react-router';
 import { ProductImage } from '@/components/ProductCard';
 import { buttonClass, GoalBadge, SectionHeading, WhatsAppButton } from '@/components/ui';
 import { EASE_OUT, LayoutMotion } from '@/lib/motion';
-import { GOALS, PRODUCTS } from '@/lib/products';
-import { showcasePicks } from '@/lib/showcase';
+import { CatalogGate } from '@/components/CatalogGate';
+import { DEFAULTS } from '@/lib/defaults';
+import { goalOf, type Product } from '@/lib/products';
+import { pickVaried } from '@/lib/showcase';
 import { infoAbout } from '@/lib/whatsapp';
-
-/* Cinco fórmulas reales, una por objetivo: todas salen del catálogo generado desde la web de la marca. */
-const picks = showcasePicks();
 
 const CONTAINER = { hidden: {}, show: { transition: { staggerChildren: 0.06, delayChildren: 0.08 } } };
 const ITEM = { hidden: { opacity: 0, y: 14 }, show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: EASE_OUT } } };
 
 export function ProductShowcase() {
+  return <CatalogGate error={null} empty={null}>{(catalog) => <Showcase products={catalog.products} />}</CatalogGate>;
+}
+
+/* Hasta cinco fórmulas reales de Herbavida, de objetivos distintos mientras alcance. */
+function Showcase({ products }: { products: Product[] }) {
+  const picks = useMemo(() => pickVaried(products, 5), [products]);
   const [index, setIndex] = useState(0);
   const tabs = useRef<(HTMLButtonElement | null)[]>([]);
-  const product = picks[index];
+  const product = picks[Math.min(index, picks.length - 1)];
 
   /* Flechas, Inicio y Fin dentro del grupo de pestañas; el foco sigue a la pestaña elegida. */
   const move = useCallback((step: number) => {
@@ -30,7 +35,7 @@ export function ProductShowcase() {
       tabs.current[next]?.focus();
       return next;
     });
-  }, []);
+  }, [picks.length]);
 
   const goTo = (position: number) => {
     setIndex(position);
@@ -53,7 +58,7 @@ export function ProductShowcase() {
         <div className="flex flex-wrap items-end justify-between gap-6">
           <SectionHeading eyebrow="Mueve la línea" title={<span id="showcase-title">Elige una fórmula y mírala de cerca</span>} lead="Selecciona un frasco y la ficha cambia en la misma página. Son datos del catálogo: no hay precios ni carrito." />
           <Link to="/catalogo" className={buttonClass('outline')}>
-            Ver las {PRODUCTS.length} fórmulas <IconArrowRight size={16} aria-hidden="true" />
+            Ver las {products.length} fórmulas <IconArrowRight size={16} aria-hidden="true" />
           </Link>
         </div>
 
@@ -102,8 +107,8 @@ export function ProductShowcase() {
                 ))}
               </m.ul>
               <m.div variants={ITEM} className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-line pt-5 text-[0.85rem] text-muted">
-                <span>{product.format || 'Presentación por confirmar'}</span>
-                <span>{GOALS.find((goal) => goal.id === product.goal)?.label}</span>
+                <span>{product.format || DEFAULTS.formatMissing}</span>
+                <span>{goalOf(product.goal).label}</span>
               </m.div>
               <m.div variants={ITEM} className="mt-8 flex flex-wrap gap-3">
                 <Link to={`/producto/${product.slug}`} className={buttonClass('primary')}>

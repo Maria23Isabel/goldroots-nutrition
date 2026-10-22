@@ -9,6 +9,6 @@
   "assets": {
     "directory": "./dist",
     // Cada ruta del sitio ya tiene su carpeta con index.html (scripts/postbuild.mjs); lo que no existe devuelve el 404.html del sitio
-    "not_found_handling": "404-page"
+    "not_found_handling": "single-page-application"
   }
 }

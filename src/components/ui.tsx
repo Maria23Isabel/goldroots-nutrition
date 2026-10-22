@@ -1,4 +1,4 @@
-import { IconBolt, IconBrain, IconBrandWhatsapp, IconChevronDown, IconEye, IconHeartbeat, IconMoon, IconShieldCheck, type Icon } from '@tabler/icons-react';
+import { IconBolt, IconBrain, IconBrandWhatsapp, IconChevronDown, IconEye, IconHeartbeat, IconLeaf, IconMoon, IconShieldCheck, type Icon } from '@tabler/icons-react';
 import { useEffect, useId, useRef, useState, type CSSProperties, type ReactNode, type SVGProps } from 'react';
 import { AnimatePresence } from 'motion/react';
 import * as m from 'motion/react-m';
@@ -14,6 +14,7 @@ export const GOAL_ICONS: Record<GoalId, Icon> = {
   sleep: IconMoon,
   'eye-skin': IconEye,
   immune: IconShieldCheck,
+  general: IconLeaf,
 };
 
 export const d = (ms: number) => ({ '--d': `${ms}ms` }) as CSSProperties;

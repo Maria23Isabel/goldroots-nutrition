@@ -5,7 +5,8 @@ import { useEffect, useState } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router';
 import { LeafMark, Logo, WhatsAppFloat } from './ui';
 import { EASE_OUT, LayoutMotion } from '@/lib/motion';
-import { GOALS, PRODUCTS } from '@/lib/products';
+import { useCatalogState } from '@/lib/catalog';
+import { GOALS } from '@/lib/products';
 import { isConfirmed, site } from '@/lib/site';
 import { INFO_MESSAGE, waLink } from '@/lib/whatsapp';
 
@@ -104,6 +105,7 @@ function Header() {
 }
 
 function Footer() {
+  const total = useCatalogState().catalog?.products.length ?? 0;
   const socials = [
     { label: 'Instagram', href: site.instagram, Icon: IconBrandInstagram },
     { label: 'Facebook', href: site.facebook, Icon: IconBrandFacebook },
@@ -115,7 +117,7 @@ function Footer() {
       <div className="wrap grid gap-12 py-16 md:grid-cols-[1.5fr_1fr_1fr_1.15fr]">
         <div>
           <Logo onDark />
-          <p className="mt-5 max-w-sm text-[0.92rem] leading-relaxed text-white/62">Una línea de {PRODUCTS.length} fórmulas organizada para conocer ingredientes, objetivos y presentaciones con claridad.</p>
+          <p className="mt-5 max-w-sm text-[0.92rem] leading-relaxed text-white/62">Una línea{total > 0 ? ` de ${total} fórmulas` : ' de fórmulas'} organizada para conocer ingredientes, objetivos y presentaciones con claridad.</p>
           {socials.length > 0 && <ul className="mt-5 flex gap-2">{socials.map(({ label, href, Icon }) => <li key={label}><a href={href!} target="_blank" rel="noopener noreferrer" aria-label={label} className="grid size-10 place-items-center rounded-full border border-white/18 text-white/70 hover:border-accent hover:text-accent"><Icon size={18} aria-hidden="true" /></a></li>)}</ul>}
         </div>
         <nav aria-label="Secciones">

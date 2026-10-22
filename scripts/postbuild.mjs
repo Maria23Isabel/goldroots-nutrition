@@ -16,7 +16,18 @@ const url = (path) => {
   return `${HOST}${BASE}${clean ? `${clean}/` : ''}`;
 };
 
-const products = JSON.parse(readFileSync('src/data/productos.generado.json', 'utf8'));
+// Las fichas vienen de Herbavida, no del código: para el mapa del sitio (y una carpeta por ficha) se leen del mismo catálogo público al compilar.
+// Si Herbavida no responde, el mapa lleva solo las páginas fijas y se avisa; las fichas siguen abriendo en vivo (la configuración de Cloudflare cae a la aplicación).
+let products = [];
+if (process.env.VITE_CATALOG_API) {
+  try {
+    const response = await fetch(`${process.env.VITE_CATALOG_API}/api/public/sites/goldroots/catalog`, { signal: AbortSignal.timeout(10_000) });
+    if (!response.ok) throw new Error(`respondió ${response.status}`);
+    products = ((await response.json()).products ?? []).filter((p) => typeof p.slug === 'string' && /^[a-z0-9-]+$/.test(p.slug));
+  } catch (error) {
+    console.warn(`postbuild: no se pudo leer el catálogo de Herbavida (${error.message}); el mapa del sitio sale sin fichas.`);
+  }
+}
 const ROUTAS = ['/', '/catalogo', '/nosotros', '/contacto', '/legal/terminos', '/legal/privacidad', ...products.map((p) => `/producto/${p.slug}`)];
 
 const pagina = readFileSync(resolve(DIST, 'index.html'), 'utf8');
@@ -37,9 +48,17 @@ const REDIRECCIONES = [
   ['/about', '/nosotros/'],
   ['/contact', '/contacto/'],
 ];
+// Las direcciones de producto de la primera versión (/producto/zinc-triple-play) llevan por 301 a la ficha actual del mismo producto: la dirección nueva sale del
+// catálogo de Herbavida (lleva su código -hv-NNNNN), por eso solo se escriben las que se pueden resolver ahora. Las que no, siguen resolviéndose en la aplicación.
+const legacy = JSON.parse(readFileSync('src/lib/legacy-slugs.json', 'utf8'));
+const sinCodigo = (slug) => slug.replace(/-hv-\d+(-\d+)?$/, '');
+const heredadas = Object.entries(legacy).flatMap(([antigua, base]) => {
+  const actual = products.find((p) => sinCodigo(p.slug) === base);
+  return actual ? [`/producto/${antigua} /producto/${actual.slug}/ 301`, `/producto/${antigua}/ /producto/${actual.slug}/ 301`] : [];
+});
 writeFileSync(
   resolve(DIST, '_redirects'),
-  [...REDIRECCIONES.flatMap(([desde, hacia]) => [`${desde} ${hacia} 301`, `${desde}/ ${hacia} 301`]), '/product/:slug /producto/:slug/ 301', '/product/:slug/ /producto/:slug/ 301', ''].join('\n'),
+  [...heredadas, ...REDIRECCIONES.flatMap(([desde, hacia]) => [`${desde} ${hacia} 301`, `${desde}/ ${hacia} 301`]), '/product/:slug /producto/:slug/ 301', '/product/:slug/ /producto/:slug/ 301', ''].join('\n'),
 );
 writeFileSync(resolve(DIST, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

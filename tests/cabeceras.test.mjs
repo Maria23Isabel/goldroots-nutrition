@@ -17,6 +17,16 @@ describe('el archivo _headers que se sube a Cloudflare', () => {
     }
   });
 
+  it('solo admite lo de Herbavida que cada ambiente declara: la API en connect-src y las fotos en img-src', () => {
+    const base = cabeceras({ noindex: true });
+    expect(base).toContain("connect-src 'self';");
+    expect(base).toContain("img-src 'self' data:;");
+    const conHerbavida = cabeceras({ noindex: true, api: 'https://qa.herbavidaperu.com', fotos: ['https://lh3.googleusercontent.com', 'https://fotos-qa.herbavidaperu.com'] });
+    expect(conHerbavida).toContain("connect-src 'self' https://qa.herbavidaperu.com;");
+    expect(conHerbavida).toContain("img-src 'self' data: https://lh3.googleusercontent.com https://fotos-qa.herbavidaperu.com;");
+    expect(conHerbavida).not.toMatch(/script-src[^;]*https:/);
+  });
+
   it('QA y la dirección de pruebas piden no ser indexadas; el sitio real no', () => {
     expect(qa).toContain('X-Robots-Tag: noindex, nofollow');
     expect(real).not.toContain('X-Robots-Tag');
@@ -25,7 +35,7 @@ describe('el archivo _headers que se sube a Cloudflare', () => {
   it('los archivos con huella se guardan un año como inmutables y las fotos con nombre fijo solo una semana', () => {
     expect(real).toMatch(/\/assets\/\*\n {2}Cache-Control: public, max-age=31536000, immutable/);
     expect(real).toMatch(/\/brand\/\*\n {2}Cache-Control: public, max-age=604800/);
-    expect(real).toMatch(/\/products\/\*\n {2}Cache-Control: public, max-age=604800/);
+    expect(real).not.toContain('/products/');
   });
 
   it('el HTML no lleva caché propia (Cloudflare ya revalida con ETag) y no hay reglas repetidas', () => {

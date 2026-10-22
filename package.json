@@ -12,8 +12,6 @@
     "build": "vite build && node scripts/postbuild.mjs",
     "build:pages": "vite build --mode pages && node scripts/postbuild.mjs --pages",
     "preview": "vite preview",
-    "datos": "node scripts/traer-productos.mjs",
-    "datos:herbavida": "node scripts/traer-marcas.mjs",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "publicar": "npm run build:pages && node scripts/publicar-pages.mjs",

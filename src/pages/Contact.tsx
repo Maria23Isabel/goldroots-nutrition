@@ -4,14 +4,16 @@ import { InquiryForm } from '@/components/InquiryForm';
 import { PageHero } from '@/components/PageHero';
 import { LeafMark, Reveal, SectionHeading, WhatsAppButton } from '@/components/ui';
 import { usePageMeta } from '@/lib/meta';
-import { PRODUCTS, findProduct } from '@/lib/products';
+import { useCatalogState } from '@/lib/catalog';
+import { findProduct } from '@/lib/products';
 import { prettyPhone, site } from '@/lib/site';
 import { INFO_MESSAGE } from '@/lib/whatsapp';
 
 export function Contact() {
   const [params] = useSearchParams();
-  const asked = findProduct(params.get('producto') ?? undefined)?.slug;
-  usePageMeta({ title: 'Contacto — Gold Roots Nutrition', description: `Contacto institucional de Gold Roots Nutrition: escribe por WhatsApp para conocer las ${PRODUCTS.length} fórmulas de la línea.`, path: '/contacto' });
+  const products = useCatalogState().catalog?.products ?? [];
+  const asked = findProduct(products, params.get('producto') ?? undefined)?.slug;
+  usePageMeta({ title: 'Contacto — Gold Roots Nutrition', description: `Contacto institucional de Gold Roots Nutrition: escribe por WhatsApp para conocer las fórmulas de la línea.`, path: '/contacto' });
 
   return (
     <>

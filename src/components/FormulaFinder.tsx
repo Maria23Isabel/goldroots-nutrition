@@ -3,12 +3,19 @@ import { useMemo, useState } from 'react';
 import { Link } from 'react-router';
 import { ProductImage } from './ProductCard';
 import { GOAL_ICONS, SectionHeading, buttonClass } from './ui';
-import { countByGoal, goalOf, GOALS, productPath, type GoalId } from '@/lib/products';
+import { CatalogGate } from './CatalogGate';
+import { countByGoal, goalOf, GOALS, productPath, type GoalId, type Product } from '@/lib/products';
 import { rank } from '@/lib/showcase';
 
 export function FormulaFinder() {
-  const [goal, setGoal] = useState<GoalId>('energy');
-  const matches = useMemo(() => rank(goal), [goal]);
+  return <CatalogGate error={null} empty={null}>{(catalog) => <Finder products={catalog.products} />}</CatalogGate>;
+}
+
+function Finder({ products }: { products: Product[] }) {
+  /* Parte del primer objetivo que tiene fórmulas: si «energía» no tiene ninguna, no abre con una lista vacía. */
+  const [goal, setGoal] = useState<GoalId>(() => GOALS.find((item) => countByGoal(products, item.id) > 0)?.id ?? GOALS[0].id);
+  const matches = useMemo(() => rank(products, goal), [products, goal]);
+  const total = countByGoal(products, goal);
 
   return (
     <section aria-labelledby="explorador-title" className="wrap section">
@@ -21,10 +28,11 @@ export function FormulaFinder() {
       </div>
       <div className="mt-5 overflow-hidden rounded-3xl border border-line bg-surface">
         <div className={`g-${goal} goal-block p-6 sm:p-8`}>
-          <p className="eyebrow text-goal">{countByGoal(goal)} {countByGoal(goal) === 1 ? 'fórmula' : 'fórmulas'}</p>
+          <p className="eyebrow text-goal">{total} {total === 1 ? 'fórmula' : 'fórmulas'}</p>
           <h3 className="mt-2 text-[1.5rem] sm:text-[2rem]">{goalOf(goal).label}</h3>
           <p className="mt-2 max-w-xl text-[0.92rem] leading-relaxed text-muted">{goalOf(goal).blurb}.</p>
         </div>
+        {matches.length === 0 && <p className="p-6 text-[0.92rem] text-muted">Todavía no hay fórmulas publicadas con este objetivo.</p>}
         <ul key={goal} className="grid gap-px bg-line md:grid-cols-3">
           {matches.slice(0, 3).map((product) => (
             <li key={product.slug} className="group bg-surface p-5">

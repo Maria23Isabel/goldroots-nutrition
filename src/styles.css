@@ -140,6 +140,7 @@ strong {
   .g-sleep { --gb: #e3eaea; --gi: #35605c; }
   .g-eye-skin { --gb: #e4f0e7; --gi: #2f6a4d; }
   .g-immune { --gb: #edf2da; --gi: #5a6d30; }
+  .g-general { --gb: #f1ede4; --gi: #6a5a35; }
 
   /* El bloque de objetivo va en blanco hacia el centro y teñido hacia los bordes: así el multiply de la
      foto (fondo gris de estudio) desaparece donde está el frasco y el color del objetivo sigue encuadrando. */

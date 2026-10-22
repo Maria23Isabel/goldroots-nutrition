@@ -12,6 +12,16 @@ const TAREAS = [
   { de: 'fuentes/logo-gold.webp', a: 'public/brand/logo-gold-240.webp', ancho: 240, calidad: 90 },
 ];
 
+// Imagen de respaldo de las fichas: la marca, discreta, sobre blanco (las fotos se funden con multiply, así que el blanco no deja recuadro).
+// Se usa solo cuando un producto no tiene foto o no carga; no representa ningún producto.
+const logo = await sharp('fuentes/logo-gold.webp').resize({ width: 300 }).ensureAlpha().toBuffer();
+const tenue = await sharp(logo).composite([{ input: Buffer.from([0, 0, 0, 110]), raw: { width: 1, height: 1, channels: 4 }, tile: true, blend: 'dest-in' }]).png().toBuffer();
+await sharp({ create: { width: 604, height: 900, channels: 3, background: '#ffffff' } })
+  .composite([{ input: tenue, gravity: 'centre' }])
+  .webp({ quality: 80, effort: 6 })
+  .toFile('public/brand/placeholder-producto.webp');
+console.log(`public/brand/placeholder-producto.webp: ${(statSync('public/brand/placeholder-producto.webp').size / 1024).toFixed(1)} KB`);
+
 for (const { de, a, ancho, calidad } of TAREAS) {
   await sharp(de).resize({ width: ancho }).webp({ quality: calidad, effort: 6 }).toFile(a);
   console.log(`${a}: ${(statSync(a).size / 1024).toFixed(1)} KB (de ${(statSync(de).size / 1024).toFixed(1)} KB)`);

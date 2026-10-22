@@ -10,10 +10,15 @@
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" type="image/png" sizes="32x32" href="/icon-32.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <!-- La imagen de la portada es lo más grande de la primera pantalla: se pide desde el HTML, con la misma lista de tamaños que usa la portada, y no cuando React ya dibujó. -->
+    <link rel="preload" as="image" type="image/webp" fetchpriority="high" imagesrcset="/brand/hero-gold-640.webp 640w, /brand/hero-gold-900.webp 900w, /brand/hero-gold.webp 1600w" imagesizes="(max-width: 1024px) 100vw, 62vw" />
+    <!-- El catálogo lo entrega Herbavida: se conecta y se pide desde ya, en paralelo con el JavaScript de la web. -->
+    <link rel="preconnect" href="%VITE_CATALOG_API%" crossorigin />
+    <link rel="preload" as="fetch" href="%VITE_CATALOG_API%/api/public/sites/goldroots/catalog" crossorigin="anonymous" />
     <title>Gold Roots Nutrition — Nutrición esencial para tu bienestar diario</title>
     <meta
       name="description"
-      content="Catálogo informativo de Gold Roots Nutrition: catorce fórmulas organizadas por objetivo —energía, corazón, mente, sueño, vista y piel, y defensas— con ingredientes, presentación y ficha enlazada por QR."
+      content="Catálogo informativo de Gold Roots Nutrition: fórmulas organizadas por objetivo —energía, corazón, mente, sueño, vista y piel, y defensas— con ingredientes, presentación y ficha informativa."
     />
     <meta property="og:site_name" content="Gold Roots Nutrition" />
     <meta property="og:type" content="website" />

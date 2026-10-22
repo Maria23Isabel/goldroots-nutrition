@@ -1,21 +1,32 @@
-// Experiencia B — «Producto destacado». La fotografía oficial del Zinc queda fija mientras se baja y sus datos
-// verificables se van encendiendo de uno en uno. Ningún texto se escribe a mano: todo sale de la ficha del catálogo.
+// Experiencia B — «Producto destacado». La fotografía de un producto del catálogo queda fija mientras se baja y sus datos
+// verificables se van encendiendo de uno en uno. Ningún texto se escribe a mano: todo sale de la ficha que entrega Herbavida.
 import { IconArrowRight } from '@tabler/icons-react';
 import { useMotionValueEvent, useScroll, useTransform } from 'motion/react';
 import * as m from 'motion/react-m';
-import { useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router';
+import { CatalogGate } from '@/components/CatalogGate';
+import { ProductImage } from '@/components/ProductCard';
 import { buttonClass, GoalBadge, Reveal, WhatsAppButton } from '@/components/ui';
 import { EASE_OUT, useDesktop, useQuietMotion } from '@/lib/motion';
-import { asset, findProduct } from '@/lib/products';
+import { DEFAULTS } from '@/lib/defaults';
+import { productPath, type Product } from '@/lib/products';
 import { infoAbout } from '@/lib/whatsapp';
-import { beatsOf, stepAt } from '@/lib/showcase';
-
-const zinc = findProduct('zinc-triple-play')!;
-const beats = beatsOf(zinc);
-const scene = { small: asset('brand/zinc-scene.webp') };
+import { beatsOf, spotlightOf, stepAt } from '@/lib/showcase';
 
 export function ProductSpotlight() {
+  return (
+    <CatalogGate error={null} empty={null}>
+      {(catalog) => {
+        const product = spotlightOf(catalog.products);
+        return product ? <Spotlight product={product} /> : null;
+      }}
+    </CatalogGate>
+  );
+}
+
+function Spotlight({ product }: { product: Product }) {
+  const beats = useMemo(() => beatsOf(product), [product]);
   const section = useRef<HTMLElement>(null);
   const desktop = useDesktop();
   const quiet = useQuietMotion();
@@ -32,11 +43,11 @@ export function ProductSpotlight() {
 
   const heading = (
     <div className="max-w-lg">
-      <GoalBadge goal={zinc.goal} />
+      <GoalBadge goal={product.goal} />
       <h2 id="spotlight-title" className="mt-5 text-[clamp(2rem,4vw,3.4rem)] leading-[1.02] text-night">
-        {zinc.headline}
+        {product.headline}
       </h2>
-      <p className="mt-5 text-[1rem] leading-relaxed text-muted">{zinc.summary}</p>
+      <p className="mt-5 text-[1rem] leading-relaxed text-muted">{product.summary}</p>
     </div>
   );
 
@@ -48,8 +59,8 @@ export function ProductSpotlight() {
           <Reveal kind="fade">{heading}</Reveal>
           <Reveal kind="mask" className="relative">
             <div className="zinc-stage relative overflow-hidden rounded-[2.5rem] px-6 py-10 sm:px-12">
-              <img src={scene.small} width="1400" height="800" loading="lazy" decoding="async" alt="Frasco de Zinc Triple Play Gold Roots con sus cápsulas" className="shot block h-auto w-full" />
-              <p className="relative mt-6 text-center text-[0.78rem] font-semibold tracking-[0.16em] text-accent-deep uppercase">{zinc.format}</p>
+              <span className="relative block h-[22rem] sm:h-[26rem]"><ProductImage product={product} width={520} className="mx-auto h-full w-auto object-contain" /></span>
+              <p className="relative mt-6 text-center text-[0.78rem] font-semibold tracking-[0.16em] text-accent-deep uppercase">{product.format || DEFAULTS.formatMissing}</p>
             </div>
           </Reveal>
           <ul className="lg:col-span-2">
@@ -62,8 +73,8 @@ export function ProductSpotlight() {
             ))}
           </ul>
           <div className="flex flex-wrap gap-3 lg:col-span-2">
-            <Link to={`/producto/${zinc.slug}`} className={buttonClass('primary')}>Ver producto <IconArrowRight size={17} aria-hidden="true" /></Link>
-            <WhatsAppButton text={infoAbout(zinc.name)} variant="outline">Preguntar por este producto</WhatsAppButton>
+            <Link to={`/${productPath(product.slug)}`} className={buttonClass('primary')}>Ver producto <IconArrowRight size={17} aria-hidden="true" /></Link>
+            <WhatsAppButton text={infoAbout(product.name)} variant="outline">Preguntar por este producto</WhatsAppButton>
           </div>
         </div>
       </section>
@@ -79,8 +90,8 @@ export function ProductSpotlight() {
             <div className="relative">
               <m.span aria-hidden="true" className="absolute inset-[12%] rounded-full bg-accent/16 blur-3xl" style={{ opacity: glow }} />
               <m.div className="zinc-stage relative overflow-hidden rounded-[2.5rem] px-6 py-10 sm:px-12" style={{ y: photoY }}>
-                <img src={scene.small} width="1400" height="800" loading="eager" decoding="async" alt="Frasco de Zinc Triple Play Gold Roots con sus cápsulas" className="shot block h-auto w-full" />
-                <p className="relative mt-6 text-center text-[0.78rem] font-semibold tracking-[0.16em] text-accent-deep uppercase">{zinc.format}</p>
+                <span className="relative block h-[24rem] lg:h-[28rem]"><ProductImage product={product} width={520} eager className="mx-auto h-full w-auto object-contain" /></span>
+                <p className="relative mt-6 text-center text-[0.78rem] font-semibold tracking-[0.16em] text-accent-deep uppercase">{product.format || DEFAULTS.formatMissing}</p>
               </m.div>
             </div>
 
@@ -97,8 +108,8 @@ export function ProductSpotlight() {
                 ))}
               </ul>
               <div className="mt-9 flex flex-wrap gap-3">
-                <Link to={`/producto/${zinc.slug}`} className={buttonClass('primary')}>Ver producto <IconArrowRight size={17} aria-hidden="true" /></Link>
-                <WhatsAppButton text={infoAbout(zinc.name)} variant="outline">Preguntar por este producto</WhatsAppButton>
+                <Link to={`/${productPath(product.slug)}`} className={buttonClass('primary')}>Ver producto <IconArrowRight size={17} aria-hidden="true" /></Link>
+                <WhatsAppButton text={infoAbout(product.name)} variant="outline">Preguntar por este producto</WhatsAppButton>
               </div>
             </div>
           </div>

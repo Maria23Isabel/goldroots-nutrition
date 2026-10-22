@@ -2,11 +2,29 @@ import { IconArrowUpRight } from '@tabler/icons-react';
 import { Link } from 'react-router';
 import { GoalBadge } from './ui';
 import { useCursorCard } from '@/lib/cursor';
+import { DEFAULTS } from '@/lib/defaults';
+import { imageUrl } from '@/lib/images';
 import { asset, productPath, type Product } from '@/lib/products';
 
+/** La foto del producto en el tamaño que se va a ver; sin foto (o si no carga) sale la imagen de respaldo de la marca, nunca un hueco. */
 export function ProductImage({ product, width = 480, eager = false, className = '' }: { product: Product; width?: number; eager?: boolean; className?: string }) {
-  if (!product.image) return <div className={`grid place-items-center text-sm text-muted ${className}`}>Foto próximamente</div>;
-  return <img src={asset(product.image)} alt={`Frasco de ${product.name}`} width={width} height={Math.round(width * 1.49)} loading={eager ? 'eager' : 'lazy'} decoding="async" className={`shot ${className}`} />;
+  const fallback = asset(DEFAULTS.image);
+  const src = product.image ? imageUrl(product.image, width) : fallback;
+  return (
+    <img
+      src={src}
+      alt={`Frasco de ${product.name}`}
+      width={width}
+      height={Math.round(width * 1.49)}
+      loading={eager ? 'eager' : 'lazy'}
+      decoding="async"
+      referrerPolicy="no-referrer"
+      onError={(event) => {
+        if (event.currentTarget.src !== new URL(fallback, window.location.href).href) event.currentTarget.src = fallback;
+      }}
+      className={`shot ${className}`}
+    />
+  );
 }
 
 export function ProductCard({ product, className = '' }: { product: Product; className?: string }) {
@@ -29,7 +47,7 @@ export function ProductCard({ product, className = '' }: { product: Product; cla
         </h3>
         <p className="mt-2 flex-1 text-[0.87rem] leading-relaxed text-muted">{product.tagline}</p>
         <div className="mt-5 flex items-center justify-between border-t border-line pt-4 text-[0.8rem]">
-          <span className="text-muted">{product.format || 'Presentación por confirmar'}</span>
+          <span className="text-muted">{product.format || DEFAULTS.formatMissing}</span>
           <Link to={`/${productPath(product.slug)}`} className="link-swipe font-semibold text-night">Ver ficha</Link>
         </div>
       </div>

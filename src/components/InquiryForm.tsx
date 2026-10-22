@@ -1,11 +1,12 @@
 import { IconBrandWhatsapp } from '@tabler/icons-react';
 import { useState, type FormEvent } from 'react';
-import { PRODUCTS } from '@/lib/products';
+import { useCatalogState } from '@/lib/catalog';
 import { inquiryMessage, waLink } from '@/lib/whatsapp';
 
 const label = 'block text-[0.85rem] font-semibold text-fg';
 
 export function InquiryForm({ defaultProduct }: { defaultProduct?: string }) {
+  const products = useCatalogState().catalog?.products ?? [];
   const [problems, setProblems] = useState<Record<string, string>>({});
   const [link, setLink] = useState<string | null>(null);
 
@@ -18,7 +19,7 @@ export function InquiryForm({ defaultProduct }: { defaultProduct?: string }) {
     if (text('message').length < 5) next.message = 'Escribe un mensaje corto para saber qué necesitas.';
     setProblems(next);
     if (Object.keys(next).length) return setLink(null);
-    const product = PRODUCTS.find((item) => item.slug === text('product'))?.name;
+    const product = products.find((item) => item.slug === text('product'))?.name;
     const url = waLink(inquiryMessage({ name: text('name'), message: text('message'), product }));
     setLink(url);
     window.open(url, '_blank', 'noopener,noreferrer');
@@ -36,9 +37,9 @@ export function InquiryForm({ defaultProduct }: { defaultProduct?: string }) {
         </div>
         <div className="sm:col-span-2">
           <label htmlFor="product" className={label}>¿Sobre qué fórmula? <span className="font-normal text-muted">(opcional)</span></label>
-          <select id="product" name="product" defaultValue={defaultProduct ?? ''} className="field mt-1.5">
+          <select id="product" name="product" key={products.length} defaultValue={defaultProduct ?? ''} className="field mt-1.5">
             <option value="">Consulta general</option>
-            {PRODUCTS.map((product) => <option key={product.slug} value={product.slug}>{product.name}</option>)}
+            {products.map((product) => <option key={product.slug} value={product.slug}>{product.name}</option>)}
           </select>
         </div>
         <div className="sm:col-span-2">

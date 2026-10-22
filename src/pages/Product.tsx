@@ -1,14 +1,38 @@
 import { IconCheck, IconChevronRight, IconLeaf, IconPackage } from '@tabler/icons-react';
-import { Link, useParams } from 'react-router';
+import { Link, Navigate, useParams } from 'react-router';
 import { ProductCard, ProductImage } from '@/components/ProductCard';
+import { CatalogError } from '@/components/CatalogGate';
 import { Accordion, buttonClass, d, GoalBadge, Reveal, SectionHeading, TrustMarks } from '@/components/ui';
+import { useCatalogState } from '@/lib/catalog';
+import { DEFAULTS } from '@/lib/defaults';
+import { findByLegacySlug } from '@/lib/legacy-slugs';
 import { usePageMeta } from '@/lib/meta';
 import { findProduct, goalOf, productPath, related } from '@/lib/products';
 import { NotFound } from './NotFound';
 
+/** Mientras llega el catálogo: la forma de la ficha, sin datos inventados */
+function ProductSkeleton() {
+  return (
+    <div className="wrap pt-10" role="status" aria-label="Cargando la ficha">
+      <div className="grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:gap-16">
+        <div className="aspect-[4/4.25] animate-pulse rounded-[2rem] bg-sand" />
+        <div className="space-y-5 pt-6">
+          <div className="h-7 w-32 animate-pulse rounded-full bg-sand" />
+          <div className="h-16 w-4/5 animate-pulse rounded-xl bg-sand" />
+          <div className="h-5 w-3/5 animate-pulse rounded bg-sand" />
+          <div className="h-24 w-full animate-pulse rounded-xl bg-sand" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function Product() {
   const { slug } = useParams();
-  const product = findProduct(slug);
+  const state = useCatalogState();
+  const products = state.catalog?.products ?? [];
+  const product = findProduct(products, slug);
+  const legacy = product ? undefined : findByLegacySlug(products, slug);
 
   usePageMeta({
     title: product ? `${product.name} — Gold Roots Nutrition` : 'Producto no encontrado — Gold Roots Nutrition',
@@ -17,6 +41,9 @@ export function Product() {
     image: product?.image ?? undefined,
   });
 
+  if (state.status === 'loading') return <ProductSkeleton />;
+  if (state.status === 'error') return <div className="wrap"><CatalogError className="my-20" /></div>;
+  if (legacy) return <Navigate to={`/${productPath(legacy.slug)}`} replace />;
   if (!product) return <NotFound />;
   const goal = goalOf(product.goal);
 
@@ -33,7 +60,7 @@ export function Product() {
               <span className="absolute inset-[15%] rounded-full bg-white/42 blur-2xl" aria-hidden="true" />
               <ProductImage product={product} width={620} eager className="product-float absolute inset-0 size-full object-contain p-6" />
             </div>
-            <div className="mt-3 flex items-center gap-2 rounded-2xl border border-line bg-surface px-4 py-3 text-[0.82rem] text-muted"><IconPackage size={16} aria-hidden="true" /><span>{product.format || 'Presentación por confirmar'}</span></div>
+            <div className="mt-3 flex items-center gap-2 rounded-2xl border border-line bg-surface px-4 py-3 text-[0.82rem] text-muted"><IconPackage size={16} aria-hidden="true" /><span>{product.format || DEFAULTS.formatMissing}</span></div>
           </div>
 
           <div className="pb-4 lg:pt-8">
@@ -49,19 +76,23 @@ export function Product() {
           </div>
         </div>
 
+        {product.benefits.length > 0 && (
         <section id="ficha" aria-labelledby="beneficios-title" className="mt-20 border-t border-line pt-14">
           <Reveal><SectionHeading eyebrow="Información del catálogo" title={<span id="beneficios-title">Beneficios declarados para la fórmula</span>} lead="Se presentan como información de bienestar aportada por el catálogo. No son promesas médicas ni sustituyen una consulta profesional." /></Reveal>
           <ul className="mt-9 grid gap-3 sm:grid-cols-2">{product.benefits.map((benefit, index) => <li key={benefit}><Reveal delay={Math.min(index, 5) * 40}><div className="flex items-start gap-3 rounded-2xl border border-line bg-surface p-4"><span className="text-goal mt-0.5 grid size-6 shrink-0 place-items-center rounded-full bg-[var(--gb)]"><IconCheck size={14} stroke={2.5} aria-hidden="true" /></span><span className="text-[0.94rem] leading-relaxed">{benefit}</span></div></Reveal></li>)}</ul>
         </section>
+        )}
 
-        <div className="mt-16 grid gap-12 border-t border-line pt-14 lg:grid-cols-[1.08fr_0.92fr] lg:gap-20">
+        <div id={product.benefits.length ? undefined : 'ficha'} className="mt-16 grid gap-12 border-t border-line pt-14 lg:grid-cols-[1.08fr_0.92fr] lg:gap-20">
           <section aria-labelledby="ingredients-title">
             <SectionHeading eyebrow="Composición" title={<span id="ingredients-title">Ingredientes</span>} />
+            {product.ingredients.length === 0 && <p className="mt-7 text-[0.95rem] text-muted">{DEFAULTS.ingredientsMissing}</p>}
             <ul className="mt-7 flex flex-wrap gap-2">{product.ingredients.map((ingredient) => <li key={ingredient} className="rounded-full border border-line-strong bg-surface px-4 py-2 text-[0.86rem] font-medium">{ingredient}</li>)}</ul>
-            <dl className="mt-8 divide-y divide-line border-y border-line text-[0.9rem]"><div className="flex justify-between gap-4 py-4"><dt className="text-muted">Presentación</dt><dd className="text-right font-semibold">{product.format || 'Por confirmar'}</dd></div><div className="flex justify-between gap-4 py-4"><dt className="text-muted">Objetivo</dt><dd className="text-right font-semibold"><Link to={`/catalogo?objetivo=${goal.slug}`} className="hover:text-accent-deep">{goal.label}</Link></dd></div><div className="flex justify-between gap-4 py-4"><dt className="text-muted">Tipo</dt><dd className="text-right font-semibold">Suplemento alimenticio</dd></div></dl>
+            <dl className="mt-8 divide-y divide-line border-y border-line text-[0.9rem]"><div className="flex justify-between gap-4 py-4"><dt className="text-muted">Presentación</dt><dd className="text-right font-semibold">{product.format || DEFAULTS.formatMissing}</dd></div><div className="flex justify-between gap-4 py-4"><dt className="text-muted">Objetivo</dt><dd className="text-right font-semibold"><Link to={`/catalogo?objetivo=${goal.slug}`} className="hover:text-accent-deep">{goal.label}</Link></dd></div><div className="flex justify-between gap-4 py-4"><dt className="text-muted">Tipo</dt><dd className="text-right font-semibold">Suplemento alimenticio</dd></div><div className="flex justify-between gap-4 py-4"><dt className="text-muted">Marca</dt><dd className="text-right font-semibold">{product.brandName}</dd></div>{product.attributes.map((attribute) => <div key={attribute.name} className="flex justify-between gap-4 py-4"><dt className="shrink-0 text-muted">{attribute.name}</dt><dd className="text-right font-semibold">{attribute.value}</dd></div>)}</dl>
           </section>
           <section aria-label="Avisos de la ficha" className="border-t border-line">
-            <Accordion title="Cómo leer esta información" defaultOpen>Revisa la etiqueta física del producto antes de usarlo. La ficha resume el contenido disponible en el catálogo y puede actualizarse cuando la marca aporte nueva información.</Accordion>
+            {product.usage && <Accordion title="Modo de uso" defaultOpen>{product.usage}</Accordion>}
+            <Accordion title="Cómo leer esta información" defaultOpen={!product.usage}>Revisa la etiqueta física del producto antes de usarlo. La ficha resume el contenido disponible en el catálogo y puede actualizarse cuando la marca aporte nueva información.</Accordion>
             <Accordion title="Consulta profesional">Habla con un profesional de la salud antes de empezar cualquier suplemento, sobre todo si estás embarazada, en lactancia, tomas medicamentos o tienes una condición de salud.</Accordion>
             <Accordion title="Aviso importante">Estas declaraciones no han sido evaluadas por la FDA de EE. UU. Este producto no está destinado a diagnosticar, tratar, curar ni prevenir ninguna enfermedad.</Accordion>
           </section>
@@ -69,7 +100,7 @@ export function Product() {
 
         <section aria-labelledby="related-title" className="mt-20 border-t border-line pt-14">
           <Reveal><SectionHeading eyebrow="Continúa explorando" title={<span id="related-title">Otras fórmulas de la línea</span>} /></Reveal>
-          <ul className="mt-9 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{related(product).map((item) => <li key={item.slug}><ProductCard product={item} /></li>)}</ul>
+          <ul className="mt-9 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{related(products, product).map((item) => <li key={item.slug}><ProductCard product={item} /></li>)}</ul>
         </section>
       </div>
     </div>

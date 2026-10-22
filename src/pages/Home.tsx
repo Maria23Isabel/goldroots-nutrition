@@ -9,7 +9,9 @@ import { useCursorCard } from '@/lib/cursor';
 import { Defer, lazyNamed } from '@/lib/lazy';
 import { usePageMeta } from '@/lib/meta';
 import { useMedia } from '@/lib/motion';
-import { asset, GOALS, PRODUCTS } from '@/lib/products';
+import { CatalogError } from '@/components/CatalogGate';
+import { useCatalogState } from '@/lib/catalog';
+import { asset, GOALS } from '@/lib/products';
 import { INFO_MESSAGE } from '@/lib/whatsapp';
 
 /* Las escenas de abajo se descargan cuando van a entrar en pantalla: la portada llega sola y primero. */
@@ -78,6 +80,7 @@ function GoalCard({ goal, index, compact = false }: { goal: (typeof GOALS)[numbe
 }
 
 function BrandMoment() {
+  const total = useCatalogState().catalog?.products.length ?? 0;
   return (
     <section className="wrap section" aria-labelledby="brand-title">
       <div className="overflow-hidden rounded-[2rem] border border-line bg-surface">
@@ -93,7 +96,7 @@ function BrandMoment() {
             <dl className="grid grid-cols-2 gap-5 border-t border-line pt-7">
               <div>
                 <dd className="font-display text-4xl text-night">
-                  <CountUp to={PRODUCTS.length} />
+                  {total > 0 ? <CountUp to={total} /> : '—'}
                 </dd>
                 <dt className="mt-1 text-[0.78rem] font-medium text-muted">fórmulas documentadas</dt>
               </div>
@@ -156,21 +159,31 @@ function FinalCta() {
   );
 }
 
+/** Si Herbavida no responde y no hay copia guardada, las secciones con productos se ocultan: este aviso es el único que lo dice, con su «Reintentar». */
+function CatalogStatus() {
+  return useCatalogState().status === 'error' ? <CatalogError className="my-10 max-w-3xl" /> : null;
+}
+
 export function Home() {
+  const state = useCatalogState();
+  const total = state.catalog?.products.length ?? 0;
+  /* Las «seis puertas» y el explorador son por objetivo: si Herbavida todavía no clasificó ninguna fórmula, no se muestran vacías (mientras carga sí, para no saltar) */
+  const hasGoals = state.status !== 'ready' || state.catalog.products.some((product) => product.goal !== 'general');
   usePageMeta({
     title: 'Gold Roots Nutrition — Fórmulas para tu bienestar diario',
-    description: `Conoce las ${PRODUCTS.length} fórmulas de Gold Roots Nutrition: ingredientes, objetivos, presentaciones y fichas informativas.`,
+    description: `Conoce ${total > 0 ? `las ${total} fórmulas` : 'las fórmulas'} de Gold Roots Nutrition: ingredientes, objetivos, presentaciones y fichas informativas.`,
     path: '/',
     image: 'brand/hero-gold.webp',
   });
   return (
     <>
-      <SectionRail items={RAIL} />
+      <SectionRail items={hasGoals ? RAIL : RAIL.filter((item) => item.id !== 'objetivos' && item.id !== 'explorador')} />
       <HeroScene />
       <Defer reserve="min-h-[60svh]"><UniverseBand /></Defer>
       <Defer id="historia" reserve="min-h-[120svh] lg:min-h-[190svh]"><StoryScene /></Defer>
-      <Goals />
-      <Defer id="explorador" reserve="min-h-[48rem]"><FormulaFinder /></Defer>
+      {hasGoals && <Goals />}
+      <CatalogStatus />
+      {hasGoals && <Defer id="explorador" reserve="min-h-[48rem]"><FormulaFinder /></Defer>}
       <Defer id="destacado" reserve="min-h-[90svh] lg:min-h-[200svh]"><ProductSpotlight /></Defer>
       <Defer id="coleccion" reserve="min-h-[56rem]"><ProductShowcase /></Defer>
       <BrandMoment />

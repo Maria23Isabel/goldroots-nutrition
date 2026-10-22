@@ -2,6 +2,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Navigate, Route, Routes, useLocation, useParams } from 'react-router';
 import { Layout } from '@/components/Layout';
+import { startCatalog } from '@/lib/catalog';
 import { Home } from '@/pages/Home';
 import { NotFound } from '@/pages/NotFound';
 import { lazyNamed, Page } from '@/lib/lazy';
@@ -14,6 +15,9 @@ const Catalog = lazyNamed(() => import('@/pages/Catalog'), 'Catalog');
 const Contact = lazyNamed(() => import('@/pages/Contact'), 'Contact');
 const Legal = lazyNamed(() => import('@/pages/Legal'), 'Legal');
 const Product = lazyNamed(() => import('@/pages/Product'), 'Product');
+
+/* El catálogo empieza a pedirse al abrir la web (lo guardado se pinta al instante), no cuando una pantalla lo necesita. */
+startCatalog();
 
 const basename = import.meta.env.BASE_URL.replace(/\/$/, '') || '/';
 

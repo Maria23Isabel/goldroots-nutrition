@@ -7,14 +7,13 @@ import * as m from 'motion/react-m';
 import { useRef, useState } from 'react';
 import { Link } from 'react-router';
 import { ProductImage } from '@/components/ProductCard';
+import { CatalogGate } from '@/components/CatalogGate';
 import { buttonClass, Reveal, SectionHeading } from '@/components/ui';
 import { EASE_OUT, useDesktop, useQuietMotion } from '@/lib/motion';
 import { goalOf, type Product } from '@/lib/products';
-import { featuredStories, stepAt } from '@/lib/showcase';
+import { pickVaried, stepAt } from '@/lib/showcase';
 
-const stories = featuredStories();
-
-/* Los tres tramos se escriven sobre datos que ya están en el catálogo: nombre, objetivo y ficha. */
+/* Los tres tramos se escriben sobre datos que ya están en el catálogo: nombre, objetivo y ficha. */
 const STEPS = [
   {
     n: '01',
@@ -50,6 +49,18 @@ const LAYOUT = [
 ];
 
 export function StoryScene() {
+  return (
+    <CatalogGate error={null} empty={null}>
+      {(catalog) => {
+        /* La escena cuenta con tres productos distintos: con menos de tres no se muestra (no se repiten ni se inventan). */
+        const stories = pickVaried(catalog.products, STEPS.length);
+        return stories.length === STEPS.length ? <Story stories={stories} /> : null;
+      }}
+    </CatalogGate>
+  );
+}
+
+function Story({ stories }: { stories: Product[] }) {
   const section = useRef<HTMLElement>(null);
   const desktop = useDesktop();
   const quiet = useQuietMotion();

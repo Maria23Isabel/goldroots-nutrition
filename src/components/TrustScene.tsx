@@ -5,30 +5,36 @@ import * as m from 'motion/react-m';
 import { Link } from 'react-router';
 import { CountUp, SectionHeading } from '@/components/ui';
 import { EASE_OUT } from '@/lib/motion';
+import { CatalogGate } from '@/components/CatalogGate';
+import { productPath, type Product } from '@/lib/products';
 import { trustFacts } from '@/lib/showcase';
-
-const facts = trustFacts();
 
 const RAIL = { hidden: {}, show: { transition: { staggerChildren: 0.16, delayChildren: 0.5 } } };
 const DRAW = { hidden: { scaleX: 0 }, show: { scaleX: 1, transition: { duration: 0.9, ease: EASE_OUT } } };
 const NODE = { hidden: { opacity: 0, scale: 0.6, y: 18 }, show: { opacity: 1, scale: 1, y: 0, transition: { type: 'spring' as const, stiffness: 260, damping: 22 } } };
 const TEXT = { hidden: { opacity: 0, clipPath: 'inset(0 0 100% 0)' }, show: { opacity: 1, clipPath: 'inset(0 0 0% 0)', transition: { duration: 0.6, ease: EASE_OUT } } };
 
-/* Cada garantía va atada a algo que se puede abrir y comprobar en esta misma web. */
-const items: { Icon: Icon; title: string; text: string; check: string; to: string }[] = [
-  { Icon: IconFlask, title: 'Fórmula completa', text: `Ingredientes, presentación y objetivo declarado en cada una de las ${facts.formulas} fichas.`, check: 'Ver una ficha', to: '/producto/zinc-triple-play' },
-  { Icon: IconRoute, title: 'Información primero', text: 'Sin precios, sin carrito y sin presión: la página describe, no vende.', check: 'Recorrer el catálogo', to: '/catalogo' },
-  { Icon: IconLink, title: 'Rutas que permanecen', text: 'Cada ficha conserva una dirección propia para volver a consultarla cuando quieras.', check: 'Preguntar por una ficha', to: '/contacto' },
-  { Icon: IconShieldCheck, title: 'Límites claros', text: 'Suplementos alimenticios: no sustituyen una dieta variada ni la consulta profesional.', check: 'Leer los avisos', to: '/legal/terminos' },
-];
-
-const cifras = [
-  { to: facts.formulas, label: 'fórmulas documentadas' },
-  { to: facts.goals, label: 'objetivos para explorar' },
-  { to: facts.sheets, label: 'fichas con su fotografía' },
-];
-
 export function TrustScene() {
+  return <CatalogGate error={null} empty={null}>{(catalog) => <Trust products={catalog.products} />}</CatalogGate>;
+}
+
+function Trust({ products }: { products: Product[] }) {
+  const facts = trustFacts(products);
+  /* Cada garantía va atada a algo que se puede abrir y comprobar en esta misma web. */
+  const items: { Icon: Icon; title: string; text: string; check: string; to: string }[] = [
+    { Icon: IconFlask, title: 'Fórmula completa', text: `Ingredientes, presentación y objetivo declarado en cada una de las ${facts.formulas} fichas.`, check: 'Ver una ficha', to: `/${productPath(products[0].slug)}` },
+    { Icon: IconRoute, title: 'Información primero', text: 'Sin precios, sin carrito y sin presión: la página describe, no vende.', check: 'Recorrer el catálogo', to: '/catalogo' },
+    { Icon: IconLink, title: 'Rutas que permanecen', text: 'Cada ficha conserva una dirección propia para volver a consultarla cuando quieras.', check: 'Preguntar por una ficha', to: '/contacto' },
+    { Icon: IconShieldCheck, title: 'Límites claros', text: 'Suplementos alimenticios: no sustituyen una dieta variada ni la consulta profesional.', check: 'Leer los avisos', to: '/legal/terminos' },
+  ];
+
+  const cifras = [
+    { to: facts.formulas, label: 'fórmulas documentadas' },
+    ...(facts.goals > 0 ? [{ to: facts.goals, label: 'objetivos con fórmulas' }] : []),
+    { to: facts.sheets, label: 'fichas con su fotografía' },
+  ];
+
+
   return (
     <section className="border-y border-line bg-surface" aria-labelledby="quality-title">
       <div className="wrap section">
