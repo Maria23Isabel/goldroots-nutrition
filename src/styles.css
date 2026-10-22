@@ -1,45 +1,47 @@
 @import '@fontsource-variable/inter';
-@import '@fontsource-variable/hanken-grotesk';
+@import '@fontsource-variable/playfair-display';
 @import 'tailwindcss';
 
-/* Sistema «botica limpia»: papel cálido casi blanco, bloques pastel por objetivo, texto casi negro (nunca #000)
-   y UN solo color saturado — la arcilla del acento — reservado para los botones de comprar.
-   Nada de degradados en el texto, ni vidrio esmerilado, ni grano, ni modo oscuro: así van las páginas de suplementos
-   de arriba (Seed, Ritual, Thorne, Momentous, Moon Juice). */
+/* Identidad Gold Roots, tomada de sus propios archivos oficiales: marfil cálido de fondo, azul tinta como
+   bloque oscuro, dorado de la etiqueta como acento (con una variante oscura legible sobre el marfil) y verde
+   botánico secundario. Tipografía: Playfair Display para los títulos, Inter para la lectura.
+   Sin modo oscuro, sin vidrio esmerilado, sin degradados en el texto. */
 @theme static {
   --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
-  --font-display: 'Hanken Grotesk Variable', 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Playfair Display Variable', ui-serif, Georgia, serif;
 
-  /* Superficies */
-  --color-canvas: #fcfbf7; /* fondo de la página: blanco hueso, no blanco puro */
+  /* Superficies: el papel marfil de la marca. */
+  --color-canvas: #fbf8f1; /* fondo de página: marfil, nunca blanco puro */
   --color-surface: #ffffff; /* tarjetas y formularios */
-  --color-sand: #f4f1e8; /* bloque arena (avena) */
-  --color-sage: #eaefe8; /* bloque salvia */
-  --color-line: #e5e1d6; /* filete */
-  --color-line-strong: #d6d1c4;
+  --color-sand: #f2ece0; /* bloque arena: el marfil bajado un tono */
+  --color-sage: #e9eee3; /* bloque botánico muy claro */
+  --color-line: #e3dccc; /* filete */
+  --color-line-strong: #cfc5ac;
 
-  /* Texto */
-  --color-fg: #23231f; /* casi negro cálido */
-  --color-muted: #6d6d64; /* gris verdoso para lo secundario */
-  --color-night: #26231d; /* el único bloque oscuro del sitio */
+  /* Texto: azul tinta antes que negro. El navy oficial sale del rótulo del Zinc y de los banners. */
+  --color-fg: #1e2b3c; /* cuerpo: tinta oscura */
+  --color-muted: #6c7482; /* secundario: gris tinta */
+  --color-night: #101b38; /* azul marino oficial: el bloque oscuro del sitio */
+  --color-ink: #0a1226; /* el tinta más hondo, para el estado presionado */
 
-  /* El único color saturado: arcilla. Solo en llamadas a la acción y enlaces importantes. */
-  --color-accent: #b0562f;
-  --color-accent-deep: #8f4324;
-  --color-accent-soft: #f3e5dc;
+  /* El dorado del logotipo, medido sobre el símbolo (#B8882A) y afinado con el de las piezas de marca.
+     accent-deep es la versión legible sobre marfil; gold-soft es la luz del degradado del favicon. */
+  --color-accent: #bc9134;
+  --color-accent-deep: #7e5c14;
+  --color-accent-soft: #f2e7cd;
+  --color-gold: #b8882a;
+  --color-gold-light: #e4c57f;
+
+  /* Verde botánico secundario: detalles, no llamadas a la acción. */
+  --color-botanical: #537446;
+  --color-botanical-soft: #e6ecdc;
 
   /* WhatsApp: verde hondo, no neón. Se usa solo en lo que abre el chat. */
   --color-wa: #1e8e4a;
   --color-wa-deep: #146634;
   --color-wa-soft: #e4f1e8;
-
-  --animate-marquee: marquee 42s linear infinite;
 }
 
-@keyframes marquee {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
-}
 @keyframes fade-in {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -48,33 +50,34 @@
   from { transform: translateY(16px); opacity: 0; }
   to { transform: none; opacity: 1; }
 }
-@keyframes slide-in {
-  from { transform: translateX(100%); }
-  to { transform: none; }
-}
 @keyframes pop {
   0% { transform: scale(0.7); opacity: 0; }
   100% { transform: scale(1); opacity: 1; }
 }
 /* Entrada escalonada: cada bloque sube y aparece. El retardo se pasa con --d en el estilo del elemento. */
 @keyframes rise {
-  from { opacity: 0; transform: translateY(20px); }
+  from { opacity: 0; transform: translateY(22px); }
   to { opacity: 1; transform: none; }
 }
 /* Flotar despacio: lo que hace que un frasco quieto se vea vivo sin llamar la atención. */
 @keyframes float {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+  50% { transform: translateY(-9px); }
 }
-/* Las manchas de color del bloque final: deriva lenta, nunca en línea recta. */
+/* Respiración lentísima del encuadre: agranda 3,5 % y vuelve, sin que se note el ciclo. */
+@keyframes breathe {
+  from { transform: scale(1); }
+  to { transform: scale(1.035); }
+}
+/* Las manchas de color del héroe y del cierre: deriva lenta, nunca en línea recta. */
 @keyframes drift {
   0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
-  50% { transform: translate3d(3%, -4%, 0) scale(1.08); }
+  50% { transform: translate3d(3%, -5%, 0) scale(1.1); }
 }
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 7.5rem;
+  scroll-padding-top: 6.5rem;
 }
 
 body {
@@ -83,28 +86,29 @@ body {
   color: var(--color-fg);
   font-family: var(--font-sans);
   font-size: 1rem;
-  line-height: 1.55;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   overflow-x: clip;
 }
 
-/* Títulos: grotesca en peso normal/medio con rastreo negativo. El peso 800 era de las cosas que hacían
-   que la página se viera gritona en vez de de farmacia. */
+/* Títulos: la serif de la marca, en peso medio y con el rastreo cerrado. En cuerpos grandes la display
+   se abre sola, así que h1 baja un punto más el rastreo. */
 h1, h2, h3, h4 {
   font-family: var(--font-display);
   font-weight: 500;
-  letter-spacing: -0.02em;
-  line-height: 1.1;
+  letter-spacing: -0.015em;
+  line-height: 1.12;
   text-wrap: balance;
 }
+h1 { letter-spacing: -0.03em; }
 
 strong {
   font-weight: 600;
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--color-accent-deep);
   outline-offset: 3px;
   border-radius: 0.25rem;
 }
@@ -115,37 +119,41 @@ strong {
 }
 
 @layer components {
-  /* Un color pastel por objetivo. --gb pinta el bloque detrás del frasco; --gi es el texto encima de ese bloque. */
-  .g-energy { --gb: #f7efdc; --gi: #86621f; }
-  .g-heart { --gb: #f7e8e2; --gi: #96563f; }
-  .g-brain { --gb: #e7edf2; --gi: #3d6075; }
-  .g-sleep { --gb: #e2ecec; --gi: #33635e; }
-  .g-eye-skin { --gb: #e4f0e7; --gi: #2e6a4e; }
-  .g-immune { --gb: #eef2da; --gi: #5a6d30; }
+  /* Un bloque claro por objetivo, emparentado con el marfil y el verde botánico.
+     --gb pinta el bloque detrás del frasco; --gi es el texto encima de ese bloque. */
+  .g-energy { --gb: #f8f0dd; --gi: #8a6a1c; }
+  .g-heart { --gb: #f8e9e4; --gi: #98543c; }
+  .g-brain { --gb: #e7edf4; --gi: #38597c; }
+  .g-sleep { --gb: #e3eaea; --gi: #35605c; }
+  .g-eye-skin { --gb: #e4f0e7; --gi: #2f6a4d; }
+  .g-immune { --gb: #edf2da; --gi: #5a6d30; }
 
-  .goal-block { background: var(--gb); }
+  /* El bloque de objetivo va en blanco hacia el centro y teñido hacia los bordes: así el multiply de la
+     foto (fondo gris de estudio) desaparece donde está el frasco y el color del objetivo sigue encuadrando. */
+  .goal-block { background: radial-gradient(125% 105% at 50% 44%, #fff 0%, #fff 40%, var(--gb) 100%); }
   .text-goal { color: var(--gi); }
   .goal-ring { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--gi) 22%, transparent); }
 
-  /* Las fotos traen fondo blanco: multiply las funde con el bloque pastel sin recuadro ni reflejo. */
+  /* Las fotos traen fondo blanco/gris de estudio: multiply las funde con el bloque claro sin recuadro.
+     No se enmascaran: el frasco ocupa casi todo el alto del archivo y una máscara lo comería por arriba. */
   .shot { mix-blend-mode: multiply; }
 
   .eyebrow {
     font-family: var(--font-sans);
     font-size: 0.75rem;
     font-weight: 600;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: var(--color-muted);
+    color: var(--color-accent-deep);
   }
 
   /* Contenido: 1280 px como máximo, con aire lateral en móvil. */
   .wrap { margin-inline: auto; width: 100%; max-width: 80rem; padding-inline: 1.25rem; }
   @media (min-width: 640px) { .wrap { padding-inline: 2rem; } }
 
-  /* Ritmo vertical: 64 px en móvil, 80 en escritorio (las páginas de referencia andan entre 46 y 80). */
+  /* Ritmo vertical: 64 px en móvil, 88 en escritorio. */
   .section { padding-block: 4rem; }
-  @media (min-width: 640px) { .section { padding-block: 5rem; } }
+  @media (min-width: 640px) { .section { padding-block: 5.5rem; } }
 
   .card {
     border-radius: 1.25rem;
@@ -166,20 +174,89 @@ strong {
   }
   .field:focus {
     border-color: var(--color-accent);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 14%, transparent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 20%, transparent);
   }
 
-  .reveal { opacity: 0; transform: translateY(14px); transition: opacity 0.5s ease-out, transform 0.5s ease-out; }
+  .reveal { opacity: 0; transform: translateY(14px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
   .reveal.in { opacity: 1; transform: none; }
 
-  /* Entrada escalonada «a la Dropbox»: cada bloque sube con su retardo (--d en milisegundos). */
-  .rise { animation: rise 0.75s cubic-bezier(0.22, 0.61, 0.36, 1) both; animation-delay: var(--d, 0ms); }
+  /* Entrada escalonada: cada bloque sube con su retardo (--d en milisegundos). */
+  .rise { animation: rise 0.85s cubic-bezier(0.22, 0.61, 0.36, 1) both; animation-delay: var(--d, 0ms); }
 
-  /* El frasco respira: flota despacio sobre su bloque pastel. */
+  /* El frasco respira: flota despacio sobre su bloque. */
   .float { animation: float 7s ease-in-out infinite; }
 
-  /* Manchas de color que derivan detrás del cierre final. */
-  .drift { animation: drift 18s ease-in-out infinite; }
+  /* Manchas de color que derivan detrás del héroe y del cierre. */
+  .drift { animation: drift 20s ease-in-out infinite; }
+
+  /* --- Héroe editorial --- */
+  /* Un solo baño cálido detrás del titular: el dorado aparece, pero la página sigue siendo marfil. */
+  .hero-shell {
+    background:
+      radial-gradient(78% 62% at 88% 6%, var(--color-accent-soft) 0%, transparent 62%),
+      linear-gradient(180deg, #fdfbf6 0%, var(--color-canvas) 100%);
+  }
+  /* Las dos luces que se mueven despacio; nunca tapan el contenido. */
+  .hero-orb {
+    position: absolute;
+    z-index: -1;
+    border-radius: 50%;
+    filter: blur(70px);
+    pointer-events: none;
+    animation: drift 26s ease-in-out infinite;
+  }
+  .hero-orb-a { top: -8%; right: 4%; width: 34rem; height: 34rem; background: color-mix(in srgb, var(--color-accent) 22%, transparent); }
+  .hero-orb-b { bottom: -14%; left: -6%; width: 28rem; height: 28rem; background: color-mix(in srgb, var(--color-botanical) 12%, transparent); animation-duration: 32s; animation-direction: reverse; }
+  /* La portada oficial va suelta, sin marco ni sombra: el multiply funde su fondo de estudio con el marfil
+     y la respiración lentísima es lo único que delata que está viva. */
+  .hero-art {
+    mix-blend-mode: multiply;
+    animation: breathe 22s ease-in-out infinite alternate;
+    will-change: transform;
+  }
+  /* El filete dorado que separa el titular del resto: un detalle, no un marco. */
+  .rule-gold { height: 1px; background: linear-gradient(90deg, var(--color-accent) 0%, color-mix(in srgb, var(--color-accent) 12%, transparent) 100%); }
+
+  /* --- Banda de frascos flotantes --- */
+  /* La escena con las cintas doradas ocupa todo el ancho y se mueve a otra velocidad que el texto. */
+  .float-band {
+    background:
+      radial-gradient(70% 90% at 50% 0%, #fffdf8 0%, transparent 55%),
+      var(--color-canvas);
+  }
+  .float-art { mix-blend-mode: multiply; will-change: transform; }
+  /* Titular que sube por capas: cada línea entra con su retardo cuando la sección aparece. */
+  .line-mask { display: block; overflow: hidden; }
+  .line-mask > span { display: block; will-change: transform; }
+
+  /* --- Producto destacado --- */
+  .zinc-stage { background: radial-gradient(120% 100% at 50% 40%, #fff 0%, #fff 38%, #f3ecdd 100%); }
+
+  /* --- Escena de scroll --- */
+  /* El bloque tinta lleva un degradado para que la escena no se vea como un rectángulo pintado. */
+  .story-section {
+    background:
+      radial-gradient(80% 55% at 20% 8%, rgb(188 145 52 / 0.16) 0%, transparent 62%),
+      linear-gradient(165deg, #1a2b52 0%, var(--color-night) 45%, #0a1226 100%);
+  }
+  .story-stage { perspective: 1200px; }
+  /* Cada placa de la escena: el transform lo maneja GSAP en escritorio; la sombra la pone Tailwind,
+     porque un filter aquí aislaría el grupo y rompería el multiply de la foto. */
+  .story-bottle { will-change: transform; }
+  .story-copy { will-change: opacity; }
+
+  /* La foto de la ficha: se queda suspendida mientras se lee. Sin filter aquí: el drop-shadow dibujaría
+     la silueta del rectángulo de la foto, no la del frasco. */
+  .product-float {
+    animation: float 9s ease-in-out infinite;
+  }
+
+  /* Cabecera del catálogo: la misma luz cálida del héroe, más baja. */
+  .catalog-hero {
+    background:
+      radial-gradient(100% 90% at 85% 0%, var(--color-accent-soft) 0%, transparent 62%),
+      linear-gradient(180deg, #fdfbf6 0%, var(--color-canvas) 100%);
+  }
 
   /* Los botones se hunden un poco al tocarlos; el color ya cambia con transition-colors. */
   .press { transition: transform 0.12s ease-out, background-color 0.18s, border-color 0.18s, color 0.18s; }
@@ -202,9 +279,9 @@ strong {
   .link-swipe:hover::after,
   .link-swipe:focus-visible::after { transform: scaleX(1); }
 
-  /* El hover de las tarjetas de arriba es un levantamiento mínimo, no un salto. */
-  .card-lift { transition: transform 0.2s ease-out, box-shadow 0.2s ease-out; }
-  .card-lift:hover { transform: translateY(-2px); box-shadow: 0 1px 2px rgb(35 35 31 / 0.05), 0 10px 24px -14px rgb(35 35 31 / 0.22), inset 0 0 0 1px var(--color-line-strong); }
+  /* El hover de las tarjetas es un levantamiento mínimo, no un salto. */
+  .card-lift { transition: transform 0.24s ease-out, box-shadow 0.24s ease-out; }
+  .card-lift:hover { transform: translateY(-3px); box-shadow: 0 1px 2px rgb(30 43 60 / 0.06), 0 18px 38px -20px rgb(34 55 92 / 0.3), inset 0 0 0 1px var(--color-line-strong); }
 
   .hairline { border-top: 1px solid var(--color-line); }
 
@@ -212,6 +289,49 @@ strong {
   .scroll-x::-webkit-scrollbar { display: none; }
 
   .pop { animation: pop 0.24s ease-out both; }
+
+  /* --- WhatsApp flotante --- */
+  /* Un solo ancla fija en toda la web: abajo a la derecha, por encima del contenido y del pie. */
+  .wa-float {
+    position: fixed;
+    right: 1.15rem;
+    bottom: 1.15rem;
+    z-index: 60;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-height: 3.25rem;
+    padding: 0 0.95rem;
+    border-radius: 9999px;
+    background: var(--color-wa);
+    color: #fff;
+    box-shadow: 0 16px 34px -16px rgb(20 102 52 / 0.75);
+    transition: transform 0.22s cubic-bezier(0.22, 0.61, 0.36, 1), background-color 0.22s, box-shadow 0.22s;
+    animation: sheet-up 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+    animation-delay: 1.1s;
+  }
+  /* El halo que late una sola vez al cargar: invita sin convertirse en chatbot. */
+  .wa-float::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 9999px;
+    border: 1px solid color-mix(in srgb, var(--color-wa) 55%, transparent);
+    opacity: 0;
+    animation: wa-halo 2.4s ease-out 1.6s 2;
+  }
+  .wa-float:hover { transform: translateY(-2px); background: var(--color-wa-deep); box-shadow: 0 22px 40px -18px rgb(20 102 52 / 0.8); }
+  .wa-float:active { transform: scale(0.98); }
+  .wa-float .wa-label { display: none; font-size: 0.86rem; font-weight: 600; white-space: nowrap; }
+  @media (min-width: 640px) {
+    .wa-float { right: 1.75rem; bottom: 1.75rem; }
+    .wa-float .wa-label { display: inline; }
+  }
+}
+
+@keyframes wa-halo {
+  from { opacity: 0.9; transform: scale(1); }
+  to { opacity: 0; transform: scale(1.22); }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -223,4 +343,7 @@ strong {
     transition-duration: 0.01ms !important;
   }
   .reveal { opacity: 1; transform: none; }
+  /* Sin movimiento la escena queda compuesta como la ve GSAP al terminar: sin parallax y sin transparencias. */
+  .hero-orb, .hero-art, .float-art, .line-mask > span, .story-bottle, .story-copy, .product-float { transform: none; opacity: 1; will-change: auto; }
+  .wa-float::before { display: none; }
 }

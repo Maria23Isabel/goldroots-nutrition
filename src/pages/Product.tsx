@@ -1,48 +1,15 @@
-import { IconCheck, IconChevronRight, IconLeaf, IconMessageCircle, IconPackage, IconShieldCheck, IconTruckDelivery } from '@tabler/icons-react';
-import { useEffect, useRef, useState, type RefObject } from 'react';
+import { IconCheck, IconChevronRight, IconInfoCircle, IconLeaf, IconPackage, IconScan } from '@tabler/icons-react';
 import { Link, useParams } from 'react-router';
 import { ProductCard, ProductImage } from '@/components/ProductCard';
 import { QrCard } from '@/components/QrCard';
-import { Accordion, AddButton, buttonClass, d, GoalBadge, Pending, PriceTag, QtyStepper, Reveal, SectionHeading, TrustMarks, WhatsAppButton } from '@/components/ui';
+import { Accordion, buttonClass, d, GoalBadge, Reveal, SectionHeading, TrustMarks } from '@/components/ui';
 import { usePageMeta } from '@/lib/meta';
-import { findProduct, goalOf, money, productPath, related, savings } from '@/lib/products';
-import { productMessage } from '@/lib/whatsapp';
+import { findProduct, goalOf, productPath, related } from '@/lib/products';
 import { NotFound } from './Legal';
-
-/* ─────────────────── barra de compra pegajosa (la usan las páginas de suplementos de arriba) ─────────────────── */
-function StickyBuyBar({ product, buyRef }: { product: ReturnType<typeof findProduct>; buyRef: RefObject<HTMLDivElement | null> }) {
-  const [show, setShow] = useState(false);
-  useEffect(() => {
-    const box = buyRef.current;
-    if (!box || typeof IntersectionObserver === 'undefined') return;
-    const io = new IntersectionObserver(([entry]) => setShow(!entry.isIntersecting && entry.boundingClientRect.top < 0), { threshold: 0 });
-    io.observe(box);
-    return () => io.disconnect();
-  }, [buyRef, product?.slug]);
-  if (!product || !show) return null;
-  return (
-    <div className="fixed inset-x-0 bottom-[5.75rem] z-40 px-4 sm:bottom-6">
-      <div className="mx-auto flex max-w-3xl flex-wrap items-center justify-between gap-3 rounded-2xl border border-line-strong bg-surface px-4 py-3 shadow-[0_16px_40px_-18px_rgb(35_35_31/0.35)] [animation:sheet-up_0.25s_both]">
-        <div className="min-w-0">
-          <p className="truncate font-display text-[0.95rem] font-medium">{product.name}</p>
-          <p className="text-[0.8rem] text-muted">{product.price == null ? 'Precio por confirmar' : `${money(product.price)} · ${product.format}`}</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <WhatsAppButton text={productMessage(product)} variant="outline" className="max-sm:hidden">
-            Preguntar
-          </WhatsAppButton>
-          {product.price != null && <AddButton product={product} compact variant="primary" quiet />}
-        </div>
-      </div>
-    </div>
-  );
-}
 
 export function Product() {
   const { slug } = useParams();
   const product = findProduct(slug);
-  const [qty, setQty] = useState(1);
-  const buyBox = useRef<HTMLDivElement>(null);
 
   usePageMeta({
     title: product ? `${product.name} — Gold Roots Nutrition` : 'Producto no encontrado — Gold Roots Nutrition',
@@ -53,192 +20,63 @@ export function Product() {
 
   if (!product) return <NotFound />;
   const goal = goalOf(product.goal);
-  const soon = product.price == null;
-  const saved = savings(product);
 
   return (
     <div className={`g-${product.goal}`}>
-      <div className="wrap pt-8 sm:pt-10">
-        <nav aria-label="Ruta de navegación" className="text-[0.82rem] text-muted">
-          <ol className="flex flex-wrap items-center gap-1.5">
-            <li>
-              <Link to="/" className="transition-colors hover:text-fg">
-                Inicio
-              </Link>
-            </li>
-            <IconChevronRight size={13} aria-hidden="true" />
-            <li>
-              <Link to="/catalogo" className="transition-colors hover:text-fg">
-                Catálogo
-              </Link>
-            </li>
-            <IconChevronRight size={13} aria-hidden="true" />
-            <li>
-              <Link to={`/catalogo?objetivo=${goal.slug}`} className="transition-colors hover:text-fg">
-                {goal.short}
-              </Link>
-            </li>
-          </ol>
+      <div className="wrap pt-7 sm:pt-10">
+        <nav aria-label="Ruta de navegación" className="text-[0.8rem] text-muted">
+          <ol className="flex flex-wrap items-center gap-1.5"><li><Link to="/" className="hover:text-night">Inicio</Link></li><IconChevronRight size={13} aria-hidden="true" /><li><Link to="/catalogo" className="hover:text-night">Catálogo</Link></li><IconChevronRight size={13} aria-hidden="true" /><li><Link to={`/catalogo?objetivo=${goal.slug}`} className="hover:text-night">{goal.short}</Link></li></ol>
         </nav>
 
-        <div className="mt-6 grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:gap-14">
-          {/* Foto protagonista sobre un bloque pastel plano, sin degradado ni reflejo. */}
+        <div className="mt-7 grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:gap-16">
           <div className="lg:sticky lg:top-28 lg:self-start">
-            <div className="goal-block grid aspect-[4/4.2] place-items-center overflow-hidden rounded-2xl">
-              <ProductImage product={product} width={560} eager className="float h-[85%] w-auto object-contain" />
+            <div className="goal-block relative grid aspect-[4/4.25] place-items-center overflow-hidden rounded-[2rem]">
+              <span className="absolute inset-[15%] rounded-full bg-white/42 blur-2xl" aria-hidden="true" />
+              <ProductImage product={product} width={620} eager className="product-float absolute inset-0 size-full object-contain p-6" />
             </div>
-            <div className="mt-3 flex items-center justify-between gap-3 rounded-xl border border-line bg-surface px-4 py-2.5 text-[0.82rem] text-muted">
-              <span className="flex items-center gap-2">
-                <IconPackage size={15} aria-hidden="true" /> {product.format || 'Presentación por confirmar'}
-              </span>
-              {saved > 0 && <span className="font-semibold text-wa-deep">Ahorras {money(saved)}</span>}
-            </div>
+            <div className="mt-3 flex items-center gap-2 rounded-2xl border border-line bg-surface px-4 py-3 text-[0.82rem] text-muted"><IconPackage size={16} aria-hidden="true" /><span>{product.format || 'Presentación por confirmar'}</span></div>
           </div>
 
-          <div>
-            <div className="rise" style={d(0)}>
-              <GoalBadge goal={product.goal} />
+          <div className="pb-4 lg:pt-8">
+            <div className="rise" style={d(0)}><GoalBadge goal={product.goal} /></div>
+            <h1 className="rise mt-5 text-[clamp(2.5rem,5vw,4.8rem)] leading-[0.96] tracking-[-0.045em]" style={d(60)}>{product.name}</h1>
+            <p className="rise mt-5 text-[1.1rem] leading-relaxed text-muted" style={d(120)}>{product.headline}</p>
+            <div className="rule-gold rise mt-7 w-32" style={d(150)} aria-hidden="true" />
+            <p className="rise mt-7 text-[1rem] leading-[1.8] text-fg/88" style={d(180)}>{product.summary}</p>
+            <div className="rise mt-8" style={d(240)}>
+              <TrustMarks items={[{ Icon: IconLeaf, text: goal.label }, { Icon: IconPackage, text: product.format || 'Presentación por confirmar' }, { Icon: IconScan, text: 'Ficha enlazada por QR' }]} />
             </div>
-            <h1 className="rise mt-3 text-[1.9rem] leading-[1.15] font-medium sm:text-[2.4rem]" style={d(60)}>
-              {product.name}
-            </h1>
-            <p className="rise mt-2 text-[1.05rem] leading-relaxed text-muted" style={d(130)}>
-              {product.headline}
-            </p>
-
-            <div className="rise mt-5 flex flex-wrap items-baseline gap-x-4 gap-y-1 border-y border-line py-4" style={d(200)}>
-              <PriceTag product={product} big />
-              <p className="text-[0.82rem] text-muted">{soon ? 'Escríbenos y te pasamos el precio y la disponibilidad.' : 'Precio en dólares. El envío se calcula en el chat.'}</p>
-            </div>
-
-            <p className="rise mt-5 text-[1rem] leading-relaxed text-fg/90" style={d(260)}>
-              {product.summary}
-            </p>
-
-            <div ref={buyBox} className="mt-6 rounded-2xl border border-line bg-surface p-5">
-              {soon ? (
-                <WhatsAppButton text={productMessage(product)} className="w-full justify-center">
-                  Consultar por esta fórmula
-                </WhatsAppButton>
-              ) : (
-                <div className="flex flex-wrap items-center gap-3">
-                  <QtyStepper value={qty} onChange={(n) => setQty(Math.max(1, n))} label={product.name} />
-                  <AddButton product={product} qty={qty} variant="primary" className="min-w-48 flex-1" />
-                </div>
-              )}
-              {!soon && (
-                <WhatsAppButton text={productMessage(product)} variant="outline" className="mt-2.5 w-full justify-center">
-                  Preguntar o pedir solo este por WhatsApp
-                </WhatsAppButton>
-              )}
-              <p className="mt-3 text-center text-[0.78rem] text-muted">Sin pago en línea: confirmamos disponibilidad, envío y pago contigo en el chat.</p>
-            </div>
-
-            <div className="mt-6">
-              <TrustMarks
-                items={[
-                  { Icon: IconLeaf, text: product.format || 'Cápsulas vegetarianas' },
-                  { Icon: IconShieldCheck, text: 'Etiqueta ingrediente por ingrediente' },
-                  { Icon: IconTruckDelivery, text: 'Envío coordinado contigo' },
-                  { Icon: IconMessageCircle, text: 'Atención por WhatsApp' },
-                ]}
-              />
-            </div>
+            <div className="rise mt-9 flex flex-wrap gap-3" style={d(300)}><a href="#ficha" className={buttonClass('primary')}>Leer la ficha completa</a><Link to="/catalogo" className={buttonClass('outline')}>Volver al catálogo</Link></div>
           </div>
         </div>
 
-        <section aria-labelledby="beneficios-title" className="mt-16 border-t border-line pt-12">
-          <Reveal>
-            <SectionHeading eyebrow="Qué te aporta" title={<span id="beneficios-title">Beneficios declarados en la etiqueta</span>} lead="Lo que la fórmula dice apoyar, en las mismas palabras del fabricante. Un suplemento acompaña: no reemplaza una consulta profesional." />
-          </Reveal>
-          <ul className="mt-8 grid gap-3 sm:grid-cols-2">
-            {product.benefits.map((b, i) => (
-              <li key={b}>
-                <Reveal delay={Math.min(i, 5) * 45}>
-                  <div className="flex items-start gap-3 rounded-xl border border-line bg-surface p-4">
-                    <span className="text-goal mt-0.5 grid size-6 shrink-0 place-items-center rounded-full bg-[var(--gb)]">
-                      <IconCheck size={14} stroke={2.6} aria-hidden="true" />
-                    </span>
-                    <span className="text-[0.95rem] leading-relaxed">{b}</span>
-                  </div>
-                </Reveal>
-              </li>
-            ))}
-          </ul>
+        <section id="ficha" aria-labelledby="beneficios-title" className="mt-20 border-t border-line pt-14">
+          <Reveal><SectionHeading eyebrow="Información del catálogo" title={<span id="beneficios-title">Beneficios declarados para la fórmula</span>} lead="Se presentan como información de bienestar aportada por el catálogo. No son promesas médicas ni sustituyen una consulta profesional." /></Reveal>
+          <ul className="mt-9 grid gap-3 sm:grid-cols-2">{product.benefits.map((benefit, index) => <li key={benefit}><Reveal delay={Math.min(index, 5) * 40}><div className="flex items-start gap-3 rounded-2xl border border-line bg-surface p-4"><span className="text-goal mt-0.5 grid size-6 shrink-0 place-items-center rounded-full bg-[var(--gb)]"><IconCheck size={14} stroke={2.5} aria-hidden="true" /></span><span className="text-[0.94rem] leading-relaxed">{benefit}</span></div></Reveal></li>)}</ul>
         </section>
 
-        <div className="mt-14 grid gap-10 border-t border-line pt-12 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14">
-          <section aria-labelledby="ingredientes-title">
-            <SectionHeading eyebrow="Ficha" title={<span id="ingredientes-title">Ingredientes</span>} />
-            <ul className="mt-6 flex flex-wrap gap-2">
-              {product.ingredients.map((i) => (
-                <li key={i} className="rounded-lg bg-sand px-3 py-1.5 text-[0.88rem] font-medium text-fg">
-                  {i}
-                </li>
-              ))}
-            </ul>
-            <dl className="mt-7 divide-y divide-line border-y border-line text-[0.9rem]">
-              <div className="flex justify-between gap-4 py-3">
-                <dt className="text-muted">Presentación</dt>
-                <dd className="text-right font-medium">{product.format || 'Por confirmar'}</dd>
-              </div>
-              <div className="flex justify-between gap-4 py-3">
-                <dt className="text-muted">Objetivo</dt>
-                <dd className="text-right font-medium">
-                  <Link to={`/catalogo?objetivo=${goal.slug}`} className="transition-colors hover:text-accent">
-                    {goal.label}
-                  </Link>
-                </dd>
-              </div>
-              <div className="flex justify-between gap-4 py-3">
-                <dt className="text-muted">Tipo</dt>
-                <dd className="text-right font-medium">Suplemento alimenticio</dd>
-              </div>
-            </dl>
+        <div className="mt-16 grid gap-12 border-t border-line pt-14 lg:grid-cols-[1.08fr_0.92fr] lg:gap-20">
+          <section aria-labelledby="ingredients-title">
+            <SectionHeading eyebrow="Composición" title={<span id="ingredients-title">Ingredientes</span>} />
+            <ul className="mt-7 flex flex-wrap gap-2">{product.ingredients.map((ingredient) => <li key={ingredient} className="rounded-full border border-line-strong bg-surface px-4 py-2 text-[0.86rem] font-medium">{ingredient}</li>)}</ul>
+            <dl className="mt-8 divide-y divide-line border-y border-line text-[0.9rem]"><div className="flex justify-between gap-4 py-4"><dt className="text-muted">Presentación</dt><dd className="text-right font-semibold">{product.format || 'Por confirmar'}</dd></div><div className="flex justify-between gap-4 py-4"><dt className="text-muted">Objetivo</dt><dd className="text-right font-semibold"><Link to={`/catalogo?objetivo=${goal.slug}`} className="hover:text-accent-deep">{goal.label}</Link></dd></div><div className="flex justify-between gap-4 py-4"><dt className="text-muted">Tipo</dt><dd className="text-right font-semibold">Suplemento alimenticio</dd></div></dl>
           </section>
-
-          <section aria-label="Más información">
-            <div className="border-t border-line">
-              <Accordion title="¿Cómo hago el pedido?" defaultOpen>
-                Agrégalo a «Mi pedido» y envíalo por WhatsApp. Te respondemos para confirmar disponibilidad, costo de envío y forma de pago.
-              </Accordion>
-              <Accordion title="Envíos y devoluciones">
-                <p>El tiempo y el costo de envío dependen de tu ubicación y se acuerdan en el chat.</p>
-                <p className="mt-3">
-                  <Pending>política de envíos y devoluciones</Pending>
-                </p>
-              </Accordion>
-              <Accordion title="Aviso importante">
-                Estas declaraciones no han sido evaluadas por la FDA de EE. UU. Este producto no está destinado a diagnosticar, tratar, curar ni prevenir ninguna enfermedad. Consulta a un profesional de la salud antes de usarlo, sobre todo si estás embarazada, en lactancia o tomas medicamentos.
-              </Accordion>
-            </div>
+          <section aria-label="Avisos de la ficha" className="border-t border-line">
+            <Accordion title="Cómo leer esta información" defaultOpen>Revisa la etiqueta física del producto antes de usarlo. La ficha resume el contenido disponible en el catálogo y puede actualizarse cuando la marca aporte nueva información.</Accordion>
+            <Accordion title="Consulta profesional">Habla con un profesional de la salud antes de empezar cualquier suplemento, sobre todo si estás embarazada, en lactancia, tomas medicamentos o tienes una condición de salud.</Accordion>
+            <Accordion title="Aviso importante">Estas declaraciones no han sido evaluadas por la FDA de EE. UU. Este producto no está destinado a diagnosticar, tratar, curar ni prevenir ninguna enfermedad.</Accordion>
           </section>
         </div>
 
-        <div className="mt-10">
-          <QrCard slug={product.slug} name={product.name} />
-        </div>
+        <div className="mt-12"><QrCard slug={product.slug} name={product.name} /></div>
 
-        <section aria-labelledby="relacionados-title" className="mt-16 border-t border-line pt-12">
-          <Reveal>
-            <SectionHeading eyebrow="Combínala con" title={<span id="relacionados-title">Otras fórmulas de la línea</span>} />
-          </Reveal>
-          <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {related(product).map((p) => (
-              <li key={p.slug}>
-                <ProductCard product={p} />
-              </li>
-            ))}
-          </ul>
-          <div className="mt-8">
-            <Link to="/catalogo" className={buttonClass('outline')}>
-              Ver todo el catálogo
-            </Link>
-          </div>
+        <aside className="mt-8 flex items-start gap-3 rounded-2xl bg-sand p-5 text-[0.86rem] leading-relaxed text-muted"><IconInfoCircle size={19} className="mt-0.5 shrink-0 text-accent-deep" aria-hidden="true" /><p>El QR abre esta ficha informativa. No es un sistema de autenticación ni confirma por sí solo el origen de una unidad física.</p></aside>
+
+        <section aria-labelledby="related-title" className="mt-20 border-t border-line pt-14">
+          <Reveal><SectionHeading eyebrow="Continúa explorando" title={<span id="related-title">Otras fórmulas de la línea</span>} /></Reveal>
+          <ul className="mt-9 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{related(product).map((item) => <li key={item.slug}><ProductCard product={item} /></li>)}</ul>
         </section>
       </div>
-
-      <StickyBuyBar product={product} buyRef={buyBox} />
     </div>
   );
 }

@@ -17,7 +17,7 @@ const url = (path) => {
 };
 
 const products = JSON.parse(readFileSync('src/data/productos.generado.json', 'utf8'));
-const ROUTAS = ['/', '/catalogo', '/mayoristas', '/nosotros', '/contacto', '/legal/terminos', '/legal/privacidad', ...products.map((p) => `/producto/${p.slug}`)];
+const ROUTAS = ['/', '/catalogo', '/nosotros', '/contacto', '/legal/terminos', '/legal/privacidad', ...products.map((p) => `/producto/${p.slug}`)];
 
 const pagina = readFileSync(resolve(DIST, 'index.html'), 'utf8');
 writeFileSync(resolve(DIST, '404.html'), pagina);
@@ -28,6 +28,9 @@ for (const ruta of ROUTAS) {
   writeFileSync(resolve(carpeta, 'index.html'), pagina);
 }
 writeFileSync(resolve(DIST, '.nojekyll'), '');
+// Las dos rutas comerciales que ya no existen llevan al catálogo informativo: Cloudflare lee _redirects
+// (GitHub Pages lo ignora, pero ahí ya devolvía 404).
+writeFileSync(resolve(DIST, '_redirects'), ['/mayoristas  /catalogo  301', '/mayoristas/ /catalogo  301', '/wholesale  /catalogo  301', '/wholesale/ /catalogo  301', ''].join('\n'));
 writeFileSync(resolve(DIST, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${ROUTAS.map((r) => `  <url><loc>${url(r)}</loc></url>`).join('\n')}

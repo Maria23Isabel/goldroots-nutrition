@@ -1,19 +1,18 @@
-# Gold Roots Nutrition — vitrina de producto
+# Gold Roots Nutrition — experiencia de marca
 
-Réplica mejorada de [goldrootsvitamins.com](https://goldrootsvitamins.com/) pensada para **mostrar** la línea, no para cobrar.
-Versión nueva, en paralelo al prototipo `goldroots-glow` (que queda intacto).
+Sitio **corporativo e informativo** de la línea, sobre los productos reales de [goldrootsvitamins.com](https://goldrootsvitamins.com/).
+No es una tienda: no muestra precios, no tiene carrito, cantidades ni flujo de compra, y no guarda nada en el navegador.
 
 ## Qué es
 
-- **Vitrina, sin carrito ni pagos**: todo el contacto y los pedidos van por **WhatsApp**. Cada producto, el formulario de contacto y el de mayoreo abren el chat con el mensaje ya escrito (`src/lib/whatsapp.ts`); hay un botón flotante en todas las páginas. El sitio no recibe ni guarda lo que se escribe.
-- **Los 14 productos reales**: nombre, precio, beneficios, ingredientes, formato y foto salen de la tienda (`npm run datos`).
-- **QR por producto**: cada ficha genera su código QR con la dirección de esa ficha, para imprimirlo en el envase o en el mostrador, con descarga en PNG y el enlace copiable.
-- **Todos los productos visibles**: portada con la lista completa, catálogo en rejilla y en tabla de especificaciones, filtros por los 6 objetivos.
-- **Todo en español**: la traducción de los 14 productos vive en `src/data/productos.es.ts` (el JSON de la tienda sigue en inglés y `lib/products.ts` los une por `slug`). Las direcciones en inglés de la versión anterior (y sus QR) redirigen a las nuevas.
-- **Tema oscuro y claro**: por defecto oscuro (índigo medianoche), con interruptor en la cabecera; se recuerda en el navegador (`lib/theme.ts`, colores en `styles.css`).
-- **«Mi pedido»**: se agregan fórmulas con un toque, se ajustan cantidades y un solo botón abre WhatsApp con el pedido completo ya escrito (`lib/order.ts`, `lib/whatsapp.ts`); el pedido vive en el navegador, no hay servidor.
-- **Rutas limpias**: `/catalogo`, `/producto/shilajit-gold`, `/mayoristas`, `/nosotros`, `/contacto`. En GitHub Pages las resuelve el `404.html` que escribe `scripts/postbuild.mjs`.
-- **Accesible y rápida**: texto salteable, LANDMARKS reales, filtros con `aria-pressed`, contador con `aria-live`, foco visible, contraste AA, `prefers-reduced-motion`, fotos con `lazy`/`decoding` y espacio reservado, `sitemap.xml` y metadatos por pantalla.
+- **Solo información**: catálogo con búsqueda y filtros por los 6 objetivos, fichas con descripción, ingredientes, presentación y beneficios declarados, más la marca, el contacto y las páginas legales.
+- **Los 14 productos reales**: nombre, beneficios, ingredientes, formato y foto salen de la tienda (`npm run datos`). El JSON conserva los precios de origen, pero `src/lib/products.ts` los deja fuera del contrato del sitio (lo comprueba `tests/products.test.ts`).
+- **Identidad sacada de sus propios archivos**: marfil `--color-canvas`, azul tinta `--color-night` `#22375c`, dorado `--color-accent` `#c09550` (versión legible `--color-accent-deep` `#826018`) y verde botánico secundario, con Playfair Display para títulos e Inter para lectura (`src/styles.css`). El logo y la foto de la línea están en `public/brand/`.
+- **Narrativa de scroll** en la portada: héroe editorial con luces en movimiento y escena fija (`sticky`) donde las placas de los frascos se recomponen con el scroll (GSAP + ScrollTrigger). Todo el movimiento pesado se apaga por debajo de 900 px y con `prefers-reduced-motion`.
+- **QR por producto**: cada ficha genera su código QR con la dirección de esa ficha, para imprimirlo en el envase o en un exhibidor, con descarga en PNG y el enlace copiable. El QR abre la ficha informativa; no afirma autenticidad por sí solo.
+- **Todo en español**: la traducción de los 14 productos vive en `src/data/productos.es.ts` (el JSON de la tienda sigue en inglés y `lib/products.ts` los une por `slug`). Las direcciones en inglés de la versión anterior (y sus QR impresos) redirigen a las nuevas.
+- **Rutas limpias**: `/catalogo`, `/producto/shilajit-gold`, `/nosotros`, `/contacto`, `/legal/…`. `/mayoristas` y `/wholesale` redirigen a `/nosotros`; las carpetas con `index.html` por ruta y el `404.html` las escribe `scripts/postbuild.mjs`.
+- **Accesible y rápida**: texto salteable, LANDMARKS reales, filtros con `aria-pressed`, foco visible, contraste AA, `prefers-reduced-motion`, fotos con `lazy`/`decoding` y espacio reservado, `sitemap.xml` y metadatos por pantalla.
 
 ## Puesta en marcha
 
@@ -27,42 +26,40 @@ npm run build      # dist/ + 404.html + sitemap.xml + robots.txt
 
 ## Datos del negocio que faltan
 
-No se inventa nada. Mientras la marca no lo confirme, la pantalla lo muestra con un sello `Por confirmar`:
+No se inventa nada. Mientras la marca no lo confirme, la pantalla lo muestra como pendiente:
 
-- **número de WhatsApp definitivo** (hoy usa el de pedidos de Herbavida, `51940176917`; se cambia en `whatsapp` de `src/lib/site.ts` o con `VITE_WHATSAPP` al compilar, y se pone `whatsappConfirmed: true`), horario, dirección y redes → `src/lib/site.ts`
-- envío y devoluciones, texto legal, precios de distribuidor y cantidad mínima
-- aviso FDA definitivo (el texto actual es el de la tienda original, pendiente de revisión)
+- **medio de contacto definitivo** (hoy `src/lib/site.ts` trae el número provisional de Herbavida con `whatsappConfirmed: false`; con ese valor, Contacto muestra «Canal oficial por confirmar» y oculta el formulario y el botón de chat. Para activarlo: confirmar el número —o pasar `VITE_WHATSAPP` al compilar— y poner `whatsappConfirmed: true`), horario, dirección y redes → `src/lib/site.ts`
+- textos legales definitivos y aviso FDA (el texto actual es el de la tienda original, pendiente de revisión)
+- certificaciones que aparecen en el arte de las fotos pero no están confirmadas (orgánico, third-party tested, GMP, Made in USA, vegano): no se publican y esas imágenes no se usan
 
 ## Publicar
 
-Ya está publicado: <https://maria23isabel.github.io/goldroots-nutrition/>
-
-- `main` → el código fuente (público, como `america-land`).
-- `gh-pages` → el contenido de `dist/` en la raíz; GitHub Pages lee de esa rama.
-
-Para volver a publicar después de un cambio:
+El hosting es Cloudflare (Worker de solo archivos, `wrangler.jsonc`):
 
 ```bash
-npm run build:pages
-node scripts/publicar-pages.mjs        # sincroniza dist/ con la rama gh-pages y la sube
+npx wrangler login          # una vez
+npm run desplegar           # QA: dirección *.workers.dev, con X-Robots-Tag: noindex en dist/_headers
+npm run desplegar:dominio   # goldrootsvitamins.com y www (solo cuando toque producción)
 ```
 
-`VITE_SITE_URL` se usa para el QR, el `canonical`, los `og:` y el sitemap. Sin esa variable el QR toma el origen por el que se está navegando, así que funciona igual en esta vista previa de Pages. Cuando el dominio propio apunte aquí, se compila con `VITE_SITE_URL=https://eldominio.com npm run build` y `npm run datos` deja de ser necesario para las rutas.
+`VITE_SITE_URL` se usa para el QR, el `canonical`, los `og:` y el sitemap. Sin esa variable el QR toma el origen por el que se está navegando. Cada ruta limpia lleva su propia carpeta con `index.html` (la escribe `scripts/postbuild.mjs`) y `404.html` cubre las direcciones escritas a mano que no cuadran.
 
-Cada ruta limpia lleva su propia carpeta con `index.html` (lo escribe `scripts/postbuild.mjs`), porque Pages responde 301 con barra final y 404 a una ruta que no existe como carpeta; `404.html` sigue cubriendo las direcciones escritas a mano que no cuadran.
+> `npm run publicar` (rama `gh-pages`) quedó como la ruta vieja: no la uses para este sitio.
 
 ## Estructura
 
 ```
+public/brand/                     logo oficial, foto de la línea y bodegón (WebP optimizados)
 src/data/productos.generado.json  catálogo leído de la tienda (lo escribe npm run datos)
 src/data/productos.es.ts          textos de los 14 productos en español
-src/lib/products.ts               tipos, objetivos, búsqueda, precios y direcciones absolutas
-src/lib/order.ts                  «Mi pedido» (localStorage)
-src/lib/theme.ts                  tema oscuro/claro
+src/styles.css                    identidad Gold Roots: tokens, escenas de scroll, motion guard
+src/lib/products.ts               tipos, objetivos, búsqueda informativa y direcciones absolutas
+src/lib/whatsapp.ts               solo enlace y mensaje de consulta (sin pedido ni cantidades)
 src/lib/site.ts                   datos del negocio (null = pendiente de confirmar)
 src/lib/meta.ts                   título, descripción, canonical y og por pantalla
+src/components/FormulaFinder.tsx  explorador por objetivo
 src/components/QrCard.tsx         QR del producto, copiar enlace y descargar PNG
-src/pages/                        inicio, catálogo, ficha, mayoreo, marca, contacto, legal
+src/pages/                        inicio (scroll storytelling), catálogo, ficha, marca, contacto, legal
 scripts/postbuild.mjs             404.html, sitemap.xml y robots.txt
 ```
 

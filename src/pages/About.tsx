@@ -1,115 +1,57 @@
-import { IconArrowRight, IconFlask, IconLeaf, IconPackage } from '@tabler/icons-react';
+import { IconArrowRight, IconBook2, IconLayersIntersect, IconLeaf, IconScan } from '@tabler/icons-react';
 import { Link } from 'react-router';
 import { ProductImage } from '@/components/ProductCard';
 import { PageHero } from '@/components/PageHero';
-import { buttonClass, GOAL_ICONS, Reveal, SectionHeading } from '@/components/ui';
+import { buttonClass, CountUp, LeafMark, Reveal, SectionHeading } from '@/components/ui';
 import { usePageMeta } from '@/lib/meta';
-import { countByGoal, findProduct, GOALS, PRODUCTS } from '@/lib/products';
+import { asset, findProduct, GOALS, PRODUCTS } from '@/lib/products';
 
-const STEPS = [
-  { Icon: IconLeaf, title: 'Ingredientes de raíz', text: 'Plantas, hongos y minerales con una larga historia de uso: maca, shilajit, cúrcuma, cardo mariano, melena de león.' },
-  { Icon: IconFlask, title: 'Una fórmula, un trabajo', text: 'Cada producto se construye alrededor de un objetivo claro, sin relleno innecesario y con etiquetas que dicen lo que lleva.' },
-  { Icon: IconPackage, title: 'Directo a ti', text: 'Eliges, armas tu pedido y lo coordinas por WhatsApp: disponibilidad, envío y pago, sin intermediarios.' },
+const pillars = [
+  { Icon: IconLeaf, title: 'Raíz botánica', text: 'La identidad conecta el origen de los ingredientes con una presentación contemporánea y sobria.' },
+  { Icon: IconLayersIntersect, title: 'Sistema claro', text: 'Una arquitectura común organiza objetivos, fórmulas, ingredientes y presentaciones.' },
+  { Icon: IconBook2, title: 'Información visible', text: 'Las fichas reúnen el contenido disponible sin ocultarlo detrás de un flujo de compra.' },
+  { Icon: IconScan, title: 'Continuidad digital', text: 'Las rutas y los QR mantienen cada ficha accesible para futuras consultas.' },
 ];
 
 export function About() {
-  usePageMeta({
-    title: 'Nosotros — Gold Roots Nutrition',
-    description: 'Ingredientes de raíz y fórmulas con criterio: qué hace Gold Roots Nutrition y cómo se usa esta vitrina.',
-    path: '/nosotros',
-  });
-  const hero = findProduct('shilajit-gold')!;
+  usePageMeta({ title: 'La marca — Gold Roots Nutrition', description: 'Conoce el enfoque visual e informativo de Gold Roots Nutrition y la estructura de su línea de suplementos.', path: '/nosotros', image: 'brand/cover-alt.webp' });
+  const shilajit = findProduct('shilajit-gold')!;
+  const zinc = findProduct('zinc-triple-play')!;
 
   return (
     <>
-      <PageHero eyebrow="Nuestra historia" title="Ingredientes de raíz. Fórmulas con criterio." lead="Gold Roots Nutrition hace suplementos para quienes esperan más que lo común: pocas fórmulas, cada una con un trabajo claro.">
-        <Link to="/catalogo" className={buttonClass('primary')}>
-          Ver el catálogo <IconArrowRight size={17} aria-hidden="true" />
-        </Link>
-        <Link to="/mayoristas" className={buttonClass('outline')}>
-          Mayoristas
-        </Link>
+      <PageHero eyebrow="Gold Roots Nutrition" title={<>Una identidad nacida entre <span className="text-accent-deep">raíces y bienestar.</span></>} lead="La marca presenta una línea organizada por objetivos, con una estética botánica y una lectura contemporánea de sus fórmulas.">
+        <Link to="/catalogo" className={buttonClass('primary')}>Explorar la línea <IconArrowRight size={17} aria-hidden="true" /></Link>
       </PageHero>
 
-      <section className="wrap grid items-center gap-12 py-14 sm:py-16 lg:grid-cols-[1.2fr_0.8fr]">
-        <Reveal>
-          <p className="text-[1.15rem] leading-relaxed text-fg/90">
-            La línea se mantiene pequeña a propósito: <strong>{PRODUCTS.length} fórmulas</strong>, cada una pensada para un objetivo claro y construida con ingredientes de larga tradición de uso. Así eliges por lo que quieres apoyar, no entre una pared de frascos parecidos.
-          </p>
-          <p className="mt-5 text-[1.15rem] leading-relaxed text-fg/90">
-            Todo lo que ves aquí es <strong>claro y verificable</strong>: fórmulas enfocadas, sin relleno, en cápsulas vegetarianas y con etiquetas que dicen exactamente qué hay dentro.
-          </p>
-        </Reveal>
-        <Reveal delay={100}>
-          <div className={`g-${hero.goal} goal-block grid place-items-center overflow-hidden rounded-2xl p-8`}>
-            <ProductImage product={hero} width={360} className="mx-auto h-64 w-auto object-contain" />
-            <p className="mt-3 font-display text-[1.05rem] font-medium text-[color:var(--gi)]">{hero.name}</p>
+      <section className="wrap section">
+        <div className="grid items-center gap-12 lg:grid-cols-[0.72fr_1.28fr] lg:gap-20">
+          <Reveal><div><p className="eyebrow text-accent-deep">El punto de partida</p><h2 className="mt-4 text-[clamp(2rem,3.4vw,3.1rem)] leading-[1.02]">Una colección que se entiende como un sistema.</h2><p className="mt-6 text-[1.05rem] leading-[1.8] text-muted">Gold Roots reúne {PRODUCTS.length} fórmulas en seis territorios de bienestar. El sitio pone esa estructura en primer plano para que cada visitante pueda recorrerla por objetivo, ingrediente o producto.</p></div></Reveal>
+          <Reveal delay={80}><div className="relative"><LeafMark className="absolute -top-6 -left-2 size-10 opacity-90" /><div className="overflow-hidden rounded-[2rem] bg-sand"><img src={asset('brand/cover-alt.webp')} alt="La línea Gold Roots con sus ingredientes, en la composición oficial de la marca" width="1400" height="800" loading="lazy" decoding="async" className="block h-auto w-full" /></div></div></Reveal>
+        </div>
+      </section>
+
+      <section className="border-y border-line bg-night text-white">
+        <div className="wrap grid gap-12 py-16 sm:py-24 lg:grid-cols-[1fr_1fr] lg:items-center">
+          {/* Sobre el bloque tinta el multiply de la foto la dejaría invisible: cada frasco va en su placa marfil. */}
+          <div className="relative h-[32rem]">
+            <div className="absolute bottom-0 left-[5%] h-[86%] w-[47%] -rotate-2 rounded-[1.75rem] bg-gradient-to-b from-white to-[#efe9dc] p-4 shadow-[0_34px_60px_-32px_rgb(6_12_22/0.9)] ring-1 ring-white/15">
+              <ProductImage product={shilajit} width={430} className="mx-auto h-full w-auto" />
+            </div>
+            <div className="absolute right-[3%] bottom-6 h-[68%] w-[40%] rotate-3 rounded-[1.75rem] bg-gradient-to-b from-white to-[#efe9dc] p-4 shadow-[0_34px_60px_-32px_rgb(6_12_22/0.9)] ring-1 ring-white/15">
+              <ProductImage product={zinc} width={390} className="mx-auto h-full w-auto" />
+            </div>
           </div>
-        </Reveal>
-      </section>
-
-      <section aria-labelledby="pasos-title" className="border-y border-line bg-surface">
-        <div className="wrap section">
-          <Reveal>
-            <SectionHeading eyebrow="Cómo funciona la línea" title={<span id="pasos-title">Tres ideas, de la raíz a tu mesa</span>} />
-          </Reveal>
-          <ol className="mt-10 grid gap-8 md:grid-cols-3">
-            {STEPS.map(({ Icon, title, text }, i) => (
-              <li key={title}>
-                <Reveal delay={i * 70} className="h-full">
-                  <div className="h-full border-t border-line pt-5">
-                    <div className="flex items-center justify-between">
-                      <span className="grid size-10 place-items-center rounded-xl bg-sand text-fg">
-                        <Icon size={20} stroke={1.8} aria-hidden="true" />
-                      </span>
-                      <span className="font-display text-[1.6rem] leading-none font-medium text-line-strong">0{i + 1}</span>
-                    </div>
-                    <h3 className="mt-4 font-display text-[1.08rem] font-medium">{title}</h3>
-                    <p className="mt-1.5 text-[0.92rem] leading-relaxed text-muted">{text}</p>
-                  </div>
-                </Reveal>
-              </li>
-            ))}
-          </ol>
+          <Reveal><div><p className="eyebrow !text-accent">La línea en números</p><h2 className="mt-4 text-[clamp(2.2rem,4.5vw,4.4rem)] leading-[0.98]">Pocas capas. Más contexto.</h2><p className="mt-6 max-w-xl text-[1.03rem] leading-relaxed text-white/64">La experiencia evita precios y mecanismos de compra para concentrarse en lo esencial: qué es cada fórmula, qué contiene y cómo se relaciona con el resto de la colección.</p><dl className="mt-10 grid grid-cols-2 gap-6 border-t border-white/14 pt-8"><div><dd className="font-display text-5xl text-accent"><CountUp to={PRODUCTS.length} /></dd><dt className="mt-2 text-[0.8rem] text-white/55">fórmulas</dt></div><div><dd className="font-display text-5xl text-accent"><CountUp to={GOALS.length} /></dd><dt className="mt-2 text-[0.8rem] text-white/55">objetivos</dt></div></dl></div></Reveal>
         </div>
       </section>
 
-      <section aria-labelledby="cobertura-title" className="wrap section">
-        <Reveal>
-          <SectionHeading eyebrow="Cobertura" title={<span id="cobertura-title">Lo que apoyan las {PRODUCTS.length} fórmulas</span>} />
-        </Reveal>
-        <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {GOALS.map((g, i) => {
-            const IconG = GOAL_ICONS[g.id];
-            const n = countByGoal(g.id);
-            return (
-              <li key={g.id}>
-                <Reveal delay={Math.min(i, 5) * 55} className="h-full">
-                  <Link to={`/catalogo?objetivo=${g.slug}`} className={`g-${g.id} card card-lift flex h-full items-start gap-4 p-5`}>
-                    <span className="goal-block text-goal grid size-10 shrink-0 place-items-center rounded-lg">
-                      <IconG size={19} stroke={1.9} aria-hidden="true" />
-                    </span>
-                    <span className="min-w-0">
-                      <span className="block font-display text-[1.02rem] font-medium">{g.label}</span>
-                      <span className="mt-0.5 block text-[0.88rem] leading-snug text-muted">{g.blurb}</span>
-                      <span className="text-goal mt-2 block text-[0.82rem] font-semibold">{n} {n === 1 ? 'fórmula' : 'fórmulas'} →</span>
-                    </span>
-                  </Link>
-                </Reveal>
-              </li>
-            );
-          })}
-        </ul>
+      <section className="wrap section" aria-labelledby="pillars-title">
+        <Reveal><SectionHeading eyebrow="Principios de la experiencia" title={<span id="pillars-title">Una marca que se recorre con calma</span>} /></Reveal>
+        <ul className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">{pillars.map(({ Icon, title, text }, index) => <li key={title}><Reveal delay={index * 55}><span className="grid size-12 place-items-center rounded-2xl bg-sand text-accent-deep"><Icon size={22} stroke={1.7} aria-hidden="true" /></span><h3 className="mt-5 text-[1.12rem]">{title}</h3><p className="mt-2 text-[0.9rem] leading-relaxed text-muted">{text}</p></Reveal></li>)}</ul>
       </section>
 
-      <section className="wrap pb-14">
-        <div className="rounded-2xl border border-line bg-sand p-7">
-          <h2 className="font-display text-[1.2rem] font-medium">Sobre esta página</h2>
-          <p className="mt-2.5 text-[0.95rem] leading-relaxed text-muted">
-            Es una vitrina informativa: no hay carrito ni pago en línea, y los pedidos se coordinan por WhatsApp. Los nombres, precios, beneficios, ingredientes y fotos provienen del catálogo de la marca; los datos de contacto, las condiciones de envío y los textos legales aún deben ser confirmados por la marca antes de darse por definitivos.
-          </p>
-        </div>
-      </section>
+      <section className="wrap pb-4"><div className="rounded-[2rem] border border-line bg-surface p-8 sm:p-12"><p className="eyebrow text-accent-deep">Transparencia editorial</p><h2 className="mt-4 max-w-3xl text-[2rem] leading-tight sm:text-[3rem]">El sitio presenta lo respaldado por el catálogo y marca con claridad sus límites.</h2><p className="mt-5 max-w-3xl text-[0.98rem] leading-relaxed text-muted">No se publican certificaciones, condiciones comerciales ni datos institucionales que la marca no haya confirmado. La información de bienestar no reemplaza la consulta de un profesional de la salud.</p></div></section>
     </>
   );
 }

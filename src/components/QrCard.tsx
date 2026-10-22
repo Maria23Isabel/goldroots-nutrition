@@ -15,7 +15,7 @@ export function QrCard({ slug, name }: { slug: string; name: string }) {
     let vivo = true;
     // El generador de QR solo hace falta en las fichas: se carga aparte para no pesar en el resto del sitio.
     import('qrcode')
-      .then(({ default: QRCode }) => QRCode.toDataURL(url, { errorCorrectionLevel: 'M', margin: 2, width: 320, color: { dark: '#23231f', light: '#ffffff' } }))
+      .then(({ default: QRCode }) => QRCode.toDataURL(url, { errorCorrectionLevel: 'M', margin: 2, width: 320, color: { dark: '#1e2b3c', light: '#ffffff' } }))
       .then((data) => vivo && setPng(data))
       .catch(() => vivo && setPng(null));
     return () => {

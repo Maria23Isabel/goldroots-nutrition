@@ -4,10 +4,10 @@ import { describe, expect, it } from 'vitest';
 import raw from '@/data/productos.generado.json';
 import { PRODUCTOS_ES } from '@/data/productos.es';
 import { rank } from '@/components/FormulaFinder';
-import { GOALS, PRODUCTS, absoluteUrl, countByGoal, findProduct, goalBySlug, goalOf, money, plain, productPath, related, searchProducts } from '@/lib/products';
-import { inquiryMessage, orderMessage, orderTotals, productMessage, waLink } from '../src/lib/whatsapp';
+import { GOALS, PRODUCTS, absoluteUrl, countByGoal, featured, findProduct, goalBySlug, goalOf, plain, productPath, related, searchProducts } from '@/lib/products';
+import { GENERAL_MESSAGE, inquiryMessage, waLink } from '../src/lib/whatsapp';
 
-describe('el catálogo que viene de goldrootsvitamins.com', () => {
+describe('el catálogo informativo de Gold Roots', () => {
   it('trae los catorce productos, con enlace único y foto local', () => {
     expect(PRODUCTS).toHaveLength(14);
     expect(new Set(PRODUCTS.map((p) => p.slug)).size).toBe(PRODUCTS.length);
@@ -17,8 +17,14 @@ describe('el catálogo que viene de goldrootsvitamins.com', () => {
     }
   });
 
-  it('solo deja sin precio el producto que la tienda aún no publica', () => {
-    expect(PRODUCTS.filter((p) => p.price == null).map((p) => p.slug)).toEqual(['nad-resveratrol-coenzyme-q10']);
+  it('no lleva precio, descuento ni cantidad: la vitrina no vende', () => {
+    for (const p of PRODUCTS) {
+      const keys = Object.keys(p);
+      for (const prohibido of ['price', 'compareAt', 'qty', 'savings']) expect(keys, `${p.slug} tiene ${prohibido}`).not.toContain(prohibido);
+    }
+    expect(Object.keys(PRODUCTS[0]).sort()).toEqual(
+      ['benefits', 'featured', 'format', 'goal', 'headline', 'image', 'ingredients', 'name', 'slug', 'summary', 'tagline'].sort(),
+    );
   });
 
   it('cubre los seis objetivos y cada ficha tiene beneficios e ingredientes', () => {
@@ -58,7 +64,7 @@ describe('la traducción al español', () => {
   });
 });
 
-describe('buscar, filtrar y ordenar', () => {
+describe('buscar y filtrar', () => {
   it('encuentra por ingrediente y por beneficio, sin importar tildes ni mayúsculas', () => {
     expect(searchProducts('magnesio', 'all', 'name').map((p) => p.slug)).toContain('ashwagandha-melatonin-magnesium');
     expect(searchProducts('ENFOQUE', 'all', 'featured').length).toBeGreaterThan(0);
@@ -72,11 +78,13 @@ describe('buscar, filtrar y ordenar', () => {
     expect(searchProducts('', 'noexiste' as never, 'featured')).toHaveLength(0);
   });
 
-  it('ordena por precio sin reordenar el catálogo original', () => {
+  it('solo ordena por destacadas o alfabéticamente, nunca por precio', () => {
     const antes = PRODUCTS.map((p) => p.slug);
-    const precios = searchProducts('', 'all', 'price-asc').map((p) => p.price);
-    expect(precios.filter((x) => x != null)).toEqual([...precios.filter((x) => x != null)].sort((a, b) => a! - b!));
-    expect(precios.at(-1)).toBeNull(); // el que aún no tiene precio queda al final
+    const porNombre = searchProducts('', 'all', 'name').map((p) => p.name);
+    expect(porNombre).toEqual([...porNombre].sort((a, b) => a.localeCompare(b, 'es')));
+    const porDestacadas = searchProducts('', 'all', 'featured');
+    const primeraNoDestacada = porDestacadas.findIndex((p) => !p.featured);
+    expect(porDestacadas.slice(0, primeraNoDestacada).every((p) => p.featured)).toBe(true);
     expect(PRODUCTS.map((p) => p.slug)).toEqual(antes);
   });
 
@@ -92,10 +100,18 @@ describe('buscar, filtrar y ordenar', () => {
     expect(new Set(GOALS.map((g) => g.slug)).size).toBe(GOALS.length);
   });
 
-  it('el buscador de fórmulas ordena según cómo elige el visitante', () => {
-    const baratas = rank('immune', 'budget').map((p) => p.price);
-    expect(baratas).toEqual([...baratas].sort((a, b) => a! - b!));
-    expect(rank('immune', 'picks')[0].featured).toBe(true);
+  it('el explorador ordena las fórmulas de un objetivo: destacadas primero y luego por nombre', () => {
+    const immune = rank('immune');
+    expect(immune.every((p) => p.goal === 'immune')).toBe(true);
+    expect(immune.length).toBe(countByGoal('immune'));
+    expect(Number(immune[0].featured)).toBeGreaterThanOrEqual(Number(immune.at(-1)!.featured));
+    const empardas = immune.filter((p) => p.featured === immune[0].featured).map((p) => p.name);
+    expect(empardas).toEqual([...empardas].sort((a, b) => a.localeCompare(b, 'es')));
+  });
+
+  it('las destacadas del inicio salen del catálogo, no de un número fijo', () => {
+    expect(featured().length).toBeGreaterThan(0);
+    expect(featured().every((p) => p.featured)).toBe(true);
   });
 });
 
@@ -110,52 +126,23 @@ describe('la dirección que codifica el QR', () => {
   });
 });
 
-describe('pedido y contacto por WhatsApp (la vitrina no cobra ni guarda nada)', () => {
+describe('el contacto: solo consulta, sin pedido', () => {
   const zinc = findProduct('zinc-triple-play')!;
-  const maca = findProduct('maca-root-extra-strength')!;
-  const sinPrecio = findProduct('nad-resveratrol-coenzyme-q10')!;
 
-  it('el mensaje de un producto lleva su nombre y su precio, y el enlace va codificado hacia un número', () => {
-    const text = productMessage(zinc);
-    expect(text).toContain('ZINC TRIPLE PLAY');
-    expect(text).toContain('US$ 18.00');
-    expect(waLink(text)).toMatch(/^https:\/\/wa\.me\/\d{8,15}\?text=%C2%A1Hola%20Gold%20Roots/);
+  it('el enlace de contacto va codificado hacia un número, sin texto de compra', () => {
+    const link = waLink(GENERAL_MESSAGE);
+    expect(link).toMatch(/^https:\/\/wa\.me\/\d{8,15}\?text=Hola%2C%20Gold%20Roots/);
+    expect(GENERAL_MESSAGE).not.toMatch(/pedido|carrito|precio|comprar/i);
   });
 
-  it('un producto sin precio no inventa uno', () => {
-    expect(productMessage(sinPrecio)).not.toContain('US$');
+  it('el formulario arma una consulta con nombre, fórmula y texto', () => {
+    const text = inquiryMessage({ name: ' Ana ', message: '  ¿Qué contiene? ', product: zinc.name });
+    expect(text.split('\n')).toEqual(['Hola, Gold Roots Nutrition. Me llamo Ana.', `Fórmula de interés: ${zinc.name}`, '', '¿Qué contiene?']);
+    expect(inquiryMessage({ name: 'Ana', message: 'Hola' })).not.toContain('Fórmula de interés');
   });
 
-  it('suma el pedido y calcula lo que se ahorra', () => {
-    const t = orderTotals([
-      { product: zinc, qty: 2 },
-      { product: maca, qty: 1 },
-      { product: sinPrecio, qty: 1 },
-    ]);
-    expect(t).toEqual({ units: 4, subtotal: 51, saved: 9, unpriced: 1 });
-    expect(money(t.subtotal)).toBe('US$ 51.00');
-  });
-
-  it('el mensaje del pedido lista cada producto con cantidad y precio, y avisa lo que falta cotizar', () => {
-    const text = orderMessage(
-      [
-        { product: zinc, qty: 2 },
-        { product: sinPrecio, qty: 1 },
-      ],
-      { name: ' Ana ', place: 'Lima' },
-    );
-    const lines = text.split('\n');
-    expect(lines).toContain('• 2 × ZINC TRIPLE PLAY — US$ 36.00');
-    expect(lines).toContain('• 1 × NAD + RESVERATROL + COENZIMA Q10 — precio por confirmar');
-    expect(text).toContain('Total referencial: US$ 36.00 (+ un producto por cotizar), sin envío.');
-    expect(text).toContain('Nombre: Ana');
-    expect(text).toContain('Ciudad o país de entrega: Lima');
-    expect(text).not.toContain('Nota:');
-  });
-
-  it('el formulario arma el mensaje con nombre, tema y texto', () => {
-    const text = inquiryMessage({ kind: 'wholesale', name: ' Ana ', message: ' Hola ', business: 'Tienda Sol', country: 'Perú' });
-    expect(text.split('\n')).toEqual(['¡Hola Gold Roots Nutrition! Me llamo Ana.', 'Tema: venta al por mayor', 'Tienda o empresa: Tienda Sol', 'País: Perú', '', 'Hola']);
-    expect(inquiryMessage({ kind: 'contact', name: 'Ana', message: 'Hola', product: 'CARDO MARIANO' })).toContain('Fórmula: CARDO MARIANO');
+  it('ningún mensaje del contacto menciona montos, unidades ni ahorro', () => {
+    const texto = `${GENERAL_MESSAGE} ${inquiryMessage({ name: 'Ana', message: 'Hola', product: zinc.name })}`;
+    expect(texto).not.toMatch(/US\$|cantidad|subtotal|ahorro|envío/i);
   });
 });

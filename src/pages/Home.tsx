@@ -1,306 +1,191 @@
-import { IconArrowRight, IconChevronLeft, IconChevronRight, IconFlask, IconLeaf, IconMessageCircle, IconSearch, IconTargetArrow, IconTruckDelivery } from '@tabler/icons-react';
-import { useRef, useState } from 'react';
+import { IconArrowDown, IconArrowRight, IconBrandWhatsapp, IconFlask, IconQrcode, IconRoute, IconShieldCheck } from '@tabler/icons-react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useLayoutEffect, useRef } from 'react';
 import { Link } from 'react-router';
 import { FormulaFinder } from '@/components/FormulaFinder';
 import { ProductCard, ProductImage } from '@/components/ProductCard';
-import { Accordion, buttonClass, CountUp, d, GOAL_ICONS, Reveal, SectionHeading, TrustMarks, WhatsAppButton } from '@/components/ui';
+import { Accordion, buttonClass, CountUp, d, LeafMark, Reveal, SectionHeading } from '@/components/ui';
 import { usePageMeta } from '@/lib/meta';
-import { useOrder } from '@/lib/order';
-import { countByGoal, featured, findProduct, GOALS, PRODUCTS, type GoalId } from '@/lib/products';
-import { site } from '@/lib/site';
-import { GENERAL_MESSAGE, orderMessage, type OrderLine } from '@/lib/whatsapp';
+import { asset, featured, findProduct, GOALS, PRODUCTS } from '@/lib/products';
+import { INFO_MESSAGE, waLink } from '@/lib/whatsapp';
 
-const cheapest = Math.min(...PRODUCTS.flatMap((p) => (p.price == null ? [] : [p.price])));
+gsap.registerPlugin(ScrollTrigger);
 
-/* ───────────────────────────── Portada ───────────────────────────── */
+const storyProducts = [findProduct('shilajit-gold')!, findProduct('lions-mane-blend-complex')!, findProduct('turmeric-curcumin')!];
+const zinc = findProduct('zinc-triple-play')!;
+
+/** El mismo archivo oficial en dos tamaños: el de 900 px pesa menos de la mitad en el móvil. */
+const cover = { small: asset('brand/hero-cover-900.webp'), large: asset('brand/hero-cover.webp') };
+const floatArt = { small: asset('brand/floating-900.webp'), large: asset('brand/floating.webp') };
 
 function Hero() {
-  const hero = findProduct('shilajit-gold')!;
-  const alsoOnScreen = featured().filter((p) => p.slug !== hero.slug).slice(0, 3);
-  const stats = [
-    { to: PRODUCTS.length, label: 'fórmulas' },
-    { to: GOALS.length, label: 'objetivos' },
-    { to: Math.round(cheapest), prefix: 'US$ ', label: 'desde' },
-  ];
-  return (
-    <section className="border-b border-line bg-canvas">
-      <div className="wrap grid items-center gap-12 py-14 sm:py-20 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
-        <div>
-          <p className="eyebrow rise" style={d(0)}>Suplementos en cápsulas vegetarianas</p>
-          <h1 className="rise mt-3 text-[2.35rem] leading-[1.08] font-medium sm:text-[3.1rem]" style={d(70)}>
-            Ingredientes de raíz.
-            <span className="mt-1 block text-accent">Formulados con criterio.</span>
-          </h1>
-          <p className="rise mt-5 max-w-xl text-[1.08rem] leading-relaxed text-muted" style={d(150)}>
-            {PRODUCTS.length} fórmulas enfocadas en energía, corazón, mente, sueño, vista y defensas. Etiquetas claras, sin relleno, y un pedido que armas aquí en segundos y envías por WhatsApp.
-          </p>
-          <div className="rise mt-8 flex flex-wrap gap-2.5" style={d(220)}>
-            <Link to="/catalogo" className={`${buttonClass('primary')} group`}>
-              Ver el catálogo <IconArrowRight size={17} aria-hidden="true" className="transition-transform duration-200 group-hover:translate-x-1" />
-            </Link>
-            <a href="#buscador" className={buttonClass('outline')}>
-              <IconSearch size={17} aria-hidden="true" /> Encuentra tu fórmula
-            </a>
-          </div>
-          <div className="rise mt-9 border-t border-line pt-6" style={d(300)}>
-            <TrustMarks
-              items={[
-                { Icon: IconLeaf, text: 'Cápsulas vegetarianas' },
-                { Icon: IconFlask, text: 'Etiqueta ingrediente por ingrediente' },
-                { Icon: IconMessageCircle, text: 'Atención directa por WhatsApp' },
-              ]}
-            />
-          </div>
-        </div>
+  const section = useRef<HTMLElement>(null);
 
-        <div className="relative">
-          <div className={`g-${hero.goal} goal-block rise overflow-hidden rounded-[1.5rem] p-6 sm:p-10`} style={d(120)}>
-            <ProductImage product={hero} width={520} eager className="float mx-auto h-[20rem] w-auto object-contain sm:h-[26rem]" />
+  useLayoutEffect(() => {
+    const context = gsap.context(() => {
+      const media = gsap.matchMedia();
+      media.add('(min-width: 900px) and (prefers-reduced-motion: no-preference)', () => {
+        /* La portada se despega despacio del titular: el parallax de la entrada, sin forzar el scroll. */
+        gsap.fromTo('.hero-art-wrap', { yPercent: 4 }, { yPercent: -4, ease: 'none', scrollTrigger: { trigger: section.current, start: 'top top', end: 'bottom top', scrub: 1.1 } });
+      });
+      return () => media.revert();
+    }, section);
+    return () => context.revert();
+  }, []);
+
+  return (
+    <section ref={section} className="hero-shell relative isolate min-h-[calc(100svh-4.75rem)] overflow-hidden border-b border-line">
+      <span className="hero-orb hero-orb-a" aria-hidden="true" />
+      <span className="hero-orb hero-orb-b" aria-hidden="true" />
+      <div className="wrap grid min-h-[calc(100svh-4.75rem)] items-center gap-8 py-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-10 lg:py-16">
+        <div className="relative z-10 order-2 max-w-2xl lg:order-none">
+          <p className="eyebrow rise flex items-center gap-3 text-accent-deep" style={d(40)}><LeafMark className="size-5" />Gold Roots Nutrition</p>
+          <h1 className="rise mt-5 text-[clamp(2.9rem,5.4vw,5.2rem)] leading-[0.94] font-medium tracking-[-0.045em] text-night" style={d(110)}>
+            Bienestar que empieza en la raíz.
+          </h1>
+          <div className="rule-gold rise mt-7 w-40" style={d(160)} aria-hidden="true" />
+          <p className="rise mt-6 max-w-xl text-[1.04rem] leading-relaxed text-muted sm:text-[1.14rem]" style={d(190)}>
+            Una línea de suplementos presentada con claridad: conoce sus ingredientes, sus objetivos y cada detalle antes de elegir.
+          </p>
+          <div className="rise mt-9 flex flex-wrap gap-3" style={d(270)}>
+            <Link to="/catalogo" className={buttonClass('primary')}>Explorar catálogo <IconArrowRight size={17} aria-hidden="true" /></Link>
+            <a href={waLink(INFO_MESSAGE)} target="_blank" rel="noopener noreferrer" className={buttonClass('outline')}>Conocer más</a>
           </div>
-          <div className="mt-3 grid grid-cols-3 gap-3">
-            {alsoOnScreen.map((p, i) => (
-              <Link key={p.slug} to={`/${`producto/${p.slug}`}`} className={`g-${p.goal} card group rise relative grid aspect-[4/3] place-items-center overflow-hidden rounded-xl ring-1 ring-line transition-colors hover:ring-1 hover:ring-line-strong`} style={d(360 + i * 90)}>
-                <ProductImage product={p} width={200} className="h-[68%] w-auto object-contain transition-transform duration-300 group-hover:scale-[1.07]" />
-                <span className="absolute bottom-1.5 left-2 max-w-[90%] truncate text-[0.68rem] font-medium text-fg/70">{p.name}</span>
-              </Link>
-            ))}
+          <a href="#historia" className="rise mt-12 inline-flex items-center gap-3 text-[0.8rem] font-semibold tracking-[0.08em] text-muted uppercase" style={d(360)}>
+            Descubre la línea <span className="grid size-9 place-items-center rounded-full border border-line-strong"><IconArrowDown size={16} aria-hidden="true" /></span>
+          </a>
+        </div>
+        {/* La portada oficial va suelta, sin marco: su fondo de estudio se funde con el marfil y el lema impreso
+            queda dentro de la imagen, sin repetirlo en HTML. El rise va en el contenedor y el parallax en el
+            interior: una animación CSS con fill «both» sobre el mismo nodo se impondría al transform de GSAP.
+            En móvil la composición alternativa es a sangre y arriba: a 390 px el lema impreso no se lee, así que
+            el mensaje lo lleva el titular que viene debajo y la foto abre la página de punta a punta. */}
+        <div className="rise order-1 -mx-5 sm:-mx-8 lg:order-none lg:mx-0" style={d(160)}>
+          <div className="hero-art-wrap">
+            <img src={cover.large} srcSet={`${cover.small} 900w, ${cover.large} 1600w`} sizes="(max-width: 1024px) 100vw, 62vw" width="1600" height="914" fetchPriority="high" decoding="async" alt="La línea completa de suplementos Gold Roots presentada sobre fondo blanco, rodeada de sus ingredientes" className="hero-art block h-auto w-full lg:max-w-[62rem]" />
           </div>
-          <dl className="rise mt-6 flex divide-x divide-line rounded-xl border border-line bg-surface" style={d(600)}>
-            {stats.map((s) => (
-              <div key={s.label} className="flex-1 px-4 py-3">
-                <dd className="font-display text-[1.45rem] leading-none font-medium tabular-nums">
-                  <CountUp to={s.to} prefix={s.prefix ?? ''} />
-                </dd>
-                <dt className="mt-1 text-[0.78rem] text-muted">{s.label}</dt>
-              </div>
-            ))}
-          </dl>
         </div>
       </div>
     </section>
   );
 }
 
-/* ───────────────────────────── Compra por objetivo ───────────────────────────── */
+/** La escena de los frascos flotando con las cintas doradas: la banda que acompaña el descenso. */
+function FloatBand() {
+  const section = useRef<HTMLElement>(null);
+
+  useLayoutEffect(() => {
+    const context = gsap.context(() => {
+      const media = gsap.matchMedia();
+      media.add('(min-width: 900px) and (prefers-reduced-motion: no-preference)', () => {
+        gsap.fromTo('.float-art', { yPercent: 7 }, { yPercent: -7, ease: 'none', scrollTrigger: { trigger: section.current, start: 'top bottom', end: 'bottom top', scrub: 1.15 } });
+        gsap.fromTo('.float-copy', { yPercent: -5 }, { yPercent: 6, ease: 'none', scrollTrigger: { trigger: section.current, start: 'top bottom', end: 'center center', scrub: 1.4 } });
+        gsap.utils.toArray<HTMLElement>('.line-mask > span').forEach((line, index) => {
+          gsap.from(line, { yPercent: 112, duration: 1.1, delay: index * 0.09, ease: 'power3.out', scrollTrigger: { trigger: line, start: 'top 88%' } });
+        });
+      });
+      return () => media.revert();
+    }, section);
+    return () => context.revert();
+  }, []);
+
+  return (
+    <section ref={section} className="float-band relative overflow-clip border-b border-line py-16 sm:py-20" aria-labelledby="float-title">
+      <div className="float-copy wrap relative z-10 text-center">
+        <p className="eyebrow">La colección en movimiento</p>
+        {/* El titular grande ya vive dentro de la pieza oficial («Every capsule…»): aquí el HTML baja de
+            tamaño para que la foto mande y el texto sea el pie, no un segundo titular. */}
+        <h2 id="float-title" className="mx-auto mt-4 max-w-2xl text-[clamp(1.35rem,2.3vw,2rem)] leading-[1.25] text-night">
+          <span className="line-mask"><span>Toda la línea responde al mismo</span></span>
+          <span className="line-mask"><span>criterio de presentación.</span></span>
+        </h2>
+        <p className="mx-auto mt-4 max-w-xl text-[0.98rem] leading-relaxed text-muted">Cada frasco se muestra con su nombre, su objetivo y su composición completa. Aquí no hay que adivinar nada.</p>
+      </div>
+      <div className="relative mt-10 sm:mt-14">
+        <img src={floatArt.large} srcSet={`${floatArt.small} 900w, ${floatArt.large} 1600w`} sizes="100vw" width="1600" height="914" loading="lazy" decoding="async" alt="Frasco de suplementos Gold Roots flotando entre cintas doradas e ingredientes" className="float-art block h-auto w-full" />
+      </div>
+    </section>
+  );
+}
+
+function Story() {
+  const section = useRef<HTMLElement>(null);
+
+  useLayoutEffect(() => {
+    const context = gsap.context(() => {
+      const media = gsap.matchMedia();
+      media.add('(min-width: 900px) and (prefers-reduced-motion: no-preference)', () => {
+        gsap.fromTo('.story-bottle-a', { xPercent: -18, yPercent: 22, rotate: -8 }, { xPercent: 8, yPercent: -8, rotate: 2, ease: 'none', scrollTrigger: { trigger: section.current, start: 'top bottom', end: 'bottom top', scrub: 1.2 } });
+        gsap.fromTo('.story-bottle-b', { yPercent: 18, scale: 0.84 }, { yPercent: -16, scale: 1.06, ease: 'none', scrollTrigger: { trigger: section.current, start: 'top 75%', end: 'bottom 20%', scrub: 1 } });
+        gsap.fromTo('.story-bottle-c', { xPercent: 20, yPercent: 30, rotate: 7 }, { xPercent: -8, yPercent: -4, rotate: -3, ease: 'none', scrollTrigger: { trigger: section.current, start: 'top bottom', end: 'bottom top', scrub: 1.35 } });
+        gsap.utils.toArray<HTMLElement>('.story-copy').forEach((item) => gsap.fromTo(item, { opacity: 0.28 }, { opacity: 1, scrollTrigger: { trigger: item, start: 'top 68%', end: 'bottom 48%', scrub: true } }));
+      });
+      return () => media.revert();
+    }, section);
+    return () => context.revert();
+  }, []);
+
+  const steps = [
+    { n: '01', eyebrow: 'Conocer', title: 'Empieza por el objetivo.', text: 'La línea se organiza en seis territorios de bienestar para que la exploración tenga un punto de partida claro.' },
+    { n: '02', eyebrow: 'Comprender', title: 'Lee la fórmula completa.', text: 'Cada ficha reúne descripción, ingredientes, presentación y beneficios declarados por el catálogo de la marca.' },
+    { n: '03', eyebrow: 'Profundizar', title: 'Lleva la ficha contigo.', text: 'El QR de cada producto abre su página informativa y mantiene disponibles sus detalles en una ruta estable.' },
+  ];
+
+  /* Las fotos oficiales llegan sobre fondo blanco: en el bloque tinta cada frasco va montado en su propia
+     placa marfil, que es la que se mueve con el scroll. */
+  const plates = [
+    'lg:absolute lg:bottom-[3%] lg:left-[1%] lg:h-[62%] lg:w-[35%]',
+    'lg:absolute lg:top-[1%] lg:left-[32%] lg:z-10 lg:h-[72%] lg:w-[37%]',
+    'lg:absolute lg:right-[1%] lg:bottom-[2%] lg:h-[58%] lg:w-[34%]',
+  ];
+
+  return (
+    <section id="historia" ref={section} className="story-section relative overflow-clip bg-night text-white">
+      <div className="wrap grid lg:grid-cols-[1.05fr_0.95fr] lg:gap-20">
+        <div className="relative py-14 lg:sticky lg:top-[4.75rem] lg:h-[calc(100svh-4.75rem)] lg:py-12">
+          <div className="absolute inset-[14%_6%] rounded-full bg-accent/12 blur-3xl" aria-hidden="true" />
+          <div className="relative z-10 mx-auto max-w-[38rem] lg:h-full">
+            <p className="eyebrow !text-accent lg:absolute lg:top-[7%] lg:left-[2%] lg:max-w-[13rem]">Una línea, varios caminos</p>
+            <p className="mt-3 max-w-[16rem] text-[0.9rem] leading-relaxed text-white/62 lg:absolute lg:top-[15%] lg:left-[2%] lg:mt-0 lg:max-w-[13rem]">La composición cambia mientras avanzas: objetivo, fórmula y ficha.</p>
+            <div className="story-stage mt-8 grid grid-cols-3 gap-3 lg:absolute lg:inset-[30%_0_5%_0] lg:mt-0 lg:block lg:gap-0">
+              {storyProducts.map((product, index) => (
+                <div key={product.slug} className={`story-bottle story-bottle-${String.fromCharCode(97 + index)} rounded-[1.5rem] bg-gradient-to-b from-white to-[#efe9dc] p-2 shadow-[0_26px_50px_-26px_rgb(6_12_22/0.85)] ring-1 ring-white/15 lg:p-4 ${plates[index]}`}>
+                  <ProductImage product={product} width={420} eager className="mx-auto h-full max-h-full w-auto object-contain" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div className="relative py-10 lg:py-[26vh]">
+          {steps.map((step) => (
+            <article key={step.n} className="story-copy flex min-h-[34vh] items-center border-t border-white/14 py-12 first:border-t-0 lg:min-h-[68vh] lg:py-16">
+              <div>
+                <p className="flex items-center gap-3 text-[0.74rem] font-semibold tracking-[0.16em] text-accent uppercase"><span>{step.n}</span><span className="h-px w-10 bg-accent/60" />{step.eyebrow}</p>
+                <h2 className="mt-6 max-w-lg text-[clamp(2.3rem,5vw,4.6rem)] leading-[0.98] font-medium tracking-[-0.04em]">{step.title}</h2>
+                <p className="mt-6 max-w-md text-[1.02rem] leading-relaxed text-white/62">{step.text}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
 
 function Goals() {
   return (
-    <section aria-labelledby="objetivos-title" className="wrap section">
-      <Reveal>
-        <SectionHeading eyebrow="Compra por objetivo" title={<span id="objetivos-title">¿Qué quieres apoyar?</span>} lead="Cada fórmula tiene un trabajo claro. Empieza por lo que quieres lograr y te mostramos lo que encaja." />
-      </Reveal>
-      <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {GOALS.map((g, i) => {
-          const IconG = GOAL_ICONS[g.id];
-          const n = countByGoal(g.id);
-          return (
-            <li key={g.id}>
-              <Reveal delay={Math.min(i, 5) * 50} className="h-full">
-                <Link to={`/catalogo?objetivo=${g.slug}`} className={`g-${g.id} card card-lift group flex h-full flex-col p-6`}>
-                  <span className="goal-block text-goal grid size-11 place-items-center rounded-xl transition-all duration-200 group-hover:-translate-y-0.5 group-hover:bg-[color-mix(in_srgb,var(--gb)_70%,var(--gi))]">
-                    <IconG size={21} stroke={1.9} aria-hidden="true" className="transition-transform duration-300 group-hover:rotate-6" />
-                  </span>
-                  <h3 className="mt-4 font-display text-[1.15rem] font-medium">{g.label}</h3>
-                  <p className="mt-1.5 flex-1 text-[0.9rem] leading-relaxed text-muted">{g.blurb}</p>
-                  <span className="mt-4 flex items-center justify-between border-t border-line pt-3 text-[0.82rem] font-semibold text-fg">
-                    {n} {n === 1 ? 'fórmula' : 'fórmulas'}
-                    <IconArrowRight size={16} aria-hidden="true" className="transition-transform group-hover:translate-x-0.5" />
-                  </span>
-                </Link>
-              </Reveal>
-            </li>
-          );
-        })}
-      </ul>
-    </section>
-  );
-}
-
-/* ───────────────────────────── Favoritos (carrusel con pestañas) ───────────────────────────── */
-
-function Favorites() {
-  const [tab, setTab] = useState<'favoritos' | GoalId>('favoritos');
-  const row = useRef<HTMLUListElement>(null);
-  const list = tab === 'favoritos' ? featured() : PRODUCTS.filter((p) => p.goal === tab);
-  const scroll = (dir: 1 | -1) => row.current?.scrollBy({ left: dir * 320, behavior: 'smooth' });
-  const chip = (active: boolean) => `shrink-0 rounded-full px-4 py-2 text-[0.85rem] font-medium transition-colors ${active ? 'bg-night text-white' : 'border border-line-strong bg-surface text-muted hover:border-fg hover:text-fg'}`;
-
-  return (
-    <section aria-labelledby="favoritos-title" className="border-y border-line bg-sand">
-      <div className="wrap section">
-        <div className="flex flex-wrap items-end justify-between gap-6">
-          <Reveal>
-            <SectionHeading eyebrow="Lo más pedido" title={<span id="favoritos-title">Las favoritas de la línea</span>} />
-          </Reveal>
-          <div className="hidden gap-2 sm:flex">
-            <button type="button" onClick={() => scroll(-1)} className="grid size-10 place-items-center rounded-full border border-line-strong bg-surface text-fg transition-colors hover:bg-night hover:text-white" aria-label="Productos anteriores">
-              <IconChevronLeft size={19} aria-hidden="true" />
-            </button>
-            <button type="button" onClick={() => scroll(1)} className="grid size-10 place-items-center rounded-full border border-line-strong bg-surface text-fg transition-colors hover:bg-night hover:text-white" aria-label="Productos siguientes">
-              <IconChevronRight size={19} aria-hidden="true" />
-            </button>
-          </div>
-        </div>
-
-        <div role="group" aria-label="Filtrar las favoritas" className="scroll-x -mx-5 mt-7 flex gap-2 overflow-x-auto px-5 pb-1 sm:mx-0 sm:px-0">
-          <button type="button" aria-pressed={tab === 'favoritos'} onClick={() => setTab('favoritos')} className={chip(tab === 'favoritos')}>
-            Favoritas
-          </button>
-          {GOALS.map((g) => (
-            <button key={g.id} type="button" aria-pressed={tab === g.id} onClick={() => setTab(g.id)} className={chip(tab === g.id)}>
-              {g.short}
-            </button>
-          ))}
-        </div>
-
-        <ul ref={row} key={tab} className="scroll-x mt-5 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 [animation:fade-in_0.3s_both]">
-          {list.map((p) => (
-            <li key={p.slug} className="w-[16.5rem] shrink-0 snap-start sm:w-[17.5rem]">
-              <ProductCard product={p} />
-            </li>
-          ))}
-          <li className="grid w-[16.5rem] shrink-0 snap-start place-items-center sm:w-[17.5rem]">
-            <Link to="/catalogo" className={buttonClass('outline', 'w-full justify-center')}>
-              Ver las {PRODUCTS.length} <IconArrowRight size={16} aria-hidden="true" />
-            </Link>
-          </li>
-        </ul>
-      </div>
-    </section>
-  );
-}
-
-/* ───────────────────────────── Cómo pedir (con vista previa del mensaje) ───────────────────────────── */
-
-const SAMPLE: OrderLine[] = [
-  { product: findProduct('zinc-triple-play')!, qty: 2 },
-  { product: findProduct('maca-root-extra-strength')!, qty: 1 },
-];
-
-function HowTo() {
-  const { lines } = useOrder();
-  const real = lines.length > 0;
-  const message = orderMessage(real ? lines : SAMPLE, { name: real ? '' : 'Tu nombre', place: real ? '' : 'Tu ciudad' });
-  const steps = [
-    { n: '01', title: 'Elige tus fórmulas', text: 'Recorre el catálogo o usa el buscador y agrega lo que quieras.' },
-    { n: '02', title: 'Revisa «Mi pedido»', text: 'Ajusta las cantidades y mira el total referencial al instante. Aquí no se cobra nada.' },
-    { n: '03', title: 'Envíalo por WhatsApp', text: 'Se abre el chat con tu pedido ya escrito. Confirmamos disponibilidad, envío y pago contigo.' },
-  ];
-  return (
-    <section aria-labelledby="como-title" className="wrap section">
-      <div className="grid items-center gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
-        <div>
-          <SectionHeading as="h2" eyebrow="Cómo pedir" title={<span id="como-title">Tres pasos, sin cuentas ni tarjetas</span>} lead="La vitrina no cobra: escribe tu pedido y lo coordinamos en el chat." />
-          <ol className="mt-9 space-y-6">
-            {steps.map((s, i) => (
-              <li key={s.n} className="group flex gap-5">
-                <Reveal delay={i * 90}>
-                  <span className="font-display text-[0.95rem] leading-none font-medium text-accent transition-transform duration-200 group-hover:scale-125">{s.n}</span>
-                </Reveal>
-                <Reveal delay={i * 90 + 60} className="flex-1">
-                  <div className="border-l border-line pl-5 transition-colors duration-200 group-hover:border-accent-soft">
-                    <h3 className="font-display text-[1.1rem] font-medium">{s.title}</h3>
-                    <p className="mt-1 text-[0.92rem] leading-relaxed text-muted">{s.text}</p>
-                  </div>
-                </Reveal>
-              </li>
-            ))}
-          </ol>
-          <Link to="/catalogo" className={`${buttonClass('primary')} group mt-9`}>
-            Empezar mi pedido <IconArrowRight size={17} aria-hidden="true" className="transition-transform duration-200 group-hover:translate-x-1" />
-          </Link>
-        </div>
-
-        <Reveal delay={80}>
-          <figure className="mx-auto w-full max-w-sm">
-            <div className="overflow-hidden rounded-2xl border border-line bg-surface shadow-[0_20px_50px_-30px_rgb(35_35_31/0.35)]">
-              <div className="flex items-center gap-3 border-b border-line bg-sand px-4 py-3">
-                <span className="grid size-8 place-items-center rounded-lg bg-night text-white">
-                  <IconLeaf size={16} aria-hidden="true" />
-                </span>
-                <div>
-                  <p className="text-[0.85rem] leading-tight font-semibold">{site.brand}</p>
-                  <p className="text-[0.72rem] text-muted">WhatsApp</p>
-                </div>
-              </div>
-              <div className="bg-[#eae6dd] p-4">
-                <div className="ml-auto max-w-[92%] rounded-xl rounded-tr-sm bg-[#dff0d8] p-3.5 text-[0.8rem] leading-relaxed whitespace-pre-line text-fg">{message}</div>
-              </div>
-            </div>
-            <figcaption className="mt-3 text-center text-[0.82rem] text-muted">{real ? 'Este es el mensaje de tu pedido de ahora mismo.' : 'Así llega tu pedido (ejemplo). Se arma solo con lo que elijas.'}</figcaption>
-          </figure>
-        </Reveal>
-      </div>
-    </section>
-  );
-}
-
-/* ───────────────────────────── Por qué, ingredientes, mayoristas, preguntas ───────────────────────────── */
-
-function Why() {
-  const items = [
-    { Icon: IconTargetArrow, title: 'Fórmulas enfocadas', text: 'Cada producto tiene un trabajo claro, en vez de una pared de frascos parecidos.' },
-    { Icon: IconFlask, title: 'Etiquetas claras', text: 'Ves exactamente qué lleva cada fórmula, ingrediente por ingrediente y en su cantidad.' },
-    { Icon: IconLeaf, title: 'Cápsulas vegetarianas', text: 'Sin relleno innecesario, con ingredientes de larga tradición de uso.' },
-    { Icon: IconTruckDelivery, title: 'Trato directo', text: 'Disponibilidad, envío y pago se conversan contigo, sin intermediarios ni formularios que no responden.' },
-  ];
-  return (
-    <section aria-labelledby="porque-title" className="border-y border-line bg-surface">
-      <div className="wrap section">
-        <Reveal>
-          <SectionHeading center eyebrow="Por qué Gold Roots" title={<span id="porque-title">Poca línea, bien pensada</span>} lead="Prefiere pocas fórmulas con un objetivo claro antes que un catálogo que repite lo mismo en doce frascos." />
-        </Reveal>
-        <ul className="mt-10 grid gap-x-8 gap-y-8 sm:grid-cols-2 lg:grid-cols-4">
-          {items.map(({ Icon, title, text }, i) => (
-            <li key={title}>
-              <Reveal delay={Math.min(i, 5) * 60} className="h-full">
-                <div className="h-full">
-                  <span className="grid size-10 place-items-center rounded-xl bg-sand text-fg">
-                    <Icon size={20} stroke={1.8} aria-hidden="true" />
-                  </span>
-                  <h3 className="mt-4 font-display text-[1.05rem] font-medium">{title}</h3>
-                  <p className="mt-1.5 text-[0.9rem] leading-relaxed text-muted">{text}</p>
-                </div>
-              </Reveal>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </section>
-  );
-}
-
-const INGREDIENTS: Array<[string, string]> = [
-  ['Shilajit', 'shilajit'],
-  ['Maca', 'maca'],
-  ['Cúrcuma', 'curcuma'],
-  ['Astaxantina', 'astaxantina'],
-  ['Melena de león', 'melena'],
-  ['Ashwagandha', 'ashwagandha'],
-  ['Magnesio', 'magnesio'],
-  ['Zinc', 'zinc'],
-  ['Selenio', 'selenio'],
-  ['Cardo mariano', 'cardo'],
-  ['Remolacha', 'remolacha'],
-  ['Coenzima Q10', 'coenzima'],
-  ['Resveratrol', 'resveratrol'],
-  ['L-Arginina', 'arginina'],
-  ['Vitamina D3', 'd3'],
-  ['Zeaxantina', 'zeaxantina'],
-];
-
-function Ingredients() {
-  return (
-    <section aria-labelledby="ingredientes-title" className="wrap section">
-      <Reveal>
-        <SectionHeading eyebrow="Busca por ingrediente" title={<span id="ingredientes-title">¿Ya sabes lo que buscas?</span>} lead="Toca un ingrediente y te mostramos las fórmulas que lo llevan." />
-      </Reveal>
-      <ul className="mt-8 flex flex-wrap gap-2">
-        {INGREDIENTS.map(([label, q], i) => (
-          <li key={q}>
-            <Reveal delay={Math.min(i, 14) * 40}>
-              <Link to={`/catalogo?q=${q}`} className="press inline-flex min-h-10 items-center rounded-full border border-line-strong bg-surface px-4 text-[0.88rem] font-medium text-fg transition-colors hover:-translate-y-0.5 hover:border-fg hover:bg-night hover:text-white">
-                {label}
+    <section className="wrap section" aria-labelledby="goals-title">
+      <Reveal><SectionHeading eyebrow="Explora por objetivo" title={<span id="goals-title">Seis puertas de entrada</span>} lead="No son diagnósticos ni recomendaciones médicas. Son categorías para orientarte dentro del catálogo y revisar la información de cada fórmula." /></Reveal>
+      <ul className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {GOALS.map((goal, index) => (
+          <li key={goal.id}>
+            <Reveal delay={index * 45} className="h-full">
+              <Link to={`/catalogo?objetivo=${goal.slug}`} className={`g-${goal.id} goal-block group flex h-full min-h-56 flex-col rounded-3xl p-6 transition-transform duration-300 hover:-translate-y-1`}>
+                <span className="text-goal text-[0.72rem] font-bold tracking-[0.14em] uppercase">0{index + 1}</span>
+                <h3 className="mt-auto text-[1.55rem] leading-tight">{goal.label}</h3>
+                <p className="mt-3 max-w-sm text-[0.9rem] leading-relaxed text-muted">{goal.blurb}.</p>
+                <span className="mt-5 inline-flex items-center gap-2 text-[0.82rem] font-semibold text-night">Explorar <IconArrowRight size={15} className="transition-transform group-hover:translate-x-1" aria-hidden="true" /></span>
               </Link>
             </Reveal>
           </li>
@@ -310,64 +195,132 @@ function Ingredients() {
   );
 }
 
-function WholesaleBanner() {
+/** Producto destacado: la fotografía individual del Zinc, en su propio escenario. */
+function Spotlight() {
+  const section = useRef<HTMLElement>(null);
+
+  useLayoutEffect(() => {
+    const context = gsap.context(() => {
+      const media = gsap.matchMedia();
+      media.add('(min-width: 900px) and (prefers-reduced-motion: no-preference)', () => {
+        gsap.fromTo('.spot-photo', { yPercent: 6, scale: 1.02 }, { yPercent: -6, scale: 1.02, ease: 'none', scrollTrigger: { trigger: section.current, start: 'top bottom', end: 'bottom top', scrub: 1.2 } });
+      });
+      return () => media.revert();
+    }, section);
+    return () => context.revert();
+  }, []);
+
   return (
-    <section aria-labelledby="mayor-title" className="wrap pb-4">
-      <Reveal>
-        <div className="g-immune goal-block relative overflow-hidden rounded-2xl p-8 sm:p-12">
-          {/* Dos manchas de color que derivan despacio: el bloque se mueve aunque el texto no. */}
-          <span aria-hidden="true" className="drift pointer-events-none absolute -right-10 -top-16 size-48 rounded-full bg-white/35 blur-2xl" />
-          <span aria-hidden="true" className="drift pointer-events-none absolute -bottom-20 left-1/3 size-56 rounded-full bg-[color:var(--gi)]/10 blur-2xl" style={{ animationDelay: '-8s' }} />
-          <div className="relative max-w-2xl">
-            <p className="eyebrow !text-[color:var(--gi)]">Tiendas, farmacias y distribuidores</p>
-            <h2 id="mayor-title" className="mt-2 font-display text-[1.75rem] leading-[1.2] font-medium sm:text-[2.1rem]">
-              Lleva la línea a tu tienda
-            </h2>
-            <p className="mt-3 max-w-xl text-[1rem] leading-relaxed text-[color:var(--gi)]">
-              {PRODUCTS.length} fórmulas con fotos, fichas y un QR por producto listos para exhibir. Cuéntanos de tu negocio y te respondemos por WhatsApp.
-            </p>
-            <div className="mt-7">
-              <Link to="/mayoristas" className={`${buttonClass('night')} group`}>
-                Quiero vender Gold Roots <IconArrowRight size={17} aria-hidden="true" className="transition-transform duration-200 group-hover:translate-x-1" />
-              </Link>
+    <section ref={section} className="overflow-clip border-y border-line bg-surface" aria-labelledby="spotlight-title">
+      <div className="wrap grid items-center gap-10 py-16 sm:py-20 lg:grid-cols-[0.95fr_1.05fr] lg:gap-16 lg:py-24">
+        <div>
+          <Reveal>
+            <p className="eyebrow">Producto destacado</p>
+            <h2 id="spotlight-title" className="mt-4 text-[clamp(2.1rem,4.2vw,3.6rem)] leading-[1.02] text-night">{zinc.headline}</h2>
+            <p className="mt-5 max-w-lg text-[1rem] leading-relaxed text-muted">{zinc.summary}</p>
+          </Reveal>
+          <Reveal delay={90}>
+            <ul className="mt-8 flex flex-wrap gap-2">
+              {zinc.ingredients.slice(0, 5).map((ingredient) => <li key={ingredient} className="rounded-full border border-line-strong px-3.5 py-1.5 text-[0.8rem] font-medium text-fg">{ingredient}</li>)}
+            </ul>
+          </Reveal>
+          <Reveal delay={150}>
+            <div className="mt-9 flex flex-wrap gap-3">
+              <Link to={`/producto/${zinc.slug}`} className={buttonClass('primary')}>Ver producto <IconArrowRight size={17} aria-hidden="true" /></Link>
+              <a href={waLink(`${INFO_MESSAGE} (Zinc Triple Play)`)} target="_blank" rel="noopener noreferrer" className={buttonClass('outline')}><IconBrandWhatsapp size={17} aria-hidden="true" /> Preguntar por este producto</a>
             </div>
-          </div>
+          </Reveal>
         </div>
-      </Reveal>
+        <Reveal delay={60} className="relative">
+          <div className="zinc-stage relative overflow-hidden rounded-[2.5rem] px-6 py-10 sm:px-12">
+            <img src={asset('brand/zinc-scene.webp')} width="1400" height="800" loading="lazy" decoding="async" alt="Frasco de Zinc Triple Play Gold Roots con sus cápsulas" className="spot-photo shot block h-auto w-full" />
+            <p className="relative mt-6 text-center text-[0.78rem] font-semibold tracking-[0.16em] text-accent-deep uppercase">{zinc.format}</p>
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+function Collection() {
+  const products = featured().slice(0, 4);
+  return (
+    <section className="border-y border-line bg-sand" aria-labelledby="collection-title">
+      <div className="wrap section">
+        <div className="flex flex-wrap items-end justify-between gap-6">
+          <Reveal><SectionHeading eyebrow="Selección de la línea" title={<span id="collection-title">Fórmulas para mirar de cerca</span>} lead="Una primera selección para conocer el lenguaje, los ingredientes y la diversidad de la colección." /></Reveal>
+          <Link to="/catalogo" className={buttonClass('outline')}>Ver las {PRODUCTS.length} fórmulas <IconArrowRight size={16} aria-hidden="true" /></Link>
+        </div>
+        <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {products.map((product, index) => <li key={product.slug}><Reveal delay={index * 55} className="h-full"><ProductCard product={product} /></Reveal></li>)}
+        </ul>
+      </div>
+    </section>
+  );
+}
+
+function BrandMoment() {
+  return (
+    <section className="wrap section" aria-labelledby="brand-title">
+      <div className="grid overflow-hidden rounded-[2rem] border border-line bg-surface lg:grid-cols-[0.78fr_1.22fr]">
+        <div className="flex flex-col justify-center p-8 sm:p-12 lg:p-14">
+          <p className="eyebrow text-accent-deep">La colección completa</p>
+          <h2 id="brand-title" className="mt-4 text-[clamp(2.2rem,4.5vw,4rem)] leading-[0.98]">Un lenguaje visual. Distintos objetivos.</h2>
+          <p className="mt-5 max-w-lg text-[1rem] leading-relaxed text-muted">Frascos, ingredientes y fichas conviven en un sistema consistente para que comparar resulte más simple.</p>
+          <dl className="mt-9 grid grid-cols-2 gap-5 border-t border-line pt-7">
+            <div><dd className="font-display text-4xl text-night"><CountUp to={PRODUCTS.length} /></dd><dt className="mt-1 text-[0.78rem] font-medium text-muted">fórmulas documentadas</dt></div>
+            <div><dd className="font-display text-4xl text-night"><CountUp to={GOALS.length} /></dd><dt className="mt-1 text-[0.78rem] font-medium text-muted">objetivos para explorar</dt></div>
+          </dl>
+        </div>
+        <div className="relative min-h-[24rem] overflow-hidden bg-[#f1eee7] lg:min-h-[38rem]">
+          <img src={asset('brand/flatlay.webp')} alt="Composición de la línea Gold Roots con sus ingredientes" width="1400" height="800" loading="lazy" decoding="async" className="absolute inset-0 size-full object-cover object-center transition-transform duration-700 hover:scale-[1.02]" />
+          {/* El degradado de la izquierda es lo que hace que la foto salga del panel blanco en vez de cortarse en seco. */}
+          <div className="pointer-events-none absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-surface via-surface/70 to-transparent lg:w-32" aria-hidden="true" />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* Solo lo que esta web puede sostener por sí misma: lo que muestra, lo que enlaza y lo que no afirma.
+   Los sellos de las piezas gráficas de la marca no se publican hasta tener su respaldo documental. */
+function Quality() {
+  const items = [
+    { Icon: IconFlask, title: 'Fórmula completa', text: `Ingredientes, presentación y objetivo declarado en cada una de las ${PRODUCTS.length} fichas.` },
+    { Icon: IconRoute, title: 'Información primero', text: 'Sin precios, sin carrito y sin presión: la página describe, no vende.' },
+    { Icon: IconQrcode, title: 'Rutas que permanecen', text: 'Cada ficha conserva una dirección propia y un QR descargable para volver a consultarla.' },
+    { Icon: IconShieldCheck, title: 'Límites claros', text: 'Suplementos alimenticios: no sustituyen una dieta variada ni reemplazan la consulta profesional.' },
+  ];
+  return (
+    <section className="border-y border-line bg-surface" aria-labelledby="quality-title">
+      <div className="wrap section">
+        <Reveal><SectionHeading center eyebrow="Nuestra calidad" title={<span id="quality-title">Lo que esta página sí puede garantizar</span>} lead="Una declaración de calidad solo es útil si se puede comprobar en la propia web. Esto es lo que se puede verificar aquí, fórmula por fórmula." /></Reveal>
+        <ul className="mt-12 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
+          {items.map(({ Icon, title, text }, index) => (
+            <li key={title}>
+              <Reveal delay={index * 60}>
+                <Icon size={24} stroke={1.5} className="text-accent-deep" aria-hidden="true" />
+                <h3 className="mt-5 text-[1.12rem]">{title}</h3>
+                <p className="mt-2 text-[0.88rem] leading-relaxed text-muted">{text}</p>
+              </Reveal>
+            </li>
+          ))}
+        </ul>
+      </div>
     </section>
   );
 }
 
 function Faq() {
   return (
-    <section aria-labelledby="faq-title" className="wrap section grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
-      <Reveal>
-        <SectionHeading eyebrow="Preguntas frecuentes" title={<span id="faq-title">Lo que más nos preguntan</span>} lead="¿Otra duda? Escríbenos y la resolvemos en el chat." />
-        <WhatsAppButton text={GENERAL_MESSAGE} variant="outline" className="mt-6">
-          Preguntar por WhatsApp
-        </WhatsAppButton>
-      </Reveal>
+    <section className="wrap section grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20" aria-labelledby="faq-title">
+      <Reveal><SectionHeading eyebrow="Preguntas frecuentes" title={<span id="faq-title">Antes de explorar</span>} lead="La página presenta la información disponible en el catálogo y no sustituye la orientación de un profesional de la salud." /></Reveal>
       <div className="border-t border-line">
-        <Reveal delay={60}>
-          <Accordion title="¿Cómo hago mi pedido?" defaultOpen>
-            Agrega las fórmulas a «Mi pedido» y toca «Enviar mi pedido por WhatsApp». Se abre el chat con la lista, las cantidades y el total referencial ya escritos; solo lo envías.
-          </Accordion>
-        </Reveal>
-        <Reveal delay={110}>
-          <Accordion title="¿Puedo pagar en la página?">No. Esta es una vitrina informativa: no hay carrito ni pago en línea. La disponibilidad, el envío y la forma de pago se confirman contigo en la conversación.</Accordion>
-        </Reveal>
-        <Reveal delay={160}>
-          <Accordion title="¿Hacen envíos a mi país?">El envío y su costo se coordinan por WhatsApp según tu ciudad o país. Indícalo en tu pedido para que la respuesta sea más rápida.</Accordion>
-        </Reveal>
-        <Reveal delay={210}>
-          <Accordion title="¿Cómo se toman las cápsulas?">Sigue siempre la indicación de la etiqueta y consulta con un profesional de la salud antes de empezar, sobre todo si estás embarazada, en lactancia o tomas medicamentos.</Accordion>
-        </Reveal>
-        <Reveal delay={260}>
-          <Accordion title="¿Para qué sirve el código QR de cada producto?">Cada ficha genera un QR que abre esa misma página. Puedes imprimirlo para el envase, un exhibidor o una hoja de catálogo.</Accordion>
-        </Reveal>
-        <Reveal delay={310}>
-          <Accordion title="¿Son medicamentos?">No. Son suplementos alimenticios y no están destinados a diagnosticar, tratar, curar ni prevenir ninguna enfermedad.</Accordion>
-        </Reveal>
+        <Accordion title="¿Puedo comprar desde esta página?" defaultOpen>No. Gold Roots funciona aquí como una experiencia corporativa e informativa. No hay precios, carrito, cantidades ni flujo de compra. Para cualquier consulta, el canal es WhatsApp.</Accordion>
+        <Accordion title="¿Qué información tiene cada ficha?">Nombre, objetivo, descripción, ingredientes, presentación, beneficios declarados por el catálogo y un QR que abre la misma página.</Accordion>
+        <Accordion title="¿El sitio recomienda qué suplemento tomar?">No. Las categorías ayudan a navegar la línea, pero no constituyen una recomendación médica ni reemplazan la evaluación de un profesional.</Accordion>
+        <Accordion title="¿Para qué sirve el código QR?">Permite abrir y compartir la ficha informativa de un producto mediante una dirección estable. No afirma autenticidad por sí solo.</Accordion>
+        <Accordion title="¿Son medicamentos?">No. Son suplementos alimenticios y no están destinados a diagnosticar, tratar, curar ni prevenir ninguna enfermedad.</Accordion>
       </div>
     </section>
   );
@@ -375,45 +328,16 @@ function Faq() {
 
 function FinalCta() {
   return (
-    <section aria-labelledby="final-title" className="relative overflow-hidden border-t border-line bg-night">
-      {/* Ambiente: tres manchas de color que derivan muy despacio detrás del cierre. */}
-      <span aria-hidden="true" className="drift pointer-events-none absolute -left-16 top-4 size-64 rounded-full bg-[#f7efdc]/12 blur-3xl" />
-      <span aria-hidden="true" className="drift pointer-events-none absolute -bottom-16 -right-12 size-72 rounded-full bg-[#e4f0e7]/14 blur-3xl" style={{ animationDelay: '-7s' }} />
-      <span aria-hidden="true" className="drift pointer-events-none absolute left-1/2 top-1/3 size-56 rounded-full bg-accent/12 blur-3xl" style={{ animationDelay: '-12s' }} />
-      <div className="wrap relative py-16 text-center sm:py-20">
-        <Reveal>
-          <h2 id="final-title" className="mx-auto max-w-2xl font-display text-[1.8rem] leading-[1.2] font-medium text-white sm:text-[2.3rem]">
-            Empieza por el objetivo, no por el frasco
-          </h2>
-        </Reveal>
-        <Reveal delay={70}>
-          <p className="mx-auto mt-3 max-w-xl text-[1.02rem] leading-relaxed text-white/65">Escoge, arma tu pedido y escríbenos. Del otro lado hay una persona lista para ayudarte.</p>
-        </Reveal>
-        <Reveal delay={140}>
-          <ul className="mx-auto mt-8 flex max-w-2xl flex-wrap justify-center gap-2">
-            {GOALS.map((g) => {
-              const IconG = GOAL_ICONS[g.id];
-              return (
-                <li key={g.id}>
-                  <Link to={`/catalogo?objetivo=${g.slug}`} className="press inline-flex min-h-10 items-center gap-2 rounded-full border border-white/20 px-4 text-[0.85rem] font-medium text-white/80 transition-colors hover:-translate-y-0.5 hover:border-white hover:bg-white hover:text-night">
-                    <IconG size={16} stroke={1.9} aria-hidden="true" />
-                    {g.short}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        </Reveal>
-        <Reveal delay={210}>
-          <div className="mt-8 flex flex-wrap justify-center gap-2.5">
-            <Link to="/catalogo" className={`${buttonClass('primary')} group`}>
-              Ver el catálogo <IconArrowRight size={17} aria-hidden="true" className="transition-transform duration-200 group-hover:translate-x-1" />
-            </Link>
-            <WhatsAppButton text={GENERAL_MESSAGE} variant="light">
-              Hablar con nosotros
-            </WhatsAppButton>
-          </div>
-        </Reveal>
+    <section className="wrap pb-2" aria-labelledby="final-title">
+      <div className="relative overflow-hidden rounded-[2rem] bg-night px-7 py-14 text-center text-white sm:px-12 sm:py-20">
+        <span className="absolute -top-24 left-1/2 size-80 -translate-x-1/2 rounded-full bg-accent/14 blur-3xl" aria-hidden="true" />
+        <LeafMark className="relative mx-auto size-9" />
+        <h2 id="final-title" className="relative mx-auto mt-5 max-w-3xl text-[clamp(2.3rem,5vw,4.5rem)] leading-[0.98]">Encuentra la fórmula que quieres conocer.</h2>
+        <p className="relative mx-auto mt-5 max-w-xl text-[1rem] leading-relaxed text-white/62">Recorre el catálogo completo, filtra por objetivo o escribe directamente a la marca.</p>
+        <div className="relative mt-8 flex flex-wrap justify-center gap-3">
+          <Link to="/catalogo" className={buttonClass('primary')}>Explorar catálogo <IconArrowRight size={17} aria-hidden="true" /></Link>
+          <a href={waLink(INFO_MESSAGE)} target="_blank" rel="noopener noreferrer" className={buttonClass('ghost-dark')}><IconBrandWhatsapp size={17} aria-hidden="true" /> Contactar por WhatsApp</a>
+        </div>
       </div>
     </section>
   );
@@ -421,23 +345,10 @@ function FinalCta() {
 
 export function Home() {
   usePageMeta({
-    title: 'Gold Roots Nutrition — Suplementos en cápsulas vegetarianas',
-    description: 'Catorce suplementos enfocados en energía, corazón, mente, sueño, vista y piel, y defensas. Fórmulas claras, en cápsulas vegetarianas. Arma tu pedido y envíalo por WhatsApp.',
+    title: 'Gold Roots Nutrition — Fórmulas para tu bienestar diario',
+    description: `Conoce las ${PRODUCTS.length} fórmulas de Gold Roots Nutrition: ingredientes, objetivos, presentaciones y fichas informativas con QR.`,
     path: '/',
-    image: 'products/shilajit-gold.webp',
+    image: 'brand/hero-cover.webp',
   });
-  return (
-    <>
-      <Hero />
-      <Goals />
-      <FormulaFinder />
-      <Favorites />
-      <HowTo />
-      <Why />
-      <Ingredients />
-      <WholesaleBanner />
-      <Faq />
-      <FinalCta />
-    </>
-  );
+  return <><Hero /><FloatBand /><Story /><Goals /><FormulaFinder /><Spotlight /><Collection /><BrandMoment /><Quality /><Faq /><FinalCta /></>;
 }

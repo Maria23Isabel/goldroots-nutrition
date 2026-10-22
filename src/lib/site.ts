@@ -3,10 +3,13 @@ export const site = {
   brand: 'Gold Roots Nutrition',
   tagline: 'Nutrición esencial para tu bienestar diario',
   /**
-   * Número de WhatsApp que recibe los pedidos, con código de país y solo dígitos.
-   * [por confirmar] Hoy usa el de pedidos de Herbavida (+51 940 176 917); se cambia aquí o con VITE_WHATSAPP al compilar.
+   * Número de WhatsApp de contacto, con código de país y solo dígitos.
+   * [por confirmar] Hoy usa el de Herbavida (+51 940 176 917), que es el que estaba configurado en el proyecto:
+   * no se inventa ninguno. Se cambia aquí o con VITE_WHATSAPP al compilar y el botón flotante, el pie, el
+   * héroe, el destacado y Contacto lo siguen al instante.
    */
   whatsapp: (import.meta.env.VITE_WHATSAPP as string | undefined)?.replace(/\D/g, '') || '51940176917',
+  /** Marca el número de arriba como oficial de Gold Roots. Mientras esté en false, el dato sigue en revisión. */
   whatsappConfirmed: false,
   /** [por confirmar] horario de atención */
   hours: null as string | null,
